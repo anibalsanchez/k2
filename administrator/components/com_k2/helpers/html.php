@@ -287,7 +287,7 @@ class K2HelperHTML
             // jQuery
             if (version_compare(JVERSION, '3.0.0', 'lt')) {
                 // Frontend
-                if ($app->isSite()) {
+                if ($app->isClient('site')) {
                     // B/C for saved old options
                     if ($option == 'com_k2' && $view === 'item' && $task == 'edit') {
                         $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js');
@@ -321,7 +321,7 @@ class K2HelperHTML
                 }
 
                 // Backend
-                if ($app->isAdmin()) {
+                if ($app->isClient('administrator')) {
                     if (($option == 'com_k2' && ($view === 'item' || $view === 'category')) || $option == 'com_menus') {
                         $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js');
                     } else {
@@ -346,9 +346,9 @@ class K2HelperHTML
             }
 
             // Everything else...
-            if ($app->isAdmin() || $adminHeadIncludes) {
+            if ($app->isClient('administrator') || $adminHeadIncludes) {
                 // JS
-                $isBackend = ($app->isAdmin()) ? ' k2IsBackend' : '';
+                $isBackend = ($app->isClient('administrator')) ? ' k2IsBackend' : '';
                 $isTask = ($task) ? ' k2TaskIs'.ucfirst($task) : '';
                 $cssClass = 'isJ'.K2_JVERSION.' k2ViewIs'.ucfirst($view).''.$isTask.''.$isBackend;
                 $document->addScriptDeclaration("
@@ -452,7 +452,7 @@ class K2HelperHTML
             }
 
             // Frontend only
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 // Magnific Popup
                 if (!$user->guest || ($option == 'com_k2' && $view === 'item') || defined('K2_JOOMLA_MODAL_REQUIRED')) {
                     $document->addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css');

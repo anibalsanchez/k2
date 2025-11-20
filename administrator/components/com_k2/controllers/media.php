@@ -93,10 +93,10 @@ class K2ControllerMedia extends K2Controller
                     return true;
                     break;
                 case 'write':
-                    return !(bool) $app->isSite();
+                    return !(bool) $app->isClient('site');
                     break;
                 case 'locked':
-                    return (bool) $app->isSite();
+                    return (bool) $app->isClient('site');
                     break;
                 case 'hidden':
                     return false;
@@ -106,7 +106,7 @@ class K2ControllerMedia extends K2Controller
             return null;
         }
 
-        $permissions = $app->isAdmin() ? ['read' => true, 'write' => true] : ['read' => true, 'write' => false];
+        $permissions = $app->isClient('administrator') ? ['read' => true, 'write' => true] : ['read' => true, 'write' => false];
 
         $options = [
             'debug' => false,

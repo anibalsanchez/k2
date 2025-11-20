@@ -14,7 +14,7 @@ $context = JRequest::getCmd('context');
 
 ?>
 
-<?php if ($app->isSite() || $context == 'modalselector'): ?>
+<?php if ($app->isClient('site') || $context == 'modalselector'): ?>
 <!-- Modal View -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -377,6 +377,6 @@ if (isset($this->lists['language'])) {
         <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite() || $context == 'modalselector'): ?>
+<?php if ($app->isClient('site') || $context == 'modalselector'): ?>
 </div>
 <?php endif; ?>

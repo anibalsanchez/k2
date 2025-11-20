@@ -55,7 +55,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
         JLoader::register('K2Table', JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php');
         JLoader::register('K2Controller', JPATH_BASE.'/components/com_k2/controllers/controller.php');
         JLoader::register('K2Model', JPATH_ADMINISTRATOR.'/components/com_k2/models/model.php');
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             K2Model::addIncludePath(JPATH_SITE.'/components/com_k2/models');
         } elseif (K2_JVERSION !== '15' || (K2_JVERSION === '15' && JRequest::getCmd('option') != 'com_users')) {
             // Fix warning under Joomla 1.5 caused by conflict in model names
@@ -83,12 +83,12 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
         }
 
         // Backend only
-        if (!$app->isAdmin()) {
+        if (!$app->isClient('administrator')) {
             return;
         }
 
         // K2 Metrics
-        if ($app->isAdmin() && $params->get('gatherStatistics', 1)) {
+        if ($app->isClient('administrator') && $params->get('gatherStatistics', 1)) {
             $option = JRequest::getCmd('option');
             $view = JRequest::getCmd('view');
             $viewsToRun = ['items', 'categories', 'tags', 'comments', 'users', 'usergroups', 'extrafields', 'extrafieldsgroups', ''];
@@ -381,13 +381,13 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
-        $basepath = ($app->isSite()) ? JPATH_SITE : JPATH_ADMINISTRATOR;
+        $basepath = ($app->isClient('site')) ? JPATH_SITE : JPATH_ADMINISTRATOR;
         Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2', $basepath);
         if (K2_JVERSION != '15') {
             Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
         }
 
-        if ($app->isAdmin() || (JRequest::getCmd('option') == 'com_k2' && (JRequest::getCmd('task') == 'add' || JRequest::getCmd('task') == 'edit'))) {
+        if ($app->isClient('administrator') || (JRequest::getCmd('option') == 'com_k2' && (JRequest::getCmd('task') == 'add' || JRequest::getCmd('task') == 'edit'))) {
             return;
         }
 
@@ -399,7 +399,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
     {
         $app = Joomla\CMS\Factory::getApplication();
 
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             return;
         }
 
@@ -655,7 +655,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
     {
         $app = Joomla\CMS\Factory::getApplication();
 
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $config = Joomla\CMS\Factory::getConfig();
             $document = Joomla\CMS\Factory::getDocument();
             $user = Joomla\CMS\Factory::getUser();

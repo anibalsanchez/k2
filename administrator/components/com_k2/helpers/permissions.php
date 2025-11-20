@@ -36,7 +36,7 @@ class K2HelperPermissions
 
         // Determine actions for everything else
         $action = false;
-        if ($app->isAdmin() && $view != '' && $view != 'info') {
+        if ($app->isClient('administrator') && $view != '' && $view != 'info') {
             switch ($task) {
                 case '':
                 case 'save':

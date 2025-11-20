@@ -14,7 +14,7 @@ $context = JRequest::getCmd('context');
 
 ?>
 
-<?php if ($app->isSite() || $context == 'modalselector'): ?>
+<?php if ($app->isClient('site') || $context == 'modalselector'): ?>
 <!-- Frontend Comments Moderation (Modal View) -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -51,7 +51,7 @@ $context = JRequest::getCmd('context');
     </div>
 <?php endif; ?>
 
-    <form action="<?php echo ($app->isSite()) ? Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=comments&tmpl=component&template=system&context=modalselector') : Joomla\CMS\Router\Route::_('index.php'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo ($app->isClient('site')) ? Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=comments&tmpl=component&template=system&context=modalselector') : Joomla\CMS\Router\Route::_('index.php'); ?>" method="post" name="adminForm" id="adminForm">
         <table class="k2AdminTableFilters table">
             <tr>
                 <td class="k2AdminTableFiltersSearch">
@@ -65,7 +65,7 @@ $context = JRequest::getCmd('context');
                 <td class="k2AdminTableFiltersSelects k2ui-hide-on-mobile">
                     <?php echo $this->lists['state']; ?>
                     <?php echo $this->lists['categories']; ?>
-                    <?php if ($app->isAdmin()): ?>
+                    <?php if ($app->isClient('administrator')): ?>
                     <?php echo $this->lists['authors']; ?>
                     <?php endif; ?>
                 </td>
@@ -162,7 +162,7 @@ $context = JRequest::getCmd('context');
                             <?php echo $row->status; ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
-                            <?php if ($app->isAdmin() && $row->userID): ?>
+                            <?php if ($app->isClient('administrator') && $row->userID): ?>
                             <a href="<?php echo $this->userEditLink.$row->userID; ?>"><?php echo $row->userName; ?></a>
                             <?php else: ?>
                             <?php echo $row->userName; ?>
@@ -192,7 +192,7 @@ $context = JRequest::getCmd('context');
                         </td>
                         <td class="k2ui-hide-on-mobile">
                             <?php $itemURL = K2HelperRoute::getItemRoute($row->itemID.':'.urlencode($row->itemAlias), $row->catid.':'.urlencode($row->catAlias)); ?>
-                            <a target="_blank" href="<?php echo ($app->isSite()) ? Joomla\CMS\Router\Route::_($itemURL) : Joomla\CMS\Uri\Uri::root().$itemURL; ?>"><?php echo $row->title; ?></a>
+                            <a target="_blank" href="<?php echo ($app->isClient('site')) ? Joomla\CMS\Router\Route::_($itemURL) : Joomla\CMS\Uri\Uri::root().$itemURL; ?>"><?php echo $row->title; ?></a>
                         </td>
                         <td class="k2ui-hide-on-mobile">
                             <?php echo $row->catName; ?>
@@ -228,19 +228,19 @@ $context = JRequest::getCmd('context');
         <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-        <input type="hidden" name="isSite" value="<?php echo (int) $app->isSite(); ?>" />
+        <input type="hidden" name="isSite" value="<?php echo (int) $app->isClient('site'); ?>" />
         <input type="hidden" name="option" value="com_k2" />
         <input type="hidden" name="view" value="<?php echo JRequest::getCmd('view'); ?>" />
         <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />
-        <?php if ($app->isSite()): ?>
+        <?php if ($app->isClient('site')): ?>
         <input type="hidden" name="template" value="system" />
         <?php endif; ?>
         <?php endif; ?>
         <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite() || $context == 'modalselector'): ?>
+<?php if ($app->isClient('site') || $context == 'modalselector'): ?>
 </div>
 <?php endif; ?>

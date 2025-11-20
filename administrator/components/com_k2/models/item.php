@@ -183,7 +183,7 @@ class K2ModelItem extends K2Model
         $dispatcher->trigger('onFinderBeforeSave', ['com_k2.item', $row, $isNew]);
 
         // JoomFish front-end editing compatibility
-        if ($app->isSite() && Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
+        if ($app->isClient('site') && Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
             $tmpRow = version_compare(phpversion(), '5.0') < 0 ? $row : clone $row;
         }
 
@@ -193,7 +193,7 @@ class K2ModelItem extends K2Model
         }
 
         // JoomFish front-end editing compatibility
-        if ($app->isSite() && Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
+        if ($app->isClient('site') && Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
             $itemID = $row->id;
             $row = $tmpRow;
             $row->id = $itemID;
@@ -639,7 +639,7 @@ class K2ModelItem extends K2Model
         }
 
         // === Extra fields ===
-        if ($params->get('showExtraFieldsTab') || $app->isAdmin()) {
+        if ($params->get('showExtraFieldsTab') || $app->isClient('administrator')) {
             $objects = [];
             $variables = JRequest::get('post', 2);
             foreach ($variables as $key => $value) {
@@ -790,7 +790,7 @@ class K2ModelItem extends K2Model
             video_credits = '.$db->Quote($row->video_credits).',
             video = '.$db->Quote($row->video).',
             gallery = '.$db->Quote($row->gallery);
-        if ($params->get('showExtraFieldsTab') || $app->isAdmin()) {
+        if ($params->get('showExtraFieldsTab') || $app->isClient('administrator')) {
             $query .= ', extra_fields = '.$db->Quote($row->extra_fields).', extra_fields_search = '.$db->Quote($row->extra_fields_search);
         }
 
@@ -905,7 +905,7 @@ class K2ModelItem extends K2Model
         $dispatcher = JDispatcher::getInstance();
 
         $attachment = Joomla\CMS\Table\Table::getInstance('K2Attachment', 'Table');
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $token = JRequest::getVar('id');
             $check = JString::substr($token, JString::strpos($token, '_') + 1);
             $hash = version_compare(JVERSION, '3.0', 'ge') ? JApplication::getHash($id) : Joomla\CMS\Utility\Utility::getHash($id);
@@ -917,7 +917,7 @@ class K2ModelItem extends K2Model
         $attachment->load($id);
 
         // Frontend Editing: Ensure the user has access to the item
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $item->load($attachment->itemID);
             $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
@@ -947,7 +947,7 @@ class K2ModelItem extends K2Model
             // Trigger K2 plugins
             $dispatcher->trigger('onK2AfterDownload', [&$attachment, &$params]);
 
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $attachment->hit();
             }
 
@@ -1055,7 +1055,7 @@ class K2ModelItem extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('UPDATE #__k2_items SET hits=0 WHERE id='.$id);
         $db->execute();
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             $url = 'index.php?option=com_k2&view=item&cid='.$id;
         } else {
             $url = 'index.php?option=com_k2&view=item&task=edit&cid='.$id.'&tmpl=component';
@@ -1072,7 +1072,7 @@ class K2ModelItem extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('DELETE FROM #__k2_rating WHERE itemID='.$id);
         $db->execute();
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             $url = 'index.php?option=com_k2&view=item&cid='.$id;
         } else {
             $url = 'index.php?option=com_k2&view=item&task=edit&cid='.$id.'&tmpl=component';

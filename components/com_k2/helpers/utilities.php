@@ -263,7 +263,7 @@ class K2HelperUtilities
         if (K2_JVERSION != '15') {
             $app = Joomla\CMS\Factory::getApplication();
 
-            return $app->isSite() ? $app->getParams($option) : Joomla\CMS\Component\ComponentHelper::getParams($option);
+            return $app->isClient('site') ? $app->getParams($option) : Joomla\CMS\Component\ComponentHelper::getParams($option);
         }
 
         return Joomla\CMS\Component\ComponentHelper::getParams($option);

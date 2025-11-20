@@ -134,7 +134,7 @@ class K2ViewUsers extends K2View
         $template = $app->getTemplate();
         $this->assignRef('template', $template);
 
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             // JS
             $document->addScriptDeclaration("
                 var K2Language = ['".Joomla\CMS\Language\Text::_('K2_REPORT_USER_WARNING', true)."'];
@@ -186,12 +186,12 @@ class K2ViewUsers extends K2View
             }
         }
 
-        $isAdmin = $app->isAdmin();
+        $isAdmin = $app->isClient('administrator');
         $this->assignRef('isAdmin', $isAdmin);
 
         // Head includes
         K2HelperHTML::loadHeadIncludes(true, false, true, true);
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             // CSS
             $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/general.css');
             $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/system.css');

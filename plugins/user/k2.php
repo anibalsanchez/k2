@@ -51,11 +51,11 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $task = JRequest::getCmd('task');
 
-        if ($app->isSite() && ($task == 'activate' || $isnew) && $params->get('stopForumSpam')) {
+        if ($app->isClient('site') && ($task == 'activate' || $isnew) && $params->get('stopForumSpam')) {
             $this->checkSpammer($user);
         }
 
-        if ($app->isSite() && $task != 'activate' && JRequest::getInt('K2UserForm')) {
+        if ($app->isClient('site') && $task != 'activate' && JRequest::getInt('K2UserForm')) {
             Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2');
             Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
             $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
@@ -167,7 +167,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
     {
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $app = Joomla\CMS\Factory::getApplication();
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             // Get the user id
             $db = Joomla\CMS\Factory::getDbo();
             $db->setQuery('SELECT id FROM #__users WHERE username = '.$db->Quote($user['username']));
@@ -204,7 +204,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
     {
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $app = Joomla\CMS\Factory::getApplication();
-        if ($app->isSite() && $params->get('cookieDomain')) {
+        if ($app->isClient('site') && $params->get('cookieDomain')) {
             setcookie('userID', '', ['expires' => time() - 3600, 'path' => '/', 'domain' => $params->get('cookieDomain'), 'secure' => 0]);
         }
 
@@ -225,7 +225,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $session = Joomla\CMS\Factory::getSession();
-        if ($params->get('K2UserProfile') && $isNew && $params->get('recaptchaOnRegistration') && $app->isSite() && !$session->get('socialConnectData')) {
+        if ($params->get('K2UserProfile') && $isNew && $params->get('recaptchaOnRegistration') && $app->isClient('site') && !$session->get('socialConnectData')) {
             require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
             if (!K2HelperUtilities::verifyRecaptcha()) {
                 $url = K2_JVERSION != '15' ? 'index.php?option=com_users&view=registration' : 'index.php?option=com_user&view=register';

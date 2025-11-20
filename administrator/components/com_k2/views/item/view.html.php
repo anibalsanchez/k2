@@ -56,7 +56,7 @@ class K2ViewItem extends K2View
         ]);
 
         // Permissions check for frontend editing
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             JLoader::register('K2HelperPermissions', JPATH_COMPONENT.'/helpers/permissions.php');
             if ($task == 'edit' && !K2HelperPermissions::canEditItem($item->created_by, $item->catid)) {
                 JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
@@ -99,7 +99,7 @@ class K2ViewItem extends K2View
 
         if ($item->isCheckedOut($user->get('id'), $item->checked_out)) {
             $message = Joomla\CMS\Language\Text::_('K2_THE_ITEM').': '.$item->title.' '.Joomla\CMS\Language\Text::_('K2_IS_CURRENTLY_BEING_EDITED_BY_ANOTHER_ADMINISTRATOR');
-            $url = ($app->isSite()) ? 'index.php?option=com_k2&view=item&id='.$item->id.'&tmpl=component' : 'index.php?option=com_k2';
+            $url = ($app->isClient('site')) ? 'index.php?option=com_k2&view=item&id='.$item->id.'&tmpl=component' : 'index.php?option=com_k2';
             $app->enqueueMessage($message);
             $app->redirect($url);
         }
@@ -323,7 +323,7 @@ class K2ViewItem extends K2View
         // Category
         $categories_option[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_SELECT_CATEGORY'));
         $categories = $categoriesModel->categoriesTree(null, true, false);
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             JLoader::register('K2HelperPermissions', JPATH_SITE.'/components/com_k2/helpers/permissions.php');
             if (($task == 'add' || $task == 'edit') && !K2HelperPermissions::canAddToAll()) {
                 $counter = count($categories);
@@ -506,7 +506,7 @@ class K2ViewItem extends K2View
         // Disable Joomla menu
         JRequest::setVar('hidemainmenu', 1);
 
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             // Toolbar
             Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
 
@@ -582,7 +582,7 @@ class K2ViewItem extends K2View
         $this->assignRef('sigPro', $sigPro);
 
         // For frontend editing
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             // Lookup template folders
             $this->_addPath('template', JPATH_COMPONENT.'/templates');
             $this->_addPath('template', JPATH_COMPONENT.'/templates/default');

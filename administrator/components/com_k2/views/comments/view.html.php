@@ -40,7 +40,7 @@ class K2ViewComments extends K2View
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\"\.\@\-_]/u', '', $search));
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $filter_author = $user->id;
             JRequest::setVar('filter_author', $user->id);
         }
@@ -99,7 +99,7 @@ class K2ViewComments extends K2View
             JRequest::setVar('limitstart', $limitstart);
         }
 
-        $reportLink = $app->isAdmin() ? 'index.php?option=com_k2&view=user&task=report&id=' : 'index.php?option=com_k2&view=comments&task=reportSpammer&id=';
+        $reportLink = $app->isClient('administrator') ? 'index.php?option=com_k2&view=user&task=report&id=' : 'index.php?option=com_k2&view=comments&task=reportSpammer&id=';
         foreach ($comments as $key => $comment) {
             $comment->reportUserLink = false;
             $comment->commenterLastVisitIP = null;
@@ -113,7 +113,7 @@ class K2ViewComments extends K2View
                     $comment->userName = $commenter->name;
                 }
 
-                if ($app->isSite()) {
+                if ($app->isClient('site')) {
                     if (K2_JVERSION != '15') {
                         if ($user->authorise('core.admin', 'com_k2')) {
                             $comment->reportUserLink = Joomla\CMS\Router\Route::_($reportLink.$comment->userID);
@@ -126,7 +126,7 @@ class K2ViewComments extends K2View
                 }
             }
 
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $comment->status = K2HelperHTML::stateToggler($comment, $key);
             } else {
                 $comment->status = K2_JVERSION == '15' ? Joomla\CMS\HTML\HTMLHelper::_('grid.published', $comment, $key) : Joomla\CMS\HTML\HTMLHelper::_('jgrid.published', $comment->published, $key);
@@ -184,7 +184,7 @@ class K2ViewComments extends K2View
 
         $this->assignRef('dateFormat', $dateFormat);
 
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             // Toolbar
             $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
             Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_COMMENTS'), 'k2.png');
@@ -207,7 +207,7 @@ class K2ViewComments extends K2View
             $this->assignRef('userEditLink', $userEditLink);
         }
 
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             // Enforce the "system" template in the frontend
             JRequest::setVar('template', 'system');
 

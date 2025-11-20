@@ -13,7 +13,7 @@ $app = Joomla\CMS\Factory::getApplication();
 
 ?>
 
-<?php if ($app->isSite()): ?>
+<?php if ($app->isClient('site')): ?>
 <!-- Frontend Item Editing (Modal View) -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -36,7 +36,7 @@ $app = Joomla\CMS\Factory::getApplication();
 <?php endif; ?>
 
     <form action="<?php echo Joomla\CMS\Router\Route::_('index.php'); ?>" enctype="multipart/form-data" method="post" name="adminForm" id="adminForm">
-        <?php if ($app->isSite() && !$this->permissions->get('publish') && !$this->row->published): ?>
+        <?php if ($app->isClient('site') && !$this->permissions->get('publish') && !$this->row->published): ?>
         <div id="k2ModalPermissionsNotice">
             <p><?php echo Joomla\CMS\Language\Text::_('K2_FRONTEND_PERMISSIONS_NOTICE'); ?></p>
         </div>
@@ -49,7 +49,7 @@ $app = Joomla\CMS\Factory::getApplication();
                 <ul class="k2NavTabs">
                     <li id="tabContent"><a href="#k2TabBasic"><i class="fa fa-home"></i><?php echo Joomla\CMS\Language\Text::_('K2_BASIC'); ?></a></li>
                     <li id="tabContent"><a href="#k2TabPubAndMeta"><i class="fa fa-info-circle"></i><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHING_AND_METADATA'); ?></a></li>
-                    <?php if ($app->isAdmin()): ?>
+                    <?php if ($app->isClient('administrator')): ?>
                     <li id="tabContent"><a href="#k2TabDisplaySet"><i class="fa fa-desktop"></i><?php echo Joomla\CMS\Language\Text::_('K2_DISPLAY_SETTINGS'); ?></a></li>
                     <?php endif; ?>
                 </ul>
@@ -137,7 +137,7 @@ $app = Joomla\CMS\Factory::getApplication();
                     </div>
                 </div>
                 <div class="k2ui-table-additional">
-                    <?php if ($app->isAdmin() || ($app->isSite() && $this->permissions->get('publish'))): ?>
+                    <?php if ($app->isClient('administrator') || ($app->isClient('site') && $this->permissions->get('publish'))): ?>
                     <div class="k2ui-field-label">
                         <label><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED'); ?></label>
                     </div>
@@ -165,7 +165,7 @@ $app = Joomla\CMS\Factory::getApplication();
                             <?php echo $this->row->author; ?>
                             <input type="hidden" name="created_by" value="<?php echo $this->row->created_by; ?>" />
                         </span>
-                        <?php if ($app->isAdmin() || ($app->isSite() && $this->permissions->get('editAll'))): ?>
+                        <?php if ($app->isClient('administrator') || ($app->isClient('site') && $this->permissions->get('editAll'))): ?>
                         <a data-k2-modal="iframe" class="k2Selector" href="index.php?option=com_k2&amp;view=users&amp;tmpl=component&amp;context=modalselector&amp;fid=k2Author&amp;fname=created_by">
                             <i class="fa fa-pencil"></i>
                         </a>
@@ -870,7 +870,7 @@ $app = Joomla\CMS\Factory::getApplication();
             </div>
             <!-- META [finish] -->
 
-            <?php if ($app->isAdmin()): ?>
+            <?php if ($app->isClient('administrator')): ?>
             <!-- DISPLAY SETTINGS [start] -->
             <div class="k2NavTabContent" id="k2TabDisplaySet">
                 <ul class="k2ScrollSpyMenu">
@@ -965,8 +965,8 @@ $app = Joomla\CMS\Factory::getApplication();
         </div>
         <!-- Top Nav Tabs END here -->
 
-        <input type="hidden" name="isSite" value="<?php echo (int) $app->isSite(); ?>" />
-        <?php if ($app->isSite()): ?>
+        <input type="hidden" name="isSite" value="<?php echo (int) $app->isClient('site'); ?>" />
+        <?php if ($app->isClient('site')): ?>
         <input type="hidden" name="lang" value="<?php echo JRequest::getCmd('lang'); ?>" />
         <?php endif; ?>
         <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
@@ -977,6 +977,6 @@ $app = Joomla\CMS\Factory::getApplication();
         <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite()): ?>
+<?php if ($app->isClient('site')): ?>
 </div>
 <?php endif; ?>

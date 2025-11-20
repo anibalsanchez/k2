@@ -165,7 +165,7 @@ class plgSearchK2 extends Joomla\CMS\Plugin\CMSPlugin
                     AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
                     AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')';
 
-            if (K2_JVERSION != '15' && $app->isSite() && $app->getLanguageFilter()) {
+            if (K2_JVERSION != '15' && $app->isClient('site') && $app->getLanguageFilter()) {
                 $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
                 $query .= ' AND c.language IN ('.$db->Quote($languageTag).', '.$db->Quote('*').') AND i.language IN ('.$db->Quote($languageTag).', '.$db->Quote('*').')';
             }

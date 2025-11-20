@@ -41,7 +41,7 @@ class K2ViewMedia extends K2View
         $this->assignRef('fieldID', $fieldID);
         $this->assignRef('token', $token);
 
-        if ($app->isAdmin()) {
+        if ($app->isClient('administrator')) {
             // Toolbar
             Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_MEDIA_MANAGER'), 'k2.png');
             if (K2_JVERSION != '15') {

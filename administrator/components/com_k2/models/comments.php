@@ -160,7 +160,7 @@ class K2ModelComments extends K2Model
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
@@ -195,7 +195,7 @@ class K2ModelComments extends K2Model
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
@@ -230,7 +230,7 @@ class K2ModelComments extends K2Model
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
@@ -263,7 +263,7 @@ class K2ModelComments extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $user = Joomla\CMS\Factory::getUser();
         $userID = $user->id;
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $query = "SELECT c.id FROM #__k2_comments AS c
 			LEFT JOIN #__k2_items AS i ON c.itemID=i.id
 			WHERE i.created_by = {$userID} AND c.published=0";
@@ -300,7 +300,7 @@ class K2ModelComments extends K2Model
         $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
         $row->load($id);
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $item->load($row->itemID);
             if ($item->created_by != $user->id) {
                 JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));

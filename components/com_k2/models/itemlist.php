@@ -385,7 +385,7 @@ class K2ModelItemlist extends K2Model
                         FROM #__k2_categories
                         WHERE parent IN('.implode(',', $array).')
                             AND id NOT IN('.implode(',', $array).')';
-            if ($app->isSite()) {
+            if ($app->isClient('site')) {
                 $query .= ' AND published=1 AND trash=0';
                 if (K2_JVERSION != '15') {
                     $query .= ' AND access IN('.implode(',', $user->getAuthorisedViewLevels()).')';
@@ -909,7 +909,7 @@ class K2ModelItemlist extends K2Model
         $aid = (int) $user->get('aid');
 
         $query = 'SELECT id, name, parent FROM #__k2_categories';
-        if ($app->isSite()) {
+        if ($app->isClient('site')) {
             $query .= ' WHERE published=1 AND trash=0';
             if (K2_JVERSION != '15') {
                 $query .= ' AND access IN('.implode(',', $user->getAuthorisedViewLevels()).')';
