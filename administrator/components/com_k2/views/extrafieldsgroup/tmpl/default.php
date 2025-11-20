@@ -33,7 +33,7 @@ defined('_JEXEC') || die;
     </div>
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="extrafieldsgroup" />
-    <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
+    <input type="hidden" name="task" value="<?php echo K2Request::getVar('task'); ?>" />
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

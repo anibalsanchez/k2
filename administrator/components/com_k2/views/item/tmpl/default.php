@@ -17,7 +17,7 @@ $app = Joomla\CMS\Factory::getApplication();
 <!-- Frontend Item Editing (Modal View) -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
-        <h2 id="k2ModalLogo"><span><?php echo (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_ITEM') : Joomla\CMS\Language\Text::_('K2_ADD_ITEM'); ?></span></h2>
+        <h2 id="k2ModalLogo"><span><?php echo (K2Request::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_ITEM') : Joomla\CMS\Language\Text::_('K2_ADD_ITEM'); ?></span></h2>
         <table id="k2ModalToolbar" cellpadding="2" cellspacing="4">
             <tr>
                 <td id="toolbar-save" class="button">
@@ -967,13 +967,13 @@ $app = Joomla\CMS\Factory::getApplication();
 
         <input type="hidden" name="isSite" value="<?php echo (int) $app->isClient('site'); ?>" />
         <?php if ($app->isClient('site')): ?>
-        <input type="hidden" name="lang" value="<?php echo JRequest::getCmd('lang'); ?>" />
+        <input type="hidden" name="lang" value="<?php echo K2Request::getCmd('lang'); ?>" />
         <?php endif; ?>
         <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
         <input type="hidden" name="option" value="com_k2" />
         <input type="hidden" name="view" value="item" />
-        <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
-        <input type="hidden" name="Itemid" value="<?php echo JRequest::getInt('Itemid'); ?>" />
+        <input type="hidden" name="task" value="<?php echo K2Request::getVar('task'); ?>" />
+        <input type="hidden" name="Itemid" value="<?php echo K2Request::getInt('Itemid'); ?>" />
         <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 

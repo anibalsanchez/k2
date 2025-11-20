@@ -21,7 +21,7 @@ class K2ControllerExtraFieldsGroups extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'extrafieldsgroups');
+        K2Request::setVar('view', 'extrafieldsgroups');
         $model = $this->getModel('extraFields');
         $view = $this->getView('extrafieldsgroups', 'html');
         $view->setModel($model, true);
@@ -37,13 +37,13 @@ class K2ControllerExtraFieldsGroups extends K2Controller
     public function edit()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=extrafieldsgroup&cid='.$cid[0]);
     }
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->removeGroups();
     }

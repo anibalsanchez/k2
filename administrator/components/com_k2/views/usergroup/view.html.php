@@ -59,10 +59,10 @@ class K2ViewUserGroup extends K2View
         $this->assignRef('lists', $lists);
 
         // Disable Joomla menu
-        JRequest::setVar('hidemainmenu', 1);
+        K2Request::setVar('hidemainmenu', 1);
 
         // Toolbar
-        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_USER_GROUP') : Joomla\CMS\Language\Text::_('K2_ADD_USER_GROUP');
+        $title = (K2Request::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_USER_GROUP') : Joomla\CMS\Language\Text::_('K2_ADD_USER_GROUP');
         Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
         Joomla\CMS\Toolbar\ToolbarHelper::apply();
         Joomla\CMS\Toolbar\ToolbarHelper::save();

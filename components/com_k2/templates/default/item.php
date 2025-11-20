@@ -11,7 +11,7 @@ defined('_JEXEC') || die;
 
 ?>
 
-<?php if (JRequest::getInt('print') == 1): ?>
+<?php if (K2Request::getInt('print') == 1): ?>
 <!-- Print button at the top of the print page only -->
 <a class="itemPrintThisPage" rel="nofollow" href="#" onclick="window.print();return false;">
     <span><?php echo Joomla\CMS\Language\Text::_('K2_PRINT_THIS_PAGE'); ?></span>
@@ -19,7 +19,7 @@ defined('_JEXEC') || die;
 <?php endif; ?>
 
 <!-- Start K2 Item Layout -->
-<span id="startOfPageId<?php echo JRequest::getInt('id'); ?>"></span>
+<span id="startOfPageId<?php echo K2Request::getInt('id'); ?>"></span>
 
 <div id="k2Container" class="itemView<?php echo ($this->item->featured) ? ' itemIsFeatured' : ''; ?><?php if ($this->item->params->get('pageclass_sfx')) {
     echo ' '.$this->item->params->get('pageclass_sfx');
@@ -104,7 +104,7 @@ defined('_JEXEC') || die;
             </li>
             <?php endif; ?>
 
-            <?php if ($this->item->params->get('itemPrintButton') && !JRequest::getInt('print')): ?>
+            <?php if ($this->item->params->get('itemPrintButton') && !K2Request::getInt('print')): ?>
             <!-- Print Button -->
             <li>
                 <a class="itemPrintLink" rel="nofollow" href="<?php echo $this->item->printLink; ?>" onclick="window.open(this.href,'printWindow','width=900,height=600,location=no,menubar=no,resizable=yes,scrollbars=yes'); return false;">
@@ -113,7 +113,7 @@ defined('_JEXEC') || die;
             </li>
             <?php endif; ?>
 
-            <?php if ($this->item->params->get('itemEmailButton') && !JRequest::getInt('print')): ?>
+            <?php if ($this->item->params->get('itemEmailButton') && !K2Request::getInt('print')): ?>
             <!-- Email Button -->
             <li>
                 <a class="itemEmailLink" rel="nofollow" href="<?php echo $this->item->emailLink; ?>" onclick="window.open(this.href,'emailWindow','width=400,height=350,location=no,menubar=no,resizable=no,scrollbars=no'); return false;">
@@ -549,7 +549,7 @@ If you add:
     <?php endif; ?>
 
     <?php /* Developer Note for the previous/next items: The full item data (e.g. images, the category etc.) are available under $this->item->previous & $this->item->next */ ?>
-    <?php if ($this->item->params->get('itemNavigation') && !JRequest::getCmd('print') && (isset($this->item->nextLink) || isset($this->item->previousLink))): ?>
+    <?php if ($this->item->params->get('itemNavigation') && !K2Request::getCmd('print') && (isset($this->item->nextLink) || isset($this->item->previousLink))): ?>
     <!-- Item navigation -->
     <div class="itemNavigation">
         <span class="itemNavigationTitle"><?php echo Joomla\CMS\Language\Text::_('K2_MORE_IN_THIS_CATEGORY'); ?></span>
@@ -585,7 +585,7 @@ If you add:
     <!-- Item comments -->
     <a name="itemCommentsAnchor" id="itemCommentsAnchor"></a>
     <div class="itemComments">
-        <?php if ($this->item->params->get('commentsFormPosition') == 'above' && $this->item->params->get('itemComments') && !JRequest::getInt('print') && ($this->item->params->get('comments') == '1' || ($this->item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($this->item->catid)))): ?>
+        <?php if ($this->item->params->get('commentsFormPosition') == 'above' && $this->item->params->get('itemComments') && !K2Request::getInt('print') && ($this->item->params->get('comments') == '1' || ($this->item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($this->item->catid)))): ?>
         <!-- Item comments form -->
         <div class="itemCommentsForm">
             <?php echo $this->loadTemplate('comments_form'); ?>
@@ -664,7 +664,7 @@ If you add:
         <?php if (
             $this->item->params->get('commentsFormPosition') == 'below' &&
             $this->item->params->get('itemComments') &&
-            !JRequest::getInt('print') &&
+            !K2Request::getInt('print') &&
             ($this->item->params->get('comments') == '1' || ($this->item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($this->item->catid)))
         ): ?>
         <!-- Item comments form -->
@@ -680,9 +680,9 @@ if ($this->item->params->get('comments') == '2' && $user->guest): ?>
     </div>
     <?php endif; ?>
 
-    <?php if (!JRequest::getCmd('print')): ?>
+    <?php if (!K2Request::getCmd('print')): ?>
     <div class="itemBackToTop">
-        <a class="k2Anchor" href="<?php echo $this->item->link; ?>#startOfPageId<?php echo JRequest::getInt('id'); ?>">
+        <a class="k2Anchor" href="<?php echo $this->item->link; ?>#startOfPageId<?php echo K2Request::getInt('id'); ?>">
             <?php echo Joomla\CMS\Language\Text::_('K2_BACK_TO_TOP'); ?>
         </a>
     </div>

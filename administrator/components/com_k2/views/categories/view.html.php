@@ -32,10 +32,10 @@ class K2ViewCategories extends K2View
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
 
-        $context = JRequest::getCmd('context');
+        $context = K2Request::getCmd('context');
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -55,10 +55,10 @@ class K2ViewCategories extends K2View
         $categories = $model->getData();
         $total = $model->getTotal();
 
-        $task = JRequest::getCmd('task');
+        $task = K2Request::getCmd('task');
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         // JS

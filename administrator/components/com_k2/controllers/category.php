@@ -21,20 +21,20 @@ class K2ControllerCategory extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'category');
+        K2Request::setVar('view', 'category');
         parent::display();
     }
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('category');
         $model->save();
     }
 
     public function saveAndNew()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('category');
         $model->save();
     }

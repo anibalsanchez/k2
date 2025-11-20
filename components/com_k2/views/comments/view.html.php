@@ -32,7 +32,7 @@ class K2ViewComments extends K2View
 
         Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
-        $row->load(JRequest::getInt('commentID'));
+        $row->load(K2Request::getInt('commentID'));
         if (!$row->published) {
             JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
         }

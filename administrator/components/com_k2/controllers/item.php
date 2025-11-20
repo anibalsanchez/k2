@@ -21,13 +21,13 @@ class K2ControllerItem extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'item');
+        K2Request::setVar('view', 'item');
         parent::display();
     }
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->save();
     }
@@ -39,7 +39,7 @@ class K2ControllerItem extends K2Controller
 
     public function cancel()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->cancel();
     }
@@ -76,7 +76,7 @@ class K2ControllerItem extends K2Controller
     public function extraFields()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id', null);
+        $id = K2Request::getInt('id', null);
 
         $categoryModel = $this->getModel('category');
         $category = $categoryModel->getData();
@@ -124,14 +124,14 @@ class K2ControllerItem extends K2Controller
 
     public function resetHits()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->resetHits();
     }
 
     public function resetRating()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->resetRating();
     }

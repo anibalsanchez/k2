@@ -26,7 +26,7 @@ class K2ModelItem extends K2Model
     public function getData()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id');
+        $id = K2Request::getInt('id');
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_items WHERE id='.$id;
         if (K2_JVERSION != '15') {
@@ -47,7 +47,7 @@ class K2ModelItem extends K2Model
     {
         jimport('joomla.filesystem.file');
         Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-        $limitstart = JRequest::getInt('limitstart');
+        $limitstart = K2Request::getInt('limitstart');
         $app = Joomla\CMS\Factory::getApplication();
 
         // Initialize params
@@ -57,7 +57,7 @@ class K2ModelItem extends K2Model
             } else {
                 $component = Joomla\CMS\Component\ComponentHelper::getComponent('com_k2');
                 $params = class_exists('JParameter') ? new JParameter($component->params) : new JRegistry($component->params);
-                $itemid = JRequest::getInt('Itemid');
+                $itemid = K2Request::getInt('Itemid');
                 if ($itemid) {
                     $menu = $app->getMenu();
                     $menuparams = $menu->getParams($itemid);
@@ -249,7 +249,7 @@ class K2ModelItem extends K2Model
         Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $params = K2HelperUtilities::getParams('com_k2');
         $limitstart = 0;
-        $view = JRequest::getCmd('view');
+        $view = K2Request::getCmd('view');
 
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
@@ -512,7 +512,7 @@ class K2ModelItem extends K2Model
         jimport('joomla.filesystem.file');
         jimport('joomla.filesystem.folder');
         $params = K2HelperUtilities::getParams('com_k2');
-        $limitstart = JRequest::getInt('limitstart');
+        $limitstart = K2Request::getInt('limitstart');
 
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
@@ -889,7 +889,7 @@ class K2ModelItem extends K2Model
 
         // Get item
         $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
-        $item->load(JRequest::getInt('itemID'));
+        $item->load(K2Request::getInt('itemID'));
 
         // Get category
         $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
@@ -914,7 +914,7 @@ class K2ModelItem extends K2Model
             JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_ITEM_NOT_FOUND'));
         }
 
-        $rate = JRequest::getVar('user_rating', 0, '', 'int');
+        $rate = K2Request::getVar('user_rating', 0, '', 'int');
 
         if ($rate >= 1 && $rate <= 5) {
             $db = Joomla\CMS\Factory::getDbo();
@@ -964,7 +964,7 @@ class K2ModelItem extends K2Model
         $user = Joomla\CMS\Factory::getUser();
         $xhr = false;
         if (is_null($itemID)) {
-            $itemID = JRequest::getInt('itemID');
+            $itemID = K2Request::getInt('itemID');
             $xhr = true;
         }
 
@@ -995,7 +995,7 @@ class K2ModelItem extends K2Model
         $xhr = false;
         $result = 0;
         if (is_null($itemID)) {
-            $itemID = JRequest::getInt('itemID');
+            $itemID = K2Request::getInt('itemID');
             $xhr = true;
         }
 
@@ -1026,7 +1026,7 @@ class K2ModelItem extends K2Model
 
         // Get item
         $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
-        $item->load(JRequest::getInt('itemID'));
+        $item->load(K2Request::getInt('itemID'));
 
         // Get category
         $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
@@ -1067,14 +1067,14 @@ class K2ModelItem extends K2Model
 
             $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
 
-            if (!$row->bind(JRequest::get('post'))) {
+            if (!$row->bind(K2Request::getPost())) {
                 $response->message = $row->getError();
                 $response->cssClass = 'k2FormLogError';
                 echo json_encode($response);
                 $app->close();
             }
 
-            $row->commentText = JRequest::getString('commentText', '', 'default');
+            $row->commentText = K2Request::getString('commentText', '', 'default');
             $row->commentText = strip_tags($row->commentText);
 
             // Clean vars
@@ -1153,7 +1153,7 @@ class K2ModelItem extends K2Model
                 $akismet->setCommentAuthorEmail($commentEmail);
                 $akismet->setCommentAuthorURL($commentURL);
                 $akismet->setCommentContent($commentText);
-                $akismet->setPermalink(Joomla\CMS\Uri\Uri::root(false).'index.php?option=com_k2&view=item&id='.JRequest::getInt('itemID'));
+                $akismet->setPermalink(Joomla\CMS\Uri\Uri::root(false).'index.php?option=com_k2&view=item&id='.K2Request::getInt('itemID'));
                 try {
                     if ($akismet->isCommentSpam()) {
                         $response->message = Joomla\CMS\Language\Text::_('K2_SPAM_ATTEMPT_HAS_BEEN_DETECTED_THE_COMMENT_HAS_BEEN_REJECTED');
@@ -1533,14 +1533,14 @@ class K2ModelItem extends K2Model
     public function checkin()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('cid');
+        $id = K2Request::getInt('cid');
         if ($id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $row->load($id);
             $row->checkin();
         } else {
             // Clean up SIGPro
-            $sigProFolder = JRequest::getCmd('sigProFolder');
+            $sigProFolder = K2Request::getCmd('sigProFolder');
             if ($sigProFolder && !is_numeric($sigProFolder) && Joomla\CMS\Filesystem\Folder::exists(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder)) {
                 Joomla\CMS\Filesystem\Folder::delete(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder);
             }
@@ -1726,7 +1726,7 @@ class K2ModelItem extends K2Model
     {
         $db = Joomla\CMS\Factory::getDbo();
         if (is_null($id)) {
-            $id = JRequest::getInt('id');
+            $id = K2Request::getInt('id');
         }
 
         static $K2UsersInstances = [];

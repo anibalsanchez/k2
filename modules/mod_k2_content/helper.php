@@ -36,7 +36,7 @@ class modK2ContentHelper
         $limit = $params->get('itemCount', 5);
         $cid = $params->get('category_id', null);
         $ordering = $params->get('itemsOrdering', '');
-        $limitstart = JRequest::getInt('limitstart');
+        $limitstart = K2Request::getInt('limitstart');
 
         // Get ACL
         $user = Joomla\CMS\Factory::getUser();
@@ -285,7 +285,7 @@ class modK2ContentHelper
                 $item->title = Joomla\CMS\Filter\OutputFilter::ampReplace($item->title);
 
                 // Manipulate tag rendering in the feed URL
-                if (JRequest::getCmd('format') == 'feed') {
+                if (K2Request::getCmd('format') == 'feed') {
                     $tagsForFeed = [];
                     $tags = $model->getItemTags($item->id);
                     if (is_array($tags) && count($tags)) {
@@ -294,9 +294,9 @@ class modK2ContentHelper
                         }
                     }
 
-                    if (JRequest::getBool('tagsontitle', false) && is_array($tagsForFeed) && count($tagsForFeed)) {
+                    if (K2Request::getBool('tagsontitle', false) && is_array($tagsForFeed) && count($tagsForFeed)) {
                         // Limit no. of rendered tags in the title (if set)
-                        $tagLimit = JRequest::getInt('taglimit', 0);
+                        $tagLimit = K2Request::getInt('taglimit', 0);
                         if ($tagLimit && $tagLimit < count($tagsForFeed)) {
                             $tagsForFeed = array_slice($tagsForFeed, 0, $tagLimit);
                         }

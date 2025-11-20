@@ -30,7 +30,7 @@ class K2ViewLatest extends K2View
         $cache = Joomla\CMS\Factory::getCache('com_k2_extended');
 
         $limit = $params->get('latestItemsLimit');
-        $limitstart = JRequest::getInt('limitstart');
+        $limitstart = K2Request::getInt('limitstart');
 
         $model = $this->getModel('itemlist');
         $itemModel = $this->getModel('item');
@@ -116,19 +116,19 @@ class K2ViewLatest extends K2View
                         $category->link = Joomla\CMS\Router\Route::_($link);
                         $category->feed = Joomla\CMS\Router\Route::_($link.'&format=feed');
 
-                        JRequest::setVar('view', 'itemlist');
-                        JRequest::setVar('task', 'category');
-                        JRequest::setVar('id', $category->id);
-                        JRequest::setVar('featured', 1);
-                        JRequest::setVar('limit', $limit);
-                        JRequest::setVar('clearFlag', true);
+                        K2Request::setVar('view', 'itemlist');
+                        K2Request::setVar('task', 'category');
+                        K2Request::setVar('id', $category->id);
+                        K2Request::setVar('featured', 1);
+                        K2Request::setVar('limit', $limit);
+                        K2Request::setVar('clearFlag', true);
 
                         $category->name = htmlspecialchars($category->name, ENT_QUOTES, 'utf-8');
                         if ($limit) {
                             $category->items = $model->getData('rdate');
 
-                            JRequest::setVar('view', 'latest');
-                            JRequest::setVar('task', '');
+                            K2Request::setVar('view', 'latest');
+                            K2Request::setVar('task', '');
                             $counter = count($category->items);
 
                             for ($i = 0; $i < $counter; $i++) {
@@ -304,7 +304,7 @@ class K2ViewLatest extends K2View
         }
 
         // Allow temporary template loading with ?template=
-        $template = JRequest::getCmd('template');
+        $template = K2Request::getCmd('template');
         if (isset($template)) {
             // Look for overrides in template folder (new K2 template structure)
             $this->_addPath('template', JPATH_SITE.'/templates/'.$template.'/html/com_k2');

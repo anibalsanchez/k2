@@ -22,41 +22,41 @@ class K2ControllerComments extends K2Controller
     public function display($cachable = false, $urlparams = [])
     {
         require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
-        JRequest::setVar('view', 'comments');
+        K2Request::setVar('view', 'comments');
         parent::display();
     }
 
     public function publish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->unpublish();
     }
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->remove();
     }
 
     public function deleteUnpublished()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->deleteUnpublished();
     }
 
     public function saveComment()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->save();
     }

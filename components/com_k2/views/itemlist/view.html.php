@@ -26,11 +26,11 @@ class K2ViewItemlist extends K2View
         $db = Joomla\CMS\Factory::getDbo();
         $config = Joomla\CMS\Factory::getConfig();
         $user = Joomla\CMS\Factory::getUser();
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $limit = JRequest::getInt('limit', 10);
-        $moduleID = JRequest::getInt('moduleID');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
+        $limitstart = K2Request::getInt('limitstart', 0);
+        $limit = K2Request::getInt('limit', 10);
+        $moduleID = K2Request::getInt('moduleID');
 
         $params = K2HelperUtilities::getParams('com_k2');
         $cache = Joomla\CMS\Factory::getCache('com_k2_extended');
@@ -82,7 +82,7 @@ class K2ViewItemlist extends K2View
 
         // --- JSON Output [start] ---
         // Set the document type in Joomla 1.5
-        if (K2_JVERSION == '15' && JRequest::getCmd('format') == 'json') {
+        if (K2_JVERSION == '15' && K2Request::getCmd('format') == 'json') {
             $document->setMimeEncoding('application/json');
             $document->setType('json');
         }
@@ -111,7 +111,7 @@ class K2ViewItemlist extends K2View
             switch ($task) {
                 case 'category':
                     // Get category
-                    $id = JRequest::getInt('id');
+                    $id = K2Request::getInt('id');
 
                     $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                     $category->load($id);
@@ -249,7 +249,7 @@ class K2ViewItemlist extends K2View
                     $this->setLayout('category');
 
                     // Set featured flag
-                    JRequest::setVar('featured', $params->get('catFeaturedItems'));
+                    K2Request::setVar('featured', $params->get('catFeaturedItems'));
 
                     // Set limit
                     $limit = $params->get('num_leading_items') + $params->get('num_primary_items') + $params->get('num_secondary_items') + $params->get('num_links');
@@ -291,7 +291,7 @@ class K2ViewItemlist extends K2View
                     break;
                 case 'tag':
                     // Prevent spammers from using the tag view
-                    $tag = JRequest::getString('tag');
+                    $tag = K2Request::getString('tag');
                     $db->setQuery('SELECT id, name, description FROM #__k2_tags WHERE name = '.$db->quote($tag));
                     $tag = $db->loadObject();
                     if (!$tag || !$tag->id) {
@@ -362,7 +362,7 @@ class K2ViewItemlist extends K2View
                     break;
                 case 'user':
                     // Get user
-                    $id = JRequest::getInt('id');
+                    $id = K2Request::getInt('id');
                     $userObject = Joomla\CMS\Factory::getUser($id);
 
                     // Check user status
@@ -454,11 +454,11 @@ class K2ViewItemlist extends K2View
                     }
 
                     // Set title
-                    if (JRequest::getInt('day')) {
-                        $dateFromRequest = strtotime(JRequest::getInt('year').'-'.JRequest::getInt('month').'-'.JRequest::getInt('day'));
+                    if (K2Request::getInt('day')) {
+                        $dateFromRequest = strtotime(K2Request::getInt('year').'-'.K2Request::getInt('month').'-'.K2Request::getInt('day'));
                         $dateFormat = (K2_JVERSION == '15') ? '%A, %d %B %Y' : 'l, d F Y';
                     } else {
-                        $dateFromRequest = strtotime(JRequest::getInt('year').'-'.JRequest::getInt('month'));
+                        $dateFromRequest = strtotime(K2Request::getInt('year').'-'.K2Request::getInt('month'));
                         $dateFormat = (K2_JVERSION == '15') ? '%B %Y' : 'F Y';
                     }
 
@@ -492,7 +492,7 @@ class K2ViewItemlist extends K2View
                     $limit = $params->get('genericItemCount');
 
                     // Set title
-                    $title = filter_var(JRequest::getVar('searchword'), FILTER_SANITIZE_STRING);
+                    $title = filter_var(K2Request::getVar('searchword'), FILTER_SANITIZE_STRING);
                     $this->assignRef('title', $title);
 
                     // Set search form data
@@ -524,7 +524,7 @@ class K2ViewItemlist extends K2View
                         // Set parameters prefix
                         $prefix = 'generic';
 
-                        $response->search = JRequest::getVar('searchword');
+                        $response->search = K2Request::getVar('searchword');
                     }
 
                     // --- JSON Output [finish] ---
@@ -537,7 +537,7 @@ class K2ViewItemlist extends K2View
                     $this->setLayout('category');
 
                     // Set featured flag
-                    JRequest::setVar('featured', $params->get('catFeaturedItems'));
+                    K2Request::setVar('featured', $params->get('catFeaturedItems'));
 
                     // Set limit
                     $limit = $params->get('num_leading_items') + $params->get('num_primary_items') + $params->get('num_secondary_items') + $params->get('num_links');
@@ -576,8 +576,8 @@ class K2ViewItemlist extends K2View
             }
 
             // Allow Feed & JSON outputs to request more items that the preset limit
-            if (in_array($document->getType(), ['feed', 'json']) && JRequest::getInt('limit')) {
-                $limit = JRequest::getInt('limit');
+            if (in_array($document->getType(), ['feed', 'json']) && K2Request::getInt('limit')) {
+                $limit = K2Request::getInt('limit');
             }
 
             // Protect from large limit requests
@@ -586,13 +586,13 @@ class K2ViewItemlist extends K2View
                 $limit = $siteItemlistLimit;
             }
 
-            JRequest::setVar('limit', $limit);
+            K2Request::setVar('limit', $limit);
 
             // Allow for simplified paginated results using "page"
-            $page = JRequest::getInt('page');
+            $page = K2Request::getInt('page');
             if ($page) {
                 $limitstart = $page * $limit;
-                JRequest::setVar('limitstart', $limitstart);
+                K2Request::setVar('limitstart', $limitstart);
             }
 
             // Get items
@@ -655,9 +655,9 @@ class K2ViewItemlist extends K2View
                 $item = $itemModel->prepareFeedItem($items[$i]);
 
                 // Manipulate tag rendering in the feed URL
-                if (JRequest::getBool('tagsontitle', false) && !empty($item->tags) && count($item->tags)) {
+                if (K2Request::getBool('tagsontitle', false) && !empty($item->tags) && count($item->tags)) {
                     // Limit no. of rendered tags in the title (if set)
-                    $tagLimit = JRequest::getInt('taglimit', 0);
+                    $tagLimit = K2Request::getInt('taglimit', 0);
                     if ($tagLimit && $tagLimit < count($item->tags)) {
                         $item->tags = array_slice($item->tags, 0, $tagLimit);
                     }
@@ -771,7 +771,7 @@ class K2ViewItemlist extends K2View
 
             // Output
             $json = json_encode($response);
-            $callback = JRequest::getCmd('callback');
+            $callback = K2Request::getCmd('callback');
             if ($callback) {
                 $document->setMimeEncoding('application/javascript');
                 echo $callback.'('.$json.')';
@@ -797,20 +797,20 @@ class K2ViewItemlist extends K2View
 
             switch ($task) {
                 case 'category':
-                    if ($menuActive->query['task'] != 'category' || $menuActive->query['id'] != JRequest::getInt('id')) {
+                    if ($menuActive->query['task'] != 'category' || $menuActive->query['id'] != K2Request::getInt('id')) {
                         $pathway->addItem($title, '');
                     }
 
                     break;
                 case 'user':
-                    if ($menuActive->query['task'] != 'user' || $menuActive->query['id'] != JRequest::getInt('id')) {
+                    if ($menuActive->query['task'] != 'user' || $menuActive->query['id'] != K2Request::getInt('id')) {
                         $pathway->addItem($title, '');
                     }
 
                     break;
 
                 case 'tag':
-                    if ($menuActive->query['task'] != 'tag' || $menuActive->query['tag'] != JRequest::getVar('tag')) {
+                    if ($menuActive->query['task'] != 'tag' || $menuActive->query['tag'] != K2Request::getVar('tag')) {
                         $pathway->addItem($title, '');
                     }
 
@@ -1429,7 +1429,7 @@ class K2ViewItemlist extends K2View
             }
 
             // Allow temporary template loading with ?template=
-            $template = JRequest::getCmd('template');
+            $template = K2Request::getCmd('template');
             if (isset($template)) {
                 // Look for overrides in template folder (new K2 template structure)
                 $this->_addPath('template', JPATH_SITE.'/templates/'.$template.'/html/com_k2');
@@ -1510,7 +1510,7 @@ class K2ViewItemlist extends K2View
             $itemlistModel = K2Model::getInstance('Itemlist', 'K2Model');
 
             jimport('joomla.application.module.helper');
-            $moduleID = JRequest::getInt('moduleID');
+            $moduleID = K2Request::getInt('moduleID');
             if ($moduleID) {
                 $result = $itemlistModel->getModuleItems($moduleID);
                 $items = $result->items;
@@ -1535,7 +1535,7 @@ class K2ViewItemlist extends K2View
     private function setCanonicalUrl($url)
     {
         $document = Joomla\CMS\Factory::getDocument();
-        $limitstart = JRequest::getInt('limitstart', 0);
+        $limitstart = K2Request::getInt('limitstart', 0);
         $params = K2HelperUtilities::getParams('com_k2');
         $canonicalURL = $params->get('canonicalURL', 'relative');
         if ($canonicalURL) {

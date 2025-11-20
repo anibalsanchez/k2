@@ -22,7 +22,7 @@ class K2ControllerMedia extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'media');
+        K2Request::setVar('view', 'media');
         parent::display();
     }
 
@@ -33,14 +33,14 @@ class K2ControllerMedia extends K2Controller
         if (version_compare(JVERSION, '2.5', 'ge')) {
             Joomla\CMS\Session\Session::checkToken($method) || jexit(Joomla\CMS\Language\Text::_('JINVALID_TOKEN'));
         } else {
-            JRequest::checkToken($method) || jexit(Joomla\CMS\Language\Text::_('JINVALID_TOKEN'));
+            K2Request::checkToken($method) || jexit(Joomla\CMS\Language\Text::_('JINVALID_TOKEN'));
         }
 
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_media');
         $root = $params->get('file_path', 'media');
-        $folder = JRequest::getVar('folder', $root, 'default', 'path');
-        $type = JRequest::getCmd('type', 'video');
+        $folder = K2Request::getVar('folder', $root, 'default', 'path');
+        $type = K2Request::getCmd('type', 'video');
 
         if (JString::trim($folder) == '') {
             $folder = $root;
@@ -50,7 +50,7 @@ class K2ControllerMedia extends K2Controller
         }
 
         // Disable debug
-        JRequest::setVar('debug', false);
+        K2Request::setVar('debug', false);
 
         $url = Joomla\CMS\Uri\Uri::root(true).'/'.$folder;
         $path = JPATH_SITE.'/'.Joomla\CMS\Filesystem\Path::clean($folder);
@@ -59,8 +59,8 @@ class K2ControllerMedia extends K2Controller
 
         // Disallow force downloading sensitive file types
         $disallowedFileTypes = ['php', 'ini', 'sql', 'htaccess'];
-        $target = JRequest::getCmd('target');
-        $download = JRequest::getCmd('download');
+        $target = K2Request::getCmd('target');
+        $download = K2Request::getCmd('download');
         if ($target && $download) {
             $filePath = base64_decode(substr($target, 2));
             $fileExtension = strtolower(pathinfo(basename($filePath), PATHINFO_EXTENSION));

@@ -28,9 +28,9 @@ class K2ModelItemlist extends K2Model
         $user = Joomla\CMS\Factory::getUser();
         $aid = $user->get('aid');
         $db = Joomla\CMS\Factory::getDbo();
-        $task = JRequest::getCmd('task');
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $limit = JRequest::getInt('limit', 10);
+        $task = K2Request::getCmd('task');
+        $limitstart = K2Request::getInt('limitstart', 0);
+        $limit = K2Request::getInt('limit', 10);
         $config = Joomla\CMS\Factory::getConfig();
 
         $params = K2HelperUtilities::getParams('com_k2');
@@ -77,7 +77,7 @@ class K2ModelItemlist extends K2Model
             $query .= ' LEFT JOIN #__k2_rating AS r ON r.itemID = i.id';
         }
 
-        if ($task == 'user' && !$user->guest && $user->id == JRequest::getInt('id')) {
+        if ($task == 'user' && !$user->guest && $user->id == K2Request::getInt('id')) {
             $query .= ' WHERE';
         } else {
             $query .= ' WHERE i.published = 1 AND';
@@ -97,7 +97,7 @@ class K2ModelItemlist extends K2Model
             $query .= sprintf(' i.access <= %s AND i.trash = 0 AND c.published = 1 AND c.access <= %s AND c.trash = 0', $aid, $aid);
         }
 
-        if (!($task == 'user' && !$user->guest && $user->id == JRequest::getInt('id'))) {
+        if (!($task == 'user' && !$user->guest && $user->id == K2Request::getInt('id'))) {
             $query .= ' AND (i.publish_up = '.$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')';
             $query .= ' AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')';
         }
@@ -105,7 +105,7 @@ class K2ModelItemlist extends K2Model
         // Build query depending on task
         switch ($task) {
             case 'category':
-                $id = JRequest::getInt('id');
+                $id = K2Request::getInt('id');
 
                 $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                 $category->load($id);
@@ -129,7 +129,7 @@ class K2ModelItemlist extends K2Model
                 break;
 
             case 'user':
-                $id = JRequest::getInt('id');
+                $id = K2Request::getInt('id');
                 $query .= sprintf(" AND i.created_by=%s AND i.created_by_alias=''", $id);
                 $categories = $params->get('userCategoriesFilter', null);
                 if (is_array($categories) && count($categories)) {
@@ -150,7 +150,7 @@ class K2ModelItemlist extends K2Model
                     '<',
                     '\\',
                 ];
-                $search = JString::trim(JString::str_ireplace($badchars, '', JRequest::getString('searchword', null)));
+                $search = JString::trim(JString::str_ireplace($badchars, '', K2Request::getString('searchword', null)));
                 $sql = $this->prepareSearch($search);
                 if (!empty($sql)) {
                     $query .= $sql;
@@ -163,17 +163,17 @@ class K2ModelItemlist extends K2Model
                 break;
 
             case 'date':
-                if ((JRequest::getInt('month')) && (JRequest::getInt('year'))) {
-                    $month = JRequest::getInt('month');
-                    $year = JRequest::getInt('year');
+                if ((K2Request::getInt('month')) && (K2Request::getInt('year'))) {
+                    $month = K2Request::getInt('month');
+                    $year = K2Request::getInt('year');
                     $query .= sprintf(' AND MONTH(i.created) = %s AND YEAR(i.created)=%s', $month, $year);
-                    if (JRequest::getInt('day')) {
-                        $day = JRequest::getInt('day');
+                    if (K2Request::getInt('day')) {
+                        $day = K2Request::getInt('day');
                         $query .= ' AND DAY(i.created) = '.$day;
                     }
 
-                    if (JRequest::getInt('catid')) {
-                        $catid = JRequest::getInt('catid');
+                    if (K2Request::getInt('catid')) {
+                        $catid = K2Request::getInt('catid');
                         $query .= ' AND c.id='.$catid;
                     }
                 }
@@ -181,7 +181,7 @@ class K2ModelItemlist extends K2Model
                 break;
 
             case 'tag':
-                $tag = JRequest::getString('tag');
+                $tag = K2Request::getString('tag');
 
                 jimport('joomla.filesystem.file');
 
@@ -255,9 +255,9 @@ class K2ModelItemlist extends K2Model
 
         // Set featured flag
         if ($task == 'category' || empty($task)) {
-            if (JRequest::getInt('featured') == '0') {
+            if (K2Request::getInt('featured') == '0') {
                 $query .= ' AND i.featured != 1';
-            } elseif (JRequest::getInt('featured') == '2') {
+            } elseif (K2Request::getInt('featured') == '2') {
                 $query .= ' AND i.featured = 1';
             }
         }
@@ -288,12 +288,12 @@ class K2ModelItemlist extends K2Model
                 break;
 
             case 'order':
-                $orderby = JRequest::getInt('featured') == '2' ? 'i.featured_ordering' : 'c.ordering, i.ordering';
+                $orderby = K2Request::getInt('featured') == '2' ? 'i.featured_ordering' : 'c.ordering, i.ordering';
 
                 break;
 
             case 'rorder':
-                $orderby = JRequest::getInt('featured') == '2' ? 'i.featured_ordering DESC' : 'c.ordering DESC, i.ordering DESC';
+                $orderby = K2Request::getInt('featured') == '2' ? 'i.featured_ordering DESC' : 'c.ordering DESC, i.ordering DESC';
 
                 break;
 
@@ -495,7 +495,7 @@ class K2ModelItemlist extends K2Model
     public function getUserProfile($id = null)
     {
         $db = Joomla\CMS\Factory::getDbo();
-        $id = is_null($id) ? JRequest::getInt('id') : (int) $id;
+        $id = is_null($id) ? K2Request::getInt('id') : (int) $id;
 
         $query = 'SELECT id, gender, description, image, url, `group`, plugins FROM #__k2_users WHERE userID='.$id;
         $db->setQuery($query);
@@ -693,8 +693,8 @@ class K2ModelItemlist extends K2Model
 
         $sql = '';
 
-        if (JRequest::getVar('categories')) {
-            $categories = @explode(',', JRequest::getVar('categories'));
+        if (K2Request::getVar('categories')) {
+            $categories = @explode(',', K2Request::getVar('categories'));
             JArrayHelper::toInteger($categories);
             sort($categories);
             $sql .= ' AND c.id IN('.@implode(',', $categories).')';
@@ -854,7 +854,7 @@ class K2ModelItemlist extends K2Model
         $query = sprintf('SELECT * FROM #__modules WHERE id=%s AND published=1 AND client_id=0', $moduleID);
         $db->setQuery($query, 0, 1);
         $module = $db->loadObject();
-        $format = JRequest::getWord('format');
+        $format = K2Request::getWord('format');
         if (is_null($module)) {
             JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
         } else {

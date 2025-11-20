@@ -23,7 +23,7 @@ class K2ModelTag extends K2Model
 {
     public function getData()
     {
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
         $row->load($cid);
 
@@ -39,7 +39,7 @@ class K2ModelTag extends K2Model
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=tags');
         }
@@ -65,7 +65,7 @@ class K2ModelTag extends K2Model
         // Trigger K2 plugins
         $dispatcher->trigger('onAfterK2Save', [&$row, $isNew]);
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_TAG_SAVED');
                 $link = 'index.php?option=com_k2&view=tag&cid='.$row->id;
@@ -95,7 +95,7 @@ class K2ModelTag extends K2Model
             JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
-        $tag = JRequest::getString('tag');
+        $tag = K2Request::getString('tag');
         $tag = str_replace('-', '', $tag);
         $tag = str_replace('.', '', $tag);
 
@@ -139,8 +139,8 @@ class K2ModelTag extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $word = JRequest::getString('q', null);
-        $id = JRequest::getInt('id');
+        $word = K2Request::getString('q', null);
+        $id = K2Request::getInt('id');
         if (K2_JVERSION == '15') {
             $word = $db->Quote($db->getEscaped($word, true).'%', false);
         } else {

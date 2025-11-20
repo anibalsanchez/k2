@@ -21,27 +21,27 @@ class K2ControllerTags extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'tags');
+        K2Request::setVar('view', 'tags');
         parent::display();
     }
 
     public function publish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->unpublish();
     }
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->remove();
     }
@@ -55,13 +55,13 @@ class K2ControllerTags extends K2Controller
     public function edit()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=tag&cid='.$cid[0]);
     }
 
     public function removeOrphans()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->removeOrphans();
     }

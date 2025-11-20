@@ -32,8 +32,8 @@ class K2ViewItems extends K2View
         $document = Joomla\CMS\Factory::getDocument();
 
         $user = Joomla\CMS\Factory::getUser();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
@@ -74,12 +74,12 @@ class K2ViewItems extends K2View
 
         if (K2_JVERSION == '30' && $filter_featured == 1 && $filter_order == 'i.ordering') {
             $filter_order = 'i.featured_ordering';
-            JRequest::setVar('filter_order', 'i.featured_ordering');
+            K2Request::setVar('filter_order', 'i.featured_ordering');
         }
 
         if (K2_JVERSION == '30' && $filter_featured != 1 && $filter_order == 'i.featured_ordering') {
             $filter_order = 'i.ordering';
-            JRequest::setVar('filter_order', 'i.ordering');
+            K2Request::setVar('filter_order', 'i.ordering');
         }
 
         $model = $this->getModel();
@@ -87,7 +87,7 @@ class K2ViewItems extends K2View
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         if (K2_JVERSION != '15') {

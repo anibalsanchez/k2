@@ -27,8 +27,8 @@ class K2ModelComments extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -152,9 +152,9 @@ class K2ModelComments extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         if (count($cid) === 0) {
-            $cid[] = JRequest::getInt('commentID');
+            $cid[] = K2Request::getInt('commentID');
         }
 
         foreach ($cid as $id) {
@@ -175,12 +175,12 @@ class K2ModelComments extends K2Model
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('format') == 'raw') {
+        if (K2Request::getCmd('format') == 'raw') {
             echo 'true';
             $app->close();
         }
 
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -191,7 +191,7 @@ class K2ModelComments extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
@@ -210,7 +210,7 @@ class K2ModelComments extends K2Model
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -222,9 +222,9 @@ class K2ModelComments extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         if (count($cid) === 0) {
-            $cid[] = JRequest::getInt('commentID');
+            $cid[] = K2Request::getInt('commentID');
         }
 
         foreach ($cid as $id) {
@@ -244,13 +244,13 @@ class K2ModelComments extends K2Model
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('format') == 'raw') {
+        if (K2Request::getCmd('format') == 'raw') {
             echo 'true';
             $app->close();
         }
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -284,7 +284,7 @@ class K2ModelComments extends K2Model
         $cache->clean();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -296,7 +296,7 @@ class K2ModelComments extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
         $db = Joomla\CMS\Factory::getDbo();
-        $id = JRequest::getInt('commentID');
+        $id = K2Request::getInt('commentID');
         $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
         $row->load($id);
@@ -307,7 +307,7 @@ class K2ModelComments extends K2Model
             }
         }
 
-        $row->commentText = JRequest::getVar('commentText', '', 'default', 'string', 4);
+        $row->commentText = K2Request::getVar('commentText', '', 'default', 'string', 4);
         $row->store();
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');

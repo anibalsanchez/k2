@@ -21,27 +21,27 @@ class K2ControllerExtraFields extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'extrafields');
+        K2Request::setVar('view', 'extrafields');
         parent::display();
     }
 
     public function publish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->unpublish();
     }
 
     public function saveorder()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->saveorder();
 
@@ -59,21 +59,21 @@ class K2ControllerExtraFields extends K2Controller
 
     public function orderup()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->orderup();
     }
 
     public function orderdown()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->orderdown();
     }
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->remove();
     }
@@ -87,7 +87,7 @@ class K2ControllerExtraFields extends K2Controller
     public function edit()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=extrafield&cid='.$cid[0]);
     }
 }

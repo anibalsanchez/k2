@@ -37,7 +37,7 @@ $user = Joomla\CMS\Factory::getUser();
 
     <?php if ($this->params->get('userImage') || $this->params->get('userName') || $this->params->get('userDescription') || $this->params->get('userURL') || $this->params->get('userEmail')): ?>
     <div class="userBlock">
-        <?php if (isset($this->addLink) && JRequest::getInt('id') == $user->id): ?>
+        <?php if (isset($this->addLink) && K2Request::getInt('id') == $user->id): ?>
         <!-- Item add link -->
         <span class="userItemAddLink">
             <a data-k2-modal="edit" href="<?php echo $this->addLink; ?>">

@@ -23,7 +23,7 @@ class K2ModelCategory extends K2Model
 {
     public function getData()
     {
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $row->load($cid);
 
@@ -43,7 +43,7 @@ class K2ModelCategory extends K2Model
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
 
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=categories');
         }
@@ -63,7 +63,7 @@ class K2ModelCategory extends K2Model
         $dispatcher->trigger('onContentBeforeSave', ['com_k2.category', $row, $isNew]);
         $dispatcher->trigger('onFinderBeforeSave', ['com_k2.category', $row, $isNew]);
 
-        $row->description = JRequest::getVar('description', '', 'post', 'string', 2);
+        $row->description = K2Request::getVar('description', '', 'post', 'string', 2);
         if ($params->get('xssFiltering')) {
             $jFilterInput = new JFilterInput([], [], 1, 1, 0);
             $row->description = $jFilterInput->clean($row->description);
@@ -91,10 +91,10 @@ class K2ModelCategory extends K2Model
             ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
-        $files = JRequest::get('files');
+        $files = K2Request::getFiles();
 
-        $existingImage = JRequest::getVar('existingImage');
-        if (($files['image']['error'] == 0 || $existingImage) && !JRequest::getBool('del_image')) {
+        $existingImage = K2Request::getVar('existingImage');
+        if (($files['image']['error'] == 0 || $existingImage) && !K2Request::getBool('del_image')) {
             $image = $files['image']['error'] == 0 ? $files['image'] : JPATH_SITE.'/'.Joomla\CMS\Filesystem\Path::clean($existingImage);
 
             require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
@@ -133,7 +133,7 @@ class K2ModelCategory extends K2Model
             }
         }
 
-        if (JRequest::getBool('del_image')) {
+        if (K2Request::getBool('del_image')) {
             $savedRow = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $savedRow->load($row->id);
             if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/categories/'.$savedRow->image)) {
@@ -163,7 +163,7 @@ class K2ModelCategory extends K2Model
 
         $results = $dispatcher->trigger('onFinderAfterSave', ['com_k2.category', $row, $isNew]);
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_CATEGORY_SAVED');
                 $link = 'index.php?option=com_k2&view=category&cid='.$row->id;

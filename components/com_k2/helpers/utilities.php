@@ -24,7 +24,7 @@ class K2HelperUtilities
         jimport('joomla.application.component.model');
         $app = Joomla\CMS\Factory::getApplication();
         $params = self::getParams('com_k2');
-        $template = JRequest::getCmd('template');
+        $template = K2Request::getCmd('template');
 
         // Check for placeholder overrides
         if (isset($template) && Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/templates/'.$template.'/images/placeholder/user.png')) {

@@ -35,10 +35,10 @@ class K2ViewTag extends K2View
         $this->assignRef('lists', $lists);
 
         // Disable Joomla menu
-        JRequest::setVar('hidemainmenu', 1);
+        K2Request::setVar('hidemainmenu', 1);
 
         // Toolbar
-        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_TAG') : Joomla\CMS\Language\Text::_('K2_ADD_TAG');
+        $title = (K2Request::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_TAG') : Joomla\CMS\Language\Text::_('K2_ADD_TAG');
         Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
 
         Joomla\CMS\Toolbar\ToolbarHelper::apply();

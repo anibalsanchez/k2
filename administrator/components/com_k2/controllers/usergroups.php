@@ -21,14 +21,14 @@ class K2ControllerUserGroups extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'usergroups');
+        K2Request::setVar('view', 'usergroups');
         parent::display();
     }
 
     public function edit()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=usergroup&cid='.$cid[0]);
     }
 
@@ -40,7 +40,7 @@ class K2ControllerUserGroups extends K2Controller
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('userGroups');
         $model->remove();
     }

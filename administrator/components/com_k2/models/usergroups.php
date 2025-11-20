@@ -24,8 +24,8 @@ class K2ModelUserGroups extends K2Model
     public function getData()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -49,8 +49,8 @@ class K2ModelUserGroups extends K2Model
     public function getTotal()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
 
         $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
@@ -65,7 +65,7 @@ class K2ModelUserGroups extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2UserGroup', 'Table');
             $row->load($id);

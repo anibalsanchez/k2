@@ -10,7 +10,7 @@
 defined('_JEXEC') || die;
 
 $app = Joomla\CMS\Factory::getApplication();
-$context = JRequest::getCmd('context');
+$context = K2Request::getCmd('context');
 
 ?>
 
@@ -230,7 +230,7 @@ $context = JRequest::getCmd('context');
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         <input type="hidden" name="isSite" value="<?php echo (int) $app->isClient('site'); ?>" />
         <input type="hidden" name="option" value="com_k2" />
-        <input type="hidden" name="view" value="<?php echo JRequest::getCmd('view'); ?>" />
+        <input type="hidden" name="view" value="<?php echo K2Request::getCmd('view'); ?>" />
         <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />

@@ -23,7 +23,7 @@ class K2ModelUser extends K2Model
 {
     public function getData()
     {
-        $cid = JRequest::getInt('cid');
+        $cid = K2Request::getInt('cid');
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_users WHERE userID = '.$cid;
         $db->setQuery($query);
@@ -42,12 +42,12 @@ class K2ModelUser extends K2Model
         $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=users');
         }
 
-        $row->description = JRequest::getVar('description', '', 'post', 'string', 2);
+        $row->description = K2Request::getVar('description', '', 'post', 'string', 2);
         if ($params->get('xssFiltering')) {
             $jFilterInput = new JFilterInput([], [], 1, 1, 0);
             $row->description = $jFilterInput->clean($row->description);
@@ -66,9 +66,9 @@ class K2ModelUser extends K2Model
             ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
-        $file = JRequest::get('files');
+        $file = K2Request::getFiles();
 
-        if (isset($file['image']) && $file['image']['error'] == 0 && !JRequest::getBool('del_image')) {
+        if (isset($file['image']) && $file['image']['error'] == 0 && !K2Request::getBool('del_image')) {
             require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
             $savepath = JPATH_ROOT.'/media/k2/users/';
 
@@ -102,7 +102,7 @@ class K2ModelUser extends K2Model
             }
         }
 
-        if (JRequest::getBool('del_image')) {
+        if (K2Request::getBool('del_image')) {
             $current = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
             $current->load($row->id);
             $currentImage = basename($current->image);
@@ -126,7 +126,7 @@ class K2ModelUser extends K2Model
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_USER_SAVED');
                 $link = 'index.php?option=com_k2&view=user&cid='.$row->userID;

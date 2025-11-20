@@ -24,8 +24,8 @@ class K2ViewMedia extends K2View
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
         $document = Joomla\CMS\Factory::getDocument();
-        $type = JRequest::getCmd('type');
-        $fieldID = JRequest::getCmd('fieldID');
+        $type = K2Request::getCmd('type');
+        $fieldID = K2Request::getCmd('fieldID');
         if ($type == 'video') {
             $mimes = "'video','audio'";
         } elseif ($type == 'image') {

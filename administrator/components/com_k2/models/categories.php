@@ -27,8 +27,8 @@ class K2ModelCategories extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -209,7 +209,7 @@ class K2ModelCategories extends K2Model
     public function publish()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $row->load($id);
@@ -223,7 +223,7 @@ class K2ModelCategories extends K2Model
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -233,7 +233,7 @@ class K2ModelCategories extends K2Model
     public function unpublish()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $row->load($id);
@@ -247,7 +247,7 @@ class K2ModelCategories extends K2Model
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -259,9 +259,9 @@ class K2ModelCategories extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid', [0], 'post', 'array');
+        $cid = K2Request::getVar('cid', [0], 'post', 'array');
         $total = count($cid);
-        $order = JRequest::getVar('order', [0], 'post', 'array');
+        $order = K2Request::getVar('order', [0], 'post', 'array');
         JArrayHelper::toInteger($order, [0]);
         $groupings = [];
         for ($i = 0; $i < $total; $i++) {
@@ -294,7 +294,7 @@ class K2ModelCategories extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $row->load($cid[0]);
         $row->move(-1, 'parent = '.$row->parent.' AND trash=0');
@@ -307,7 +307,7 @@ class K2ModelCategories extends K2Model
 
         $msg = Joomla\CMS\Language\Text::_('K2_NEW_ORDERING_SAVED');
         $app->enqueueMessage($msg);
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -318,7 +318,7 @@ class K2ModelCategories extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $row->load($cid[0]);
         $row->move(1, 'parent = '.$row->parent.' AND trash=0');
@@ -331,7 +331,7 @@ class K2ModelCategories extends K2Model
 
         $msg = Joomla\CMS\Language\Text::_('K2_NEW_ORDERING_SAVED');
         $app->enqueueMessage($msg);
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -343,7 +343,7 @@ class K2ModelCategories extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row->load($cid[0]);
         $row->access = 1;
         if (!$row->check()) {
@@ -369,7 +369,7 @@ class K2ModelCategories extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row->load($cid[0]);
         $row->access = 2;
         if (!$row->check()) {
@@ -395,7 +395,7 @@ class K2ModelCategories extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row->load($cid[0]);
         $row->access = 0;
         if (!$row->check()) {
@@ -420,7 +420,7 @@ class K2ModelCategories extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         JArrayHelper::toInteger($cid);
         K2Model::addIncludePath(JPATH_SITE.'/components/com_k2/models');
@@ -451,7 +451,7 @@ class K2ModelCategories extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $warning = false;
         $restored = [];
         foreach ($cid as $id) {
@@ -501,7 +501,7 @@ class K2ModelCategories extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         jimport('joomla.filesystem.file');
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
@@ -618,7 +618,7 @@ class K2ModelCategories extends K2Model
     {
         jimport('joomla.filesystem.file');
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         $copies = [];
         foreach ($cid as $id) {
@@ -655,12 +655,12 @@ class K2ModelCategories extends K2Model
     public function saveBatch()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
-        $batchMode = JRequest::getCmd('batchMode');
-        $catid = JRequest::getCmd('batchCategory');
-        $access = JRequest::getCmd('batchAccess');
-        $extraFieldsGroups = JRequest::getCmd('batchExtraFieldsGroups');
-        $language = JRequest::getVar('batchLanguage');
+        $cid = K2Request::getVar('cid');
+        $batchMode = K2Request::getCmd('batchMode');
+        $catid = K2Request::getCmd('batchCategory');
+        $access = K2Request::getCmd('batchAccess');
+        $extraFieldsGroups = K2Request::getCmd('batchExtraFieldsGroups');
+        $language = K2Request::getVar('batchLanguage');
         if ($batchMode == 'clone') {
             $cid = $this->copy(true);
         }

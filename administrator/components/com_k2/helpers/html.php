@@ -19,7 +19,7 @@ class K2HelperHTML
 {
     public static function activeMenu($current)
     {
-        $view = JRequest::getCmd('view', 'items');
+        $view = K2Request::getCmd('view', 'items');
         if ($current === $view) {
             return ' class="active"';
         }
@@ -31,7 +31,7 @@ class K2HelperHTML
     {
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $user = Joomla\CMS\Factory::getUser();
-        $view = JRequest::getCmd('view');
+        $view = K2Request::getCmd('view');
 
         $editForms = ['item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup'];
 
@@ -175,8 +175,8 @@ class K2HelperHTML
     {
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $user = Joomla\CMS\Factory::getUser();
-        $view = JRequest::getCmd('view');
-        $context = JRequest::getCmd('context');
+        $view = K2Request::getCmd('view');
+        $context = K2Request::getCmd('context');
 
         $editForms = ['item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup', 'media'];
 
@@ -222,7 +222,7 @@ class K2HelperHTML
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $user = Joomla\CMS\Factory::getUser();
-        $view = JRequest::getCmd('view');
+        $view = K2Request::getCmd('view');
 
         JSubMenuHelper::addEntry(Joomla\CMS\Language\Text::_('K2_ITEMS'), 'index.php?option=com_k2&view=items', $view == 'items');
         JSubMenuHelper::addEntry(Joomla\CMS\Language\Text::_('K2_CATEGORIES'), 'index.php?option=com_k2&view=categories', $view == 'categories');
@@ -261,9 +261,9 @@ class K2HelperHTML
 
         $params = K2HelperUtilities::getParams('com_k2');
 
-        $option = JRequest::getCmd('option');
-        $view = strtolower(JRequest::getWord('view', 'items'));
-        $task = JRequest::getCmd('task');
+        $option = K2Request::getCmd('option');
+        $view = strtolower(K2Request::getWord('view', 'items'));
+        $task = K2Request::getCmd('task');
 
         $getSiteLanguage = Joomla\CMS\Factory::getLanguage();
         $languageTag = substr($getSiteLanguage->getTag(), 0, 2);
@@ -471,7 +471,7 @@ class K2HelperHTML
                 // Add related CSS to the <head>
                 if ($params->get('enable_css')) {
                     jimport('joomla.filesystem.file');
-                    $template = JRequest::getCmd('template');
+                    $template = K2Request::getCmd('template');
 
                     // Simple Line Icons
                     $document->addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css');
@@ -486,7 +486,7 @@ class K2HelperHTML
                     }
 
                     // k2.print.css
-                    if (JRequest::getInt('print') == 1) {
+                    if (K2Request::getInt('print') == 1) {
                         if (isset($template) && Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/templates/'.$template.'/css/k2.print.css')) {
                             $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/'.$template.'/css/k2.print.css?v='.K2_CURRENT_VERSION, 'text/css', 'print');
                         } elseif (Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/templates/'.$app->getTemplate().'/css/k2.print.css')) {

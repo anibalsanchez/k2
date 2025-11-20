@@ -17,6 +17,70 @@ defined('_JEXEC') || die;
 
 jimport('joomla.plugin.plugin');
 
+abstract class K2Request
+{
+    private static $input;
+
+    public static function getCmd($name, $default = '', $hash = 'default')
+    {
+        return self::getInput()->getCmd($name, $default, $hash);
+    }
+
+    public static function getInt($name, $default = 0, $hash = 'default')
+    {
+        return self::getInput()->getInt($name, $default, $hash);
+    }
+
+    public static function getString($name, $default = '', $hash = 'default')
+    {
+        return self::getInput()->getString($name, $default, $hash);
+    }
+
+    public static function getBool($name, $default = false, $hash = 'default')
+    {
+        return self::getInput()->getBool($name, $default, $hash);
+    }
+
+    public static function getWord($name, $default = '', $hash = 'default')
+    {
+        return self::getInput()->getWord($name, $default, $hash);
+    }
+
+    public static function getPost()
+    {
+        return self::getInput()->get('post', [], 'array');
+    }
+
+    public static function getFiles()
+    {
+        return self::getInput()->get('files', [], 'array');
+    }
+
+    public static function getVar($name, $default = null, $hash = 'default', $type = 'none', $mask = 0)
+    {
+        return self::getInput()->get($name, $default, $hash);
+    }
+
+    public static function setVar($name, $value)
+    {
+        self::getInput()->set($name, $value);
+    }
+
+    public static function checkToken($method = 'post')
+    {
+        return self::getInput()->checkToken($method);
+    }
+
+    private static function getInput()
+    {
+        if (self::$input === null) {
+            self::$input = Joomla\CMS\Factory::getApplication()->input;
+        }
+
+        return self::$input;
+    }
+}
+
 class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 {
     public function onAfterInitialise()
@@ -57,7 +121,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
         JLoader::register('K2Model', JPATH_ADMINISTRATOR.'/components/com_k2/models/model.php');
         if ($app->isClient('site')) {
             K2Model::addIncludePath(JPATH_SITE.'/components/com_k2/models');
-        } elseif (K2_JVERSION !== '15' || (K2_JVERSION === '15' && JRequest::getCmd('option') != 'com_users')) {
+        } elseif (K2_JVERSION !== '15' || (K2_JVERSION === '15' && K2Request::getCmd('option') != 'com_users')) {
             // Fix warning under Joomla 1.5 caused by conflict in model names
             K2Model::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/models');
         }
@@ -89,8 +153,8 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         // K2 Metrics
         if ($app->isClient('administrator') && $params->get('gatherStatistics', 1)) {
-            $option = JRequest::getCmd('option');
-            $view = JRequest::getCmd('view');
+            $option = K2Request::getCmd('option');
+            $view = K2Request::getCmd('view');
             $viewsToRun = ['items', 'categories', 'tags', 'comments', 'users', 'usergroups', 'extrafields', 'extrafieldsgroups', ''];
             if ($option == 'com_k2' && in_array($view, $viewsToRun)) {
                 require_once JPATH_ADMINISTRATOR.'/components/com_k2/helpers/stats.php';
@@ -102,13 +166,13 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         // --- JoomFish integration [start] ---
         if ((int) K2_JVERSION < 25) {
-            $option = JRequest::getCmd('option');
-            $task = JRequest::getCmd('task');
-            $type = JRequest::getCmd('catid');
+            $option = K2Request::getCmd('option');
+            $task = K2Request::getCmd('task');
+            $type = K2Request::getCmd('catid');
         } else {
             $option = Joomla\CMS\Factory::getApplication()->input->get('option');
             $task = Joomla\CMS\Factory::getApplication()->input->get('task');
-            $type = JRequest::getCmd('catid');
+            $type = K2Request::getCmd('catid');
         }
 
         if ($option == 'com_joomfish') {
@@ -116,10 +180,10 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
 
             if (($task == 'translate.apply' || $task == 'translate.save') && $type == 'k2_items') {
-                $language_id = JRequest::getInt('select_language_id');
-                $reference_id = JRequest::getInt('reference_id');
+                $language_id = K2Request::getInt('select_language_id');
+                $reference_id = K2Request::getInt('reference_id');
                 $objects = [];
-                $variables = JRequest::get('post');
+                $variables = K2Request::getPost();
 
                 foreach ($variables as $key => $value) {
                     if ((bool) stristr($key, 'K2ExtraField_')) {
@@ -152,7 +216,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
-                    $published = JRequest::getVar('published', 0);
+                    $published = K2Request::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_items', 'extra_fields', ", $language_id, $reference_id).$db->Quote($extra_fields).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
                     $db->execute();
@@ -169,7 +233,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
-                    $published = JRequest::getVar('published', 0);
+                    $published = K2Request::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_items', 'extra_fields_search', ", $language_id, $reference_id).$db->Quote($extra_fields_search).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
                     $db->execute();
@@ -178,19 +242,19 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
             if (($task == 'translate.edit' || $task == 'translate.apply') && $type == 'k2_items') {
                 if ($task == 'translate.edit') {
-                    $cid = JRequest::getVar('cid');
+                    $cid = K2Request::getVar('cid');
                     $array = explode('|', $cid[0]);
                     $reference_id = $array[1];
                 }
 
                 if ($task == 'translate.apply') {
-                    $reference_id = JRequest::getInt('reference_id');
+                    $reference_id = K2Request::getInt('reference_id');
                 }
 
                 $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($reference_id);
                 $category_id = $item->catid;
-                $language_id = JRequest::getInt('select_language_id');
+                $language_id = K2Request::getInt('select_language_id');
                 $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                 $category->load($category_id);
                 $group = $category->extraFieldsGroup;
@@ -237,14 +301,14 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             }
 
             if (($task == 'translate.apply' || $task == 'translate.save') && $type == 'k2_extra_fields') {
-                $language_id = JRequest::getInt('select_language_id');
-                $reference_id = JRequest::getInt('reference_id');
-                $extraFieldType = JRequest::getVar('extraFieldType');
+                $language_id = K2Request::getInt('select_language_id');
+                $reference_id = K2Request::getInt('reference_id');
+                $extraFieldType = K2Request::getVar('extraFieldType');
 
                 $objects = [];
-                $values = JRequest::getVar('option_value');
-                $names = JRequest::getVar('option_name');
-                $target = JRequest::getVar('option_target');
+                $values = K2Request::getVar('option_value');
+                $names = K2Request::getVar('option_name');
+                $target = K2Request::getVar('option_target');
                 $counter = count($values);
 
                 for ($i = 0; $i < $counter; $i++) {
@@ -281,7 +345,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
-                    $published = JRequest::getVar('published', 0);
+                    $published = K2Request::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_extra_fields', 'value', ", $language_id, $reference_id).$db->Quote($value).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
                     $db->execute();
@@ -290,18 +354,18 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
             if (($task == 'translate.edit' || $task == 'translate.apply') && $type == 'k2_extra_fields') {
                 if ($task == 'translate.edit') {
-                    $cid = JRequest::getVar('cid');
+                    $cid = K2Request::getVar('cid');
                     $array = explode('|', $cid[0]);
                     $reference_id = $array[1];
                 }
 
                 if ($task == 'translate.apply') {
-                    $reference_id = JRequest::getInt('reference_id');
+                    $reference_id = K2Request::getInt('reference_id');
                 }
 
                 $extraField = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
                 $extraField->load($reference_id);
-                $language_id = JRequest::getInt('select_language_id');
+                $language_id = K2Request::getInt('select_language_id');
 
                 if ($extraField->type == 'multipleSelect' || $extraField->type == 'select' || $extraField->type == 'radio') {
                     $subheader = '<strong>'.Joomla\CMS\Language\Text::_('K2_OPTIONS').'</strong>';
@@ -387,7 +451,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
         }
 
-        if ($app->isClient('administrator') || (JRequest::getCmd('option') == 'com_k2' && (JRequest::getCmd('task') == 'add' || JRequest::getCmd('task') == 'edit'))) {
+        if ($app->isClient('administrator') || (K2Request::getCmd('option') == 'com_k2' && (K2Request::getCmd('task') == 'add' || K2Request::getCmd('task') == 'edit'))) {
             return;
         }
 
@@ -410,10 +474,10 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         $document = Joomla\CMS\Factory::getDocument();
 
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
-        $layout = JRequest::getCmd('layout');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
+        $layout = K2Request::getCmd('layout');
         $user = Joomla\CMS\Factory::getUser();
 
         // Import plugins
@@ -468,7 +532,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             $view->addTemplatePath(JPATH_SITE.'/templates/'.$app->getTemplate().'/html/com_k2/templates');
             $view->addTemplatePath(JPATH_SITE.'/templates/'.$app->getTemplate().'/html/com_k2');
             // Allow temporary template loading with ?template=
-            $template = JRequest::getCmd('template');
+            $template = K2Request::getCmd('template');
             if (isset($template)) {
                 $view->addTemplatePath(JPATH_SITE.'/templates/'.$template.'/html/com_k2');
             }
@@ -563,7 +627,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             $view->addTemplatePath(JPATH_SITE.'/templates/'.$app->getTemplate().'/html/com_k2/templates');
             $view->addTemplatePath(JPATH_SITE.'/templates/'.$app->getTemplate().'/html/com_k2');
             // Allow temporary template loading with ?template=
-            $template = JRequest::getCmd('template');
+            $template = K2Request::getCmd('template');
             if (isset($template)) {
                 $view->addTemplatePath(JPATH_SITE.'/templates/'.$template.'/html/com_k2');
             }
@@ -663,13 +727,13 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             $response = JResponse::getBody();
 
             // Use proper headers for JSON/JSONP
-            if (JRequest::getCmd('format') == 'json') {
+            if (K2Request::getCmd('format') == 'json') {
                 if (K2_JVERSION == '15') {
                     $document->setMimeEncoding('application/json');
                     $document->setType('json');
                 }
 
-                if (JRequest::getCmd('callback')) {
+                if (K2Request::getCmd('callback')) {
                     $document->setMimeEncoding('application/javascript');
                 }
             }
@@ -859,7 +923,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             }
         }
 
-        $language_id = JRequest::getInt('select_language_id');
+        $language_id = K2Request::getInt('select_language_id');
         $db = Joomla\CMS\Factory::getDbo();
         $query = sprintf("SELECT `value` FROM #__jf_content WHERE reference_field = 'extra_fields' AND language_id = %s AND reference_id = %s AND reference_table='k2_items'", $language_id, $itemID);
         $db->setQuery($query);

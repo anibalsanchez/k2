@@ -34,8 +34,8 @@ class K2ViewItem extends K2View
         $user = Joomla\CMS\Factory::getUser();
 
         $db = Joomla\CMS\Factory::getDbo();
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
@@ -500,11 +500,11 @@ class K2ViewItem extends K2View
         $this->assignRef('lists', $lists);
         $this->assignRef('params', $params);
         $this->assignRef('user', $user);
-        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_ITEM') : Joomla\CMS\Language\Text::_('K2_ADD_ITEM');
+        $title = (K2Request::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_ITEM') : Joomla\CMS\Language\Text::_('K2_ADD_ITEM');
         $this->assignRef('title', $title);
 
         // Disable Joomla menu
-        JRequest::setVar('hidemainmenu', 1);
+        K2Request::setVar('hidemainmenu', 1);
 
         if ($app->isClient('administrator')) {
             // Toolbar
@@ -601,7 +601,7 @@ class K2ViewItem extends K2View
             }
 
             // Allow temporary template loading with ?template=
-            $template = JRequest::getCmd('template');
+            $template = K2Request::getCmd('template');
             if (isset($template)) {
                 // Look for overrides in template folder (new K2 template structure)
                 $this->_addPath('template', JPATH_SITE.'/templates/'.$template.'/html/com_k2');

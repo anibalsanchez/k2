@@ -26,7 +26,7 @@ class K2ControllerItem extends K2Controller
         $viewType = $document->getType();
         $view = $this->getView('item', $viewType);
         $view->setModel($model);
-        JRequest::setVar('view', 'item');
+        K2Request::setVar('view', 'item');
         $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
             $cache = true;
@@ -34,7 +34,7 @@ class K2ControllerItem extends K2Controller
             $cache = true;
             Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
             $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
-            $row->load(JRequest::getInt('id'));
+            $row->load(K2Request::getInt('id'));
             if (K2HelperPermissions::canEditItem($row->created_by, $row->catid)) {
                 $cache = false;
             }
@@ -91,7 +91,7 @@ class K2ControllerItem extends K2Controller
 
     public function edit()
     {
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
         $app = Joomla\CMS\Factory::getApplication();
         $document = Joomla\CMS\Factory::getDocument();
         $params = K2HelperUtilities::getParams('com_k2');
@@ -111,7 +111,7 @@ class K2ControllerItem extends K2Controller
         $view->setLayout('itemform');
 
         if ($params->get('category')) {
-            JRequest::setVar('catid', $params->get('category'));
+            K2Request::setVar('catid', $params->get('category'));
         }
 
         $view->display();
@@ -132,8 +132,8 @@ class K2ControllerItem extends K2Controller
     public function save()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        JRequest::checkToken() || jexit('Invalid Token');
-        JRequest::setVar('tmpl', 'component');
+        K2Request::checkToken() || jexit('Invalid Token');
+        K2Request::setVar('tmpl', 'component');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
@@ -182,7 +182,7 @@ class K2ControllerItem extends K2Controller
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id', null);
+        $id = K2Request::getInt('id', null);
 
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/category.php';
         $categoryModel = new K2ModelCategory();
@@ -262,8 +262,8 @@ class K2ControllerItem extends K2Controller
 
     public function resetHits()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
-        JRequest::setVar('tmpl', 'component');
+        K2Request::checkToken() || jexit('Invalid Token');
+        K2Request::setVar('tmpl', 'component');
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
@@ -274,8 +274,8 @@ class K2ControllerItem extends K2Controller
 
     public function resetRating()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
-        JRequest::setVar('tmpl', 'component');
+        K2Request::checkToken() || jexit('Invalid Token');
+        K2Request::setVar('tmpl', 'component');
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
@@ -286,7 +286,7 @@ class K2ControllerItem extends K2Controller
 
     public function media()
     {
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
         $params = K2HelperUtilities::getParams('com_k2');
         $document = Joomla\CMS\Factory::getDocument();
         $language = Joomla\CMS\Factory::getLanguage();
@@ -317,7 +317,7 @@ class K2ControllerItem extends K2Controller
 
     public function connector()
     {
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
         $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
             JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
@@ -330,7 +330,7 @@ class K2ControllerItem extends K2Controller
 
     public function users()
     {
-        $itemID = JRequest::getInt('itemID');
+        $itemID = K2Request::getInt('itemID');
         Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $item->load($itemID);
@@ -343,7 +343,7 @@ class K2ControllerItem extends K2Controller
             JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $language = Joomla\CMS\Factory::getLanguage();

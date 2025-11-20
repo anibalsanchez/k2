@@ -29,11 +29,11 @@ class K2ViewUsers extends K2View
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
 
-        $context = JRequest::getCmd('context');
+        $context = K2Request::getCmd('context');
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -51,7 +51,7 @@ class K2ViewUsers extends K2View
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         $users = $model->getData();
@@ -204,7 +204,7 @@ class K2ViewUsers extends K2View
     {
         $app = Joomla\CMS\Factory::getApplication();
 
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 

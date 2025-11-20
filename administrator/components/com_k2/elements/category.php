@@ -42,7 +42,7 @@ class K2ElementCategory extends K2Element
 
         $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         $mitems = [];
-        $option = JRequest::getCmd('option');
+        $option = K2Request::getCmd('option');
         $prefix = ($option == 'com_joomfish') ? 'refField_' : '';
         if ($name == 'categories' || $name == 'jform[params][categories]') {
             if (version_compare(JVERSION, '3.5', 'ge')) {

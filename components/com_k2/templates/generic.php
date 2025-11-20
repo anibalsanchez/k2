@@ -13,7 +13,7 @@ defined('_JEXEC') || die;
 
 <!-- Start K2 Generic (date/search) Layout -->
 <div id="k2Container" class="genericView">
-    <?php if (JRequest::getCmd('task') == 'search'): ?>
+    <?php if (K2Request::getCmd('task') == 'search'): ?>
     <form action="<?php echo $this->form->action; ?>" method="get" autocomplete="off" class="genericSearchForm">
         <input type="text" value="<?php echo $this->form->input; ?>" name="searchword" class="k2-input" placeholder="<?php echo Joomla\CMS\Language\Text::_('K2_SEARCH'); ?>" />
         <input type="submit" value="<?php echo Joomla\CMS\Language\Text::_('K2_SEARCH'); ?>" class="k2-submit" />
@@ -23,7 +23,7 @@ defined('_JEXEC') || die;
 
     <?php if ($this->params->get('genericTitle', 1)): ?>
     <!-- Title for date & search listings -->
-    <h1><?php echo (JRequest::getCmd('task') == 'date') ? Joomla\CMS\Language\Text::_('K2_ITEMS_FILTERED_BY_DATE') : Joomla\CMS\Language\Text::_('K2_SEARCH_RESULTS_FOR'); ?> <?php echo $this->title; ?></h1>
+    <h1><?php echo (K2Request::getCmd('task') == 'date') ? Joomla\CMS\Language\Text::_('K2_ITEMS_FILTERED_BY_DATE') : Joomla\CMS\Language\Text::_('K2_SEARCH_RESULTS_FOR'); ?> <?php echo $this->title; ?></h1>
     <?php endif; ?>
 
     <?php if ($this->params->get('genericFeedIcon', 1) && isset($this->items) && count($this->items)): ?>

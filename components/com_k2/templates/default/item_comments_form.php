@@ -48,6 +48,6 @@ defined('_JEXEC') || die;
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="item" />
     <input type="hidden" name="task" value="comment" />
-    <input type="hidden" name="itemID" value="<?php echo JRequest::getInt('id'); ?>" />
+    <input type="hidden" name="itemID" value="<?php echo K2Request::getInt('id'); ?>" />
     <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

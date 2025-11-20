@@ -23,10 +23,10 @@ class K2HelperPermissions
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
-        $id = ($task == 'apply' || $task == 'save') ? JRequest::getInt('id') : JRequest::getVar('cid');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
+        $id = ($task == 'apply' || $task == 'save') ? K2Request::getInt('id') : K2Request::getVar('cid');
 
         // Generic access check
         if (!$user->authorise('core.manage', $option)) {

@@ -21,41 +21,41 @@ class K2ControllerUsers extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'users');
+        K2Request::setVar('view', 'users');
         parent::display();
     }
 
     public function edit()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=user&cid='.$cid[0]);
     }
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('users');
         $model->remove();
     }
 
     public function enable()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('users');
         $model->enable();
     }
 
     public function disable()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('users');
         $model->disable();
     }
 
     public function delete()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('users');
         $model->delete();
     }
@@ -72,14 +72,14 @@ class K2ControllerUsers extends K2Controller
 
     public function saveMove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('users');
         $model->saveMove();
     }
 
     public function cancelMove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=users');
     }
@@ -94,7 +94,7 @@ class K2ControllerUsers extends K2Controller
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $word = JRequest::getString('q', null);
+        $word = K2Request::getString('q', null);
         if (K2_JVERSION == '15') {
             $word = $db->Quote($db->getEscaped($word, true).'%', false);
         } else {

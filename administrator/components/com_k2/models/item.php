@@ -23,7 +23,7 @@ class K2ModelItem extends K2Model
 {
     public function getData()
     {
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $row->load($cid);
 
@@ -48,7 +48,7 @@ class K2ModelItem extends K2Model
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
 
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=items');
         }
@@ -66,7 +66,7 @@ class K2ModelItem extends K2Model
         // If the item is not new, retrieve its saved data
         $savedRow = new stdClass();
         if (!$isNew) {
-            $id = JRequest::getInt('id');
+            $id = K2Request::getInt('id');
             $savedRow = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $savedRow->load($id);
             // Frontend only
@@ -77,7 +77,7 @@ class K2ModelItem extends K2Model
         }
 
         if ($params->get('mergeEditors')) {
-            $text = JRequest::getVar('text', '', 'post', 'string', 2);
+            $text = K2Request::getVar('text', '', 'post', 'string', 2);
             if ($params->get('xssFiltering')) {
                 $filter = new JFilterInput([], [], 1, 1, 0);
                 $text = $filter->clean($text);
@@ -92,8 +92,8 @@ class K2ModelItem extends K2Model
                 [$row->introtext, $row->fulltext] = preg_split($pattern, $text, 2);
             }
         } else {
-            $row->introtext = JRequest::getVar('introtext', '', 'post', 'string', 2);
-            $row->fulltext = JRequest::getVar('fulltext', '', 'post', 'string', 2);
+            $row->introtext = K2Request::getVar('introtext', '', 'post', 'string', 2);
+            $row->fulltext = K2Request::getVar('fulltext', '', 'post', 'string', 2);
             if ($params->get('xssFiltering')) {
                 $filter = new JFilterInput([], [], 1, 1, 0);
                 $row->introtext = $filter->clean($row->introtext);
@@ -148,7 +148,7 @@ class K2ModelItem extends K2Model
             $row->publish_down = (K2_JVERSION == '15') ? $date->toMySQL() : $date->toSql();
         }
 
-        $metadata = JRequest::getVar('meta', null, 'post', 'array');
+        $metadata = K2Request::getVar('meta', null, 'post', 'array');
         if (is_array($metadata)) {
             $txt = [];
             foreach ($metadata as $k => $v) {
@@ -226,7 +226,7 @@ class K2ModelItem extends K2Model
                 JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
             }
 
-            $tags = JRequest::getVar('tags', null, 'POST', 'array');
+            $tags = K2Request::getVar('tags', null, 'POST', 'array');
             if (is_array($tags) && count($tags)) {
                 $tags = array_unique($tags);
                 foreach ($tags as $tag) {
@@ -256,7 +256,7 @@ class K2ModelItem extends K2Model
                 }
             }
         } else {
-            $tags = JRequest::getVar('selectedTags', null, 'POST', 'array');
+            $tags = K2Request::getVar('selectedTags', null, 'POST', 'array');
             if (is_array($tags) && count($tags)) {
                 foreach ($tags as $tag) {
                     $db->setQuery('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, '.(int) $tag.', '.(int) $row->id.')');
@@ -266,7 +266,7 @@ class K2ModelItem extends K2Model
         }
 
         // File Uploads
-        $files = JRequest::get('files');
+        $files = K2Request::getFiles();
 
         // Load class.upload.php
         require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
@@ -276,9 +276,9 @@ class K2ModelItem extends K2Model
             ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
-        $existingImage = JRequest::getVar('existingImage');
+        $existingImage = K2Request::getVar('existingImage');
 
-        if (($files['image']['error'] == 0 || $existingImage) && !JRequest::getBool('del_image')) {
+        if (($files['image']['error'] == 0 || $existingImage) && !K2Request::getBool('del_image')) {
             $image = $files['image']['error'] == 0 ? $files['image'] : JPATH_SITE.'/'.Joomla\CMS\Filesystem\Path::clean($existingImage);
 
             try {
@@ -323,7 +323,7 @@ class K2ModelItem extends K2Model
                     $handle->image_ratio_y = true;
                     $handle->image_resize = true;
                     $handle->jpeg_quality = $params->get('imagesQuality', '90');
-                    $imageWidth = JRequest::getInt('itemImageXL') ?: $params->get('itemImageXL', '900');
+                    $imageWidth = K2Request::getInt('itemImageXL') ?: $params->get('itemImageXL', '900');
 
                     $handle->image_x = $imageWidth;
 
@@ -337,7 +337,7 @@ class K2ModelItem extends K2Model
                     $handle->image_ratio_y = true;
                     $handle->image_resize = true;
                     $handle->jpeg_quality = $params->get('imagesQuality', '90');
-                    $imageWidth = JRequest::getInt('itemImageL') ?: $params->get('itemImageL', '600');
+                    $imageWidth = K2Request::getInt('itemImageL') ?: $params->get('itemImageL', '600');
 
                     $handle->image_x = $imageWidth;
 
@@ -351,7 +351,7 @@ class K2ModelItem extends K2Model
                     $handle->image_ratio_y = true;
                     $handle->image_resize = true;
                     $handle->jpeg_quality = $params->get('imagesQuality', '90');
-                    $imageWidth = JRequest::getInt('itemImageM') ?: $params->get('itemImageM', '400');
+                    $imageWidth = K2Request::getInt('itemImageM') ?: $params->get('itemImageM', '400');
 
                     $handle->image_x = $imageWidth;
 
@@ -365,7 +365,7 @@ class K2ModelItem extends K2Model
                     $handle->image_ratio_y = true;
                     $handle->image_resize = true;
                     $handle->jpeg_quality = $params->get('imagesQuality', '90');
-                    $imageWidth = JRequest::getInt('itemImageS') ?: $params->get('itemImageS', '200');
+                    $imageWidth = K2Request::getInt('itemImageS') ?: $params->get('itemImageS', '200');
 
                     $handle->image_x = $imageWidth;
 
@@ -379,7 +379,7 @@ class K2ModelItem extends K2Model
                     $handle->image_ratio_y = true;
                     $handle->image_resize = true;
                     $handle->jpeg_quality = $params->get('imagesQuality', '90');
-                    $imageWidth = JRequest::getInt('itemImageXS') ?: $params->get('itemImageXS', '100');
+                    $imageWidth = K2Request::getInt('itemImageXS') ?: $params->get('itemImageXS', '100');
 
                     $handle->image_x = $imageWidth;
 
@@ -412,7 +412,7 @@ class K2ModelItem extends K2Model
             }
         }
 
-        if (JRequest::getBool('del_image')) {
+        if (K2Request::getBool('del_image')) {
             $filename = md5('Image'.$savedRow->id);
 
             if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/items/src/'.$filename.'.jpg')) {
@@ -452,12 +452,12 @@ class K2ModelItem extends K2Model
             $row->gallery = '';
         }
 
-        $flickrGallery = JRequest::getVar('flickrGallery');
+        $flickrGallery = K2Request::getVar('flickrGallery');
         if ($flickrGallery) {
             $row->gallery = '{gallery}'.$flickrGallery.'{/gallery}';
         }
 
-        if (isset($files['gallery']) && $files['gallery']['error'] == 0 && !JRequest::getBool('del_gallery')) {
+        if (isset($files['gallery']) && $files['gallery']['error'] == 0 && !K2Request::getBool('del_gallery')) {
             try {
                 $savepath = JPATH_ROOT.'/media/k2/galleries';
 
@@ -527,7 +527,7 @@ class K2ModelItem extends K2Model
             }
         }
 
-        if (JRequest::getBool('del_gallery')) {
+        if (K2Request::getBool('del_gallery')) {
             if (Joomla\CMS\Filesystem\Folder::exists(JPATH_ROOT.'/media/k2/galleries/'.$savedRow->id)) {
                 Joomla\CMS\Filesystem\Folder::delete(JPATH_ROOT.'/media/k2/galleries/'.$savedRow->id);
             }
@@ -557,7 +557,7 @@ class K2ModelItem extends K2Model
         $validExtensions = array_merge($videoExtensions, $audioExtensions);
 
         // No stored media & form fields empty for media
-        if (empty($savedRow->video) && !JRequest::getVar('embedVideo') && !JRequest::getVar('videoID') && !JRequest::getVar('remoteVideo') && !JRequest::getVar('uploadedVideo')) {
+        if (empty($savedRow->video) && !K2Request::getVar('embedVideo') && !K2Request::getVar('videoID') && !K2Request::getVar('remoteVideo') && !K2Request::getVar('uploadedVideo')) {
             $row->video = '';
         }
 
@@ -567,27 +567,27 @@ class K2ModelItem extends K2Model
         }
 
         // Embed
-        if (JRequest::getVar('embedVideo', '', 'post', 'string', JREQUEST_ALLOWRAW)) {
-            $row->video = JRequest::getVar('embedVideo', '', 'post', 'string', JREQUEST_ALLOWRAW);
+        if (K2Request::getVar('embedVideo', '', 'post', 'string', JREQUEST_ALLOWRAW)) {
+            $row->video = K2Request::getVar('embedVideo', '', 'post', 'string', JREQUEST_ALLOWRAW);
         }
 
         // Third-party Media Service
-        if (JRequest::getVar('videoID')) {
-            $provider = JRequest::getWord('videoProvider');
-            $videoID = JRequest::getVar('videoID');
+        if (K2Request::getVar('videoID')) {
+            $provider = K2Request::getWord('videoProvider');
+            $videoID = K2Request::getVar('videoID');
             $row->video = '{'.$provider.'}'.$videoID.'{/'.$provider.'}';
         }
 
         // Browse server or remote media
-        if (JRequest::getVar('remoteVideo')) {
-            $fileurl = JRequest::getVar('remoteVideo');
+        if (K2Request::getVar('remoteVideo')) {
+            $fileurl = K2Request::getVar('remoteVideo');
             $filetype = Joomla\CMS\Filesystem\File::getExt($fileurl);
             $allVideosTagSuffix = 'remote';
             $row->video = '{'.$filetype.$allVideosTagSuffix.'}'.$fileurl.'{/'.$filetype.$allVideosTagSuffix.'}';
         }
 
         // Upload media
-        if (isset($files['video']) && $files['video']['error'] == 0 && !JRequest::getBool('del_video')) {
+        if (isset($files['video']) && $files['video']['error'] == 0 && !K2Request::getBool('del_video')) {
             $filename_suffix = $row->modified ?: $row->created;
             $filename = Joomla\CMS\Filesystem\File::stripExt($files['video']['name']);
             if (class_exists('Transliterator')) {
@@ -615,7 +615,7 @@ class K2ModelItem extends K2Model
         }
 
         // Delete media
-        if (JRequest::getBool('del_video')) {
+        if (K2Request::getBool('del_video')) {
             preg_match_all('#^{(.*?)}(.*?){#', $savedRow->video, $matches, PREG_PATTERN_ORDER);
 
             $mediaType = $matches[1][0];
@@ -641,7 +641,10 @@ class K2ModelItem extends K2Model
         // === Extra fields ===
         if ($params->get('showExtraFieldsTab') || $app->isClient('administrator')) {
             $objects = [];
-            $variables = JRequest::get('post', 2);
+
+            // TODO: $variables = JRequest::get('post', 2); ?
+            $variables = K2Request::getPost();
+
             foreach ($variables as $key => $value) {
                 if ((bool) JString::stristr($key, 'K2ExtraField_')) {
                     $object = new stdClass();
@@ -655,7 +658,7 @@ class K2ModelItem extends K2Model
                 }
             }
 
-            $csvFiles = JRequest::get('files');
+            $csvFiles = K2Request::getFiles();
             foreach ($csvFiles as $key => $file) {
                 if ((bool) JString::stristr($key, 'K2ExtraField_')) {
                     $object = new stdClass();
@@ -671,8 +674,8 @@ class K2ModelItem extends K2Model
                         fclose($handle);
                         $object->value = $csvData;
                     } else {
-                        $object->value = json_decode(JRequest::getVar('K2CSV_'.$object->id));
-                        if (JRequest::getBool('K2ResetCSV_'.$object->id)) {
+                        $object->value = json_decode(K2Request::getVar('K2CSV_'.$object->id));
+                        if (K2Request::getBool('K2ResetCSV_'.$object->id)) {
                             $object->value = null;
                         }
                     }
@@ -696,8 +699,8 @@ class K2ModelItem extends K2Model
         $path = $params->get('attachmentsFolder', null);
         $savepath = is_null($path) ? JPATH_ROOT.'/media/k2/attachments' : $path;
 
-        $attPost = JRequest::getVar('attachment', null, 'POST', 'array');
-        $attFiles = JRequest::getVar('attachment', null, 'FILES', 'array');
+        $attPost = K2Request::getVar('attachment', null, 'POST', 'array');
+        $attFiles = K2Request::getVar('attachment', null, 'FILES', 'array');
 
         if (is_array($attPost) && count($attPost)) {
             foreach ($attPost as $key => $attachment) { /* Use the POST array's key as reference */
@@ -820,7 +823,7 @@ class K2ModelItem extends K2Model
 
         $results = $dispatcher->trigger('onFinderAfterSave', ['com_k2.item', $row, $isNew]);
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_ITEM_SAVED');
                 $link = 'index.php?option=com_k2&view=item&cid='.$row->id;
@@ -833,7 +836,7 @@ class K2ModelItem extends K2Model
             default:
                 $msg = Joomla\CMS\Language\Text::_('K2_ITEM_SAVED');
                 if ($front) {
-                    $link = 'index.php?option=com_k2&view=item&task=edit&cid='.$row->id.'&tmpl=component&Itemid='.JRequest::getInt('Itemid');
+                    $link = 'index.php?option=com_k2&view=item&task=edit&cid='.$row->id.'&tmpl=component&Itemid='.K2Request::getInt('Itemid');
                 } else {
                     $link = 'index.php?option=com_k2&view=items';
                 }
@@ -850,14 +853,14 @@ class K2ModelItem extends K2Model
     public function cancel()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getInt('id');
+        $cid = K2Request::getInt('id');
         if ($cid) {
             $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $row->load($cid);
             $row->checkin();
         } else {
             // Cleanup SIGPro
-            $sigProFolder = JRequest::getCmd('sigProFolder');
+            $sigProFolder = K2Request::getCmd('sigProFolder');
             if ($sigProFolder && !is_numeric($sigProFolder) && Joomla\CMS\Filesystem\Folder::exists(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder)) {
                 Joomla\CMS\Filesystem\Folder::delete(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder);
             }
@@ -898,7 +901,7 @@ class K2ModelItem extends K2Model
         $user = Joomla\CMS\Factory::getUser();
         jimport('joomla.filesystem.file');
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $id = JRequest::getInt('id');
+        $id = K2Request::getInt('id');
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
@@ -906,7 +909,7 @@ class K2ModelItem extends K2Model
 
         $attachment = Joomla\CMS\Table\Table::getInstance('K2Attachment', 'Table');
         if ($app->isClient('site')) {
-            $token = JRequest::getVar('id');
+            $token = K2Request::getVar('id');
             $check = JString::substr($token, JString::strpos($token, '_') + 1);
             $hash = version_compare(JVERSION, '3.0', 'ge') ? JApplication::getHash($id) : Joomla\CMS\Utility\Utility::getHash($id);
             if ($check != $hash) {
@@ -990,8 +993,8 @@ class K2ModelItem extends K2Model
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         jimport('joomla.filesystem.file');
-        $id = JRequest::getInt('id');
-        $itemID = JRequest::getInt('cid');
+        $id = K2Request::getInt('id');
+        $itemID = K2Request::getInt('cid');
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
@@ -1051,7 +1054,7 @@ class K2ModelItem extends K2Model
     public function resetHits()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id');
+        $id = K2Request::getInt('id');
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('UPDATE #__k2_items SET hits=0 WHERE id='.$id);
         $db->execute();
@@ -1068,7 +1071,7 @@ class K2ModelItem extends K2Model
     public function resetRating()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id');
+        $id = K2Request::getInt('id');
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('DELETE FROM #__k2_rating WHERE itemID='.$id);
         $db->execute();
@@ -1084,7 +1087,7 @@ class K2ModelItem extends K2Model
 
     public function getRating()
     {
-        $id = JRequest::getInt('cid');
+        $id = K2Request::getInt('cid');
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('SELECT * FROM #__k2_rating WHERE itemID='.$id, 0, 1);
 

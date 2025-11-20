@@ -21,13 +21,13 @@ class K2ControllerUser extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'user');
+        K2Request::setVar('view', 'user');
         parent::display();
     }
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('user');
         $model->save();
     }
@@ -47,9 +47,9 @@ class K2ControllerUser extends K2Controller
     {
         $app = Joomla\CMS\Factory::getApplication();
         $model = K2Model::getInstance('User', 'K2Model');
-        $model->setState('id', JRequest::getInt('id'));
+        $model->setState('id', K2Request::getInt('id'));
         $model->reportSpammer();
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=users&tmpl=component&template=system&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=users');

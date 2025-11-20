@@ -121,10 +121,10 @@ class K2ViewCategory extends K2View
         $this->assignRef('lists', $lists);
 
         // Disable Joomla menu
-        JRequest::setVar('hidemainmenu', 1);
+        K2Request::setVar('hidemainmenu', 1);
 
         // Toolbar
-        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_CATEGORY') : Joomla\CMS\Language\Text::_('K2_ADD_CATEGORY');
+        $title = (K2Request::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_CATEGORY') : Joomla\CMS\Language\Text::_('K2_ADD_CATEGORY');
         Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
 
         Joomla\CMS\Toolbar\ToolbarHelper::apply();

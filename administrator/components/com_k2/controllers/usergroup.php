@@ -21,7 +21,7 @@ class K2ControllerUserGroup extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'usergroup');
+        K2Request::setVar('view', 'usergroup');
         parent::display();
     }
 
@@ -32,7 +32,7 @@ class K2ControllerUserGroup extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('userGroup');
         $model->save();
     }

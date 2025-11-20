@@ -24,8 +24,8 @@ class K2ModelExtraFields extends K2Model
     public function getData()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -77,8 +77,8 @@ class K2ModelExtraFields extends K2Model
     public function getTotal()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.'.limitstart', 'limitstart', 0, 'int');
@@ -118,7 +118,7 @@ class K2ModelExtraFields extends K2Model
     public function publish()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
             $row->load($id);
@@ -135,7 +135,7 @@ class K2ModelExtraFields extends K2Model
     public function unpublish()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
             $row->load($id);
@@ -153,9 +153,9 @@ class K2ModelExtraFields extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid', [0], 'post', 'array');
+        $cid = K2Request::getVar('cid', [0], 'post', 'array');
         $total = count($cid);
-        $order = JRequest::getVar('order', [0], 'post', 'array');
+        $order = K2Request::getVar('order', [0], 'post', 'array');
         JArrayHelper::toInteger($order, [0]);
         $groupings = [];
         for ($i = 0; $i < $total; $i++) {
@@ -188,7 +188,7 @@ class K2ModelExtraFields extends K2Model
     public function orderup()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
         $row->load($cid[0]);
         $row->move(-1, sprintf("`group` = '%s'", $row->group));
@@ -209,7 +209,7 @@ class K2ModelExtraFields extends K2Model
     public function orderdown()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
         $row->load($cid[0]);
         $row->move(1, sprintf("`group` = '%s'", $row->group));
@@ -231,7 +231,7 @@ class K2ModelExtraFields extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
             $row->load($id);
@@ -247,7 +247,7 @@ class K2ModelExtraFields extends K2Model
 
     public function getExtraFieldsGroup()
     {
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraFieldsGroup', 'Table');
         $row->load($cid);
 
@@ -257,8 +257,8 @@ class K2ModelExtraFields extends K2Model
     public function getGroups($filter = false)
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
         $db = Joomla\CMS\Factory::getDbo();
@@ -294,9 +294,9 @@ class K2ModelExtraFields extends K2Model
     public function saveGroup()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $id = JRequest::getInt('id');
+        $id = K2Request::getInt('id');
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraFieldsGroup', 'Table');
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=extrafieldsgroups');
         }
@@ -311,7 +311,7 @@ class K2ModelExtraFields extends K2Model
             $app->redirect('index.php?option=com_k2&view=extrafieldsgroup');
         }
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_GROUP_SAVED');
                 $link = 'index.php?option=com_k2&view=extrafieldsgroup&cid='.$row->id;
@@ -338,7 +338,7 @@ class K2ModelExtraFields extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         foreach ($cid as $id) {
             $row = Joomla\CMS\Table\Table::getInstance('K2ExtraFieldsGroup', 'Table');

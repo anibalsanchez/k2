@@ -107,7 +107,7 @@ defined('_JEXEC') || die;
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="user" />
-    <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
+    <input type="hidden" name="task" value="<?php echo K2Request::getVar('task'); ?>" />
     <input type="hidden" name="userID" value="<?php echo $this->row->userID; ?>" />
     <input type="hidden" name="ip" value="<?php echo $this->row->ip; ?>" />
     <input type="hidden" name="hostname" value="<?php echo $this->row->hostname; ?>" />

@@ -21,7 +21,7 @@ class K2ControllerExtraField extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'extrafield');
+        K2Request::setVar('view', 'extrafield');
         parent::display();
     }
 
@@ -32,7 +32,7 @@ class K2ControllerExtraField extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraField');
         $model->save();
     }

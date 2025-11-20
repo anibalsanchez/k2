@@ -24,8 +24,8 @@ class K2ModelUsers extends K2Model
     public function getData()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
@@ -118,8 +118,8 @@ class K2ModelUsers extends K2Model
     public function getTotal()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
         $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.'.limitstart', 'limitstart', 0, 'int');
@@ -180,7 +180,7 @@ class K2ModelUsers extends K2Model
     public function remove()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'DELETE FROM #__k2_users WHERE userID IN('.implode(',', $cid).')';
@@ -270,7 +270,7 @@ class K2ModelUsers extends K2Model
     public function enable()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'UPDATE #__users SET block=0 WHERE id IN('.implode(',', $cid).')';
@@ -278,7 +278,7 @@ class K2ModelUsers extends K2Model
         $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USERS_ENABLED'));
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=users&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=users');
@@ -288,7 +288,7 @@ class K2ModelUsers extends K2Model
     public function disable()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'UPDATE #__users SET block=1 WHERE id IN('.implode(',', $cid).')';
@@ -296,7 +296,7 @@ class K2ModelUsers extends K2Model
         $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USERS_DISABLED'));
-        if (JRequest::getCmd('context') == 'modalselector') {
+        if (K2Request::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=users&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=users');
@@ -307,7 +307,7 @@ class K2ModelUsers extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = Joomla\CMS\Factory::getDbo();
         if (in_array($user->id, $cid)) {
@@ -380,10 +380,10 @@ class K2ModelUsers extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $db = Joomla\CMS\Factory::getDbo();
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
-        $group = JRequest::getVar('group');
-        $k2group = JRequest::getInt('k2group');
+        $group = K2Request::getVar('group');
+        $k2group = K2Request::getInt('k2group');
         if (K2_JVERSION != '15') {
             JArrayHelper::toInteger($group);
             $group = array_filter($group);

@@ -10,7 +10,7 @@
 defined('_JEXEC') || die;
 
 $app = Joomla\CMS\Factory::getApplication();
-$context = JRequest::getCmd('context');
+$context = K2Request::getCmd('context');
 
 ?>
 
@@ -109,10 +109,10 @@ if ($context == "modalselector") {
                         <td>
                             <?php if ($context == 'modalselector'): ?>
                             <?php
-                        if (JRequest::getCmd('output') == 'list') {
-                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".JRequest::getCmd('fid')."', '".JRequest::getVar('fname')."', '".JRequest::getCmd('output')."'); return false;";
+                        if (K2Request::getCmd('output') == 'list') {
+                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".K2Request::getCmd('fid')."', '".K2Request::getVar('fname')."', '".K2Request::getCmd('output')."'); return false;";
                         } else {
-                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".JRequest::getCmd('fid')."', '".JRequest::getVar('fname')."'); return false;";
+                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".K2Request::getCmd('fid')."', '".K2Request::getVar('fname')."'); return false;";
                         }
                         ?>
                             <a class="k2ListItemDisabled" title="<?php echo Joomla\CMS\Language\Text::_('K2_CLICK_TO_ADD_THIS_ENTRY'); ?>" href="#" onclick="<?php echo $onClick; ?>"><?php echo $row->name; ?></a>
@@ -187,7 +187,7 @@ if ($context == "modalselector") {
         </div>
 
         <input type="hidden" name="option" value="com_k2" />
-        <input type="hidden" name="view" value="<?php echo JRequest::getVar('view'); ?>" />
+        <input type="hidden" name="view" value="<?php echo K2Request::getVar('view'); ?>" />
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
@@ -195,9 +195,9 @@ if ($context == "modalselector") {
         <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />
-        <input type="hidden" name="fid" value="<?php echo JRequest::getCmd('fid'); ?>" />
-        <input type="hidden" name="fname" value="<?php echo JRequest::getVar('fname'); ?>" />
-        <input type="hidden" name="output" value="<?php echo JRequest::getCmd('output'); ?>" />
+        <input type="hidden" name="fid" value="<?php echo K2Request::getCmd('fid'); ?>" />
+        <input type="hidden" name="fname" value="<?php echo K2Request::getVar('fname'); ?>" />
+        <input type="hidden" name="output" value="<?php echo K2Request::getCmd('output'); ?>" />
         <?php endif; ?>
         <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>

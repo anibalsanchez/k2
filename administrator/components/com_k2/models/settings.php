@@ -25,7 +25,7 @@ class K2ModelSettings extends K2Model
         $component = Joomla\CMS\Table\Table::getInstance('component');
         $component->loadByOption('com_k2');
 
-        $post = JRequest::get('post');
+        $post = K2Request::getPost();
         $component->bind($post);
         if (!$component->check()) {
             $app->enqueueMessage($component->getError(), 'error');

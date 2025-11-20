@@ -115,7 +115,7 @@ if (K2_JVERSION != '30') {
         </table>
     </div>
     <input type="hidden" name="option" value="com_k2" />
-    <input type="hidden" name="view" value="<?php echo JRequest::getVar('view'); ?>" />
+    <input type="hidden" name="view" value="<?php echo K2Request::getVar('view'); ?>" />
     <input type="hidden" name="task" value="" />
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />

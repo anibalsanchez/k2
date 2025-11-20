@@ -31,8 +31,8 @@ JLoader::register('K2HelperUtilities', JPATH_COMPONENT.'/helpers/utilities.php')
 K2HelperPermissions::setPermissions();
 K2HelperPermissions::checkPermissions();
 
-$controller = JRequest::getWord('view', 'itemlist');
-$task = JRequest::getWord('task');
+$controller = K2Request::getWord('view', 'itemlist');
+$task = K2Request::getWord('task');
 
 if ($controller == 'media') {
     $controller = 'item';
@@ -62,6 +62,6 @@ if (Joomla\CMS\Filesystem\File::exists(JPATH_COMPONENT.'/controllers/'.$controll
     JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
 }
 
-if (JRequest::getCmd('format') != 'json') {
+if (K2Request::getCmd('format') != 'json') {
     echo "\n<!-- JoomlaWorks \"K2\" (v".K2_CURRENT_VERSION.") | Learn more about K2 at https://getk2.org -->\n\n";
 }

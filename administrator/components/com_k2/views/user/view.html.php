@@ -29,7 +29,7 @@ class K2ViewUser extends K2View
             Joomla\CMS\Filter\OutputFilter::objectHTMLSafe($user, ENT_QUOTES, ['params', 'plugins']);
         }
 
-        $joomlaUser = Joomla\CMS\User\User::getInstance(JRequest::getInt('cid'));
+        $joomlaUser = Joomla\CMS\User\User::getInstance(K2Request::getInt('cid'));
 
         $user->name = $joomlaUser->name;
         $user->userID = $joomlaUser->id;
@@ -60,7 +60,7 @@ class K2ViewUser extends K2View
         $this->assignRef('K2Plugins', $K2Plugins);
 
         // Disable Joomla menu
-        JRequest::setVar('hidemainmenu', 1);
+        K2Request::setVar('hidemainmenu', 1);
 
         // Toolbar
         $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');

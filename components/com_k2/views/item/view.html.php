@@ -30,9 +30,9 @@ class K2ViewItem extends K2View
         $user = Joomla\CMS\Factory::getUser();
         $document = Joomla\CMS\Factory::getDocument();
         $params = K2HelperUtilities::getParams('com_k2');
-        $limitstart = JRequest::getInt('limitstart', 0);
-        $view = JRequest::getWord('view');
-        $task = JRequest::getWord('task');
+        $limitstart = K2Request::getInt('limitstart', 0);
+        $view = K2Request::getWord('view');
+        $task = K2Request::getWord('task');
 
         $config = Joomla\CMS\Factory::getConfig();
 
@@ -70,7 +70,7 @@ class K2ViewItem extends K2View
 
         // --- JSON Output [start] ---
         // Set the document type in Joomla 1.5
-        if (K2_JVERSION == '15' && JRequest::getCmd('format') == 'json') {
+        if (K2_JVERSION == '15' && K2Request::getCmd('format') == 'json') {
             $document->setMimeEncoding('application/json');
             $document->setType('json');
         }
@@ -199,7 +199,7 @@ class K2ViewItem extends K2View
                 // Load K2 native comments system only if there are no plugins overriding it
                 if (($item->event->K2CommentsCounter === '' || $item->event->K2CommentsCounter === '0') && ($item->event->K2CommentsBlock === '' || $item->event->K2CommentsBlock === '0')) {
                     // Load reCaptcha
-                    if (!JRequest::getInt('print') && ($item->params->get('comments') == '1' || $item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($item->catid)) && ($params->get('recaptcha') && ($user->guest || $params->get('recaptchaForRegistered', 1)))) {
+                    if (!K2Request::getInt('print') && ($item->params->get('comments') == '1' || $item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($item->catid)) && ($params->get('recaptcha') && ($user->guest || $params->get('recaptchaForRegistered', 1)))) {
                         $document->addScript('https://www.google.com/recaptcha/api.js?onload=onK2RecaptchaLoaded&render=explicit');
                         $document->addScriptDeclaration('
                                 function onK2RecaptchaLoaded() {
@@ -455,7 +455,7 @@ class K2ViewItem extends K2View
 
             $json = json_encode($response);
 
-            $callback = JRequest::getCmd('callback');
+            $callback = K2Request::getCmd('callback');
 
             if ($callback) {
                 $document->setMimeEncoding('application/javascript');
@@ -758,7 +758,7 @@ class K2ViewItem extends K2View
             }
 
             // Allow temporary template loading with ?template=
-            $template = JRequest::getCmd('template');
+            $template = K2Request::getCmd('template');
             if (isset($template)) {
                 // Look for overrides in template folder (new K2 template structure)
                 $this->_addPath('template', JPATH_SITE.'/templates/'.$template.'/html/com_k2');

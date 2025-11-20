@@ -22,7 +22,7 @@ class K2ControllerItemlist extends K2Controller
     public function display($cachable = false, $urlparams = [])
     {
         $model = $this->getModel('item');
-        $format = JRequest::getWord('format', 'html');
+        $format = K2Request::getWord('format', 'html');
         $document = Joomla\CMS\Factory::getDocument();
         $viewType = $document->getType();
         $view = $this->getView('itemlist', $viewType);

@@ -95,10 +95,10 @@ class K2ElementMenuItem extends K2Element
                     $item = &$groupedList[$menuType->menutype][$i];
 
                     //If menutype is changed but item is not saved yet, use the new type in the list
-                    if (JRequest::getString('option', '', 'get') == 'com_menus') {
-                        $currentItemArray = JRequest::getVar('cid', [0], '', 'array');
+                    if (K2Request::getString('option', '', 'get') == 'com_menus') {
+                        $currentItemArray = K2Request::getVar('cid', [0], '', 'array');
                         $currentItemId = (int) $currentItemArray[0];
-                        $currentItemType = JRequest::getString('type', $item->type, 'get');
+                        $currentItemType = K2Request::getString('type', $item->type, 'get');
                         if ($currentItemId == $item->id && $currentItemType != $item->type) {
                             $item->type = $currentItemType;
                         }

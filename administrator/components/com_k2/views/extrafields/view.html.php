@@ -25,8 +25,8 @@ class K2ViewExtraFields extends K2View
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
@@ -47,7 +47,7 @@ class K2ViewExtraFields extends K2View
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         $extraFields = $model->getData();

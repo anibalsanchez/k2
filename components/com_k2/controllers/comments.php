@@ -42,7 +42,7 @@ class K2ControllerComments extends K2Controller
             $app->redirect(Joomla\CMS\Router\Route::_($url, false));
         }
 
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
 
         // Language
         $language = Joomla\CMS\Factory::getLanguage();
@@ -59,7 +59,7 @@ class K2ControllerComments extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
@@ -75,7 +75,7 @@ class K2ControllerComments extends K2Controller
 
     public function unpublish()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
@@ -91,7 +91,7 @@ class K2ControllerComments extends K2Controller
 
     public function remove()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
@@ -107,7 +107,7 @@ class K2ControllerComments extends K2Controller
 
     public function deleteUnpublished()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
@@ -123,7 +123,7 @@ class K2ControllerComments extends K2Controller
 
     public function saveComment()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
@@ -141,7 +141,7 @@ class K2ControllerComments extends K2Controller
 
     public function report()
     {
-        JRequest::setVar('tmpl', 'component');
+        K2Request::setVar('tmpl', 'component');
         $view = $this->getView('comments', 'html');
         $view->setLayout('report');
         $view->report();
@@ -149,7 +149,7 @@ class K2ControllerComments extends K2Controller
 
     public function sendReport()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $params = K2HelperUtilities::getParams('com_k2');
         $user = Joomla\CMS\Factory::getUser();
         if (!$params->get('comments') || !$params->get('commentsReporting') || ($params->get('commentsReporting') == '2' && $user->guest)) {
@@ -158,9 +158,9 @@ class K2ControllerComments extends K2Controller
 
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
-        $model->setState('id', JRequest::getInt('id'));
-        $model->setState('name', JRequest::getString('name'));
-        $model->setState('reportReason', JRequest::getString('reportReason'));
+        $model->setState('id', K2Request::getInt('id'));
+        $model->setState('name', K2Request::getString('name'));
+        $model->setState('reportReason', K2Request::getString('reportReason'));
         if (!$model->report()) {
             echo $model->getError();
         } else {
@@ -175,7 +175,7 @@ class K2ControllerComments extends K2Controller
     {
         $app = Joomla\CMS\Factory::getApplication();
         $user = Joomla\CMS\Factory::getUser();
-        $format = JRequest::getVar('format');
+        $format = K2Request::getVar('format');
         $errors = [];
         if (K2_JVERSION != '15') {
             if (!$user->authorise('core.admin', 'com_k2')) {
@@ -187,7 +187,7 @@ class K2ControllerComments extends K2Controller
 
         K2Model::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/models');
         $model = K2Model::getInstance('User', 'K2Model');
-        $model->setState('id', JRequest::getInt('id'));
+        $model->setState('id', K2Request::getInt('id'));
         $model->reportSpammer();
         if ($format == 'raw') {
             $response = '';

@@ -96,6 +96,6 @@ defined('_JEXEC') || die;
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="usergroup" />
-    <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
+    <input type="hidden" name="task" value="<?php echo K2Request::getVar('task'); ?>" />
     <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

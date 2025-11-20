@@ -23,7 +23,7 @@ class K2ModelExtraField extends K2Model
 {
     public function getData()
     {
-        $cid = JRequest::getVar('cid');
+        $cid = K2Request::getVar('cid');
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
         $row->load($cid);
 
@@ -34,16 +34,16 @@ class K2ModelExtraField extends K2Model
     {
         $app = Joomla\CMS\Factory::getApplication();
         $row = Joomla\CMS\Table\Table::getInstance('K2ExtraField', 'Table');
-        if (!$row->bind(JRequest::get('post'))) {
+        if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
             $app->redirect('index.php?option=com_k2&view=extrafields');
         }
 
-        $isNewGroup = JRequest::getInt('isNew');
+        $isNewGroup = K2Request::getInt('isNew');
 
         if ($isNewGroup) {
             $group = Joomla\CMS\Table\Table::getInstance('K2ExtraFieldsGroup', 'Table');
-            $group->set('name', JRequest::getVar('group'));
+            $group->set('name', K2Request::getVar('group'));
             $group->store();
             $row->group = $group->id;
         }
@@ -53,16 +53,16 @@ class K2ModelExtraField extends K2Model
         }
 
         $objects = [];
-        $values = JRequest::getVar('option_value', null, 'default', 'none', 4);
-        $names = JRequest::getVar('option_name');
-        $target = JRequest::getVar('option_target');
-        $editor = JRequest::getVar('option_editor');
-        $rows = JRequest::getVar('option_rows');
-        $cols = JRequest::getVar('option_cols');
-        $alias = JRequest::getWord('alias');
-        $required = JRequest::getInt('required');
-        $showNull = JRequest::getInt('showNull');
-        $displayInFrontEnd = JRequest::getInt('displayInFrontEnd');
+        $values = K2Request::getVar('option_value', null, 'default', 'none', 4);
+        $names = K2Request::getVar('option_name');
+        $target = K2Request::getVar('option_target');
+        $editor = K2Request::getVar('option_editor');
+        $rows = K2Request::getVar('option_rows');
+        $cols = K2Request::getVar('option_cols');
+        $alias = K2Request::getWord('alias');
+        $required = K2Request::getInt('required');
+        $showNull = K2Request::getInt('showNull');
+        $displayInFrontEnd = K2Request::getInt('displayInFrontEnd');
 
         if (JString::strtolower($alias) == 'this') {
             $alias = '';
@@ -93,7 +93,7 @@ class K2ModelExtraField extends K2Model
 
                 $object->value = trim($values[$i]);
             } elseif ($row->type == 'csv') {
-                $file = JRequest::getVar('csv_file', null, 'FILES');
+                $file = K2Request::getVar('csv_file', null, 'FILES');
                 $csvFile = $file['tmp_name'];
                 if (!empty($csvFile) && Joomla\CMS\Filesystem\File::getExt($file['name']) == 'csv') {
                     $handle = @fopen($csvFile, 'r');
@@ -106,7 +106,7 @@ class K2ModelExtraField extends K2Model
                     $object->value = $csvData;
                 } else {
                     $object->value = json_decode($values[$i]);
-                    if (JRequest::getBool('K2ResetCSV')) {
+                    if (K2Request::getBool('K2ResetCSV')) {
                         $object->value = null;
                     }
                 }
@@ -118,7 +118,7 @@ class K2ModelExtraField extends K2Model
             } elseif ($row->type == 'image') {
                 $object->value = $values[$i];
             } elseif ($row->type == 'header') {
-                $object->value = JRequest::getString('name');
+                $object->value = K2Request::getString('name');
                 $object->displayInFrontEnd = $displayInFrontEnd;
             } else {
                 $object->value = $values[$i];
@@ -151,7 +151,7 @@ class K2ModelExtraField extends K2Model
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
-        switch (JRequest::getCmd('task')) {
+        switch (K2Request::getCmd('task')) {
             case 'apply':
                 $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_EXTRA_FIELD_SAVED');
                 $link = 'index.php?option=com_k2&view=extrafield&cid='.$row->id;

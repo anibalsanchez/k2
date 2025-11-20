@@ -24,8 +24,8 @@ class K2ViewComments extends K2View
         $app = Joomla\CMS\Factory::getApplication();
         $document = Joomla\CMS\Factory::getDocument();
         $user = Joomla\CMS\Factory::getUser();
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
@@ -42,7 +42,7 @@ class K2ViewComments extends K2View
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\"\.\@\-_]/u', '', $search));
         if ($app->isClient('site')) {
             $filter_author = $user->id;
-            JRequest::setVar('filter_author', $user->id);
+            K2Request::setVar('filter_author', $user->id);
         }
 
         $this->loadHelper('html');
@@ -96,7 +96,7 @@ class K2ViewComments extends K2View
 
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         $reportLink = $app->isClient('administrator') ? 'index.php?option=com_k2&view=user&task=report&id=' : 'index.php?option=com_k2&view=comments&task=reportSpammer&id=';
@@ -209,7 +209,7 @@ class K2ViewComments extends K2View
 
         if ($app->isClient('site')) {
             // Enforce the "system" template in the frontend
-            JRequest::setVar('template', 'system');
+            K2Request::setVar('template', 'system');
 
             // CSS
             $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/general.css');

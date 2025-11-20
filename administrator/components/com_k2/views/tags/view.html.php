@@ -25,11 +25,11 @@ class K2ViewTags extends K2View
         $document = Joomla\CMS\Factory::getDocument();
         $user = Joomla\CMS\Factory::getUser();
 
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
-        $task = JRequest::getCmd('task');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
+        $task = K2Request::getCmd('task');
 
-        $context = JRequest::getCmd('context');
+        $context = K2Request::getCmd('context');
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
@@ -49,7 +49,7 @@ class K2ViewTags extends K2View
 
         if ($limitstart > $total - $limit) {
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
-            JRequest::setVar('limitstart', $limitstart);
+            K2Request::setVar('limitstart', $limitstart);
         }
 
         foreach ($tags as $key => $tag) {

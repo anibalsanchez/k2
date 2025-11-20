@@ -408,9 +408,9 @@ class modK2ToolsHelper
         $root_id = (int) $params->get('root_id');
         $end_level = $params->get('end_level', null);
         $id = (int) $id;
-        $catid = JRequest::getInt('id');
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
+        $catid = K2Request::getInt('id');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
 
         $user = Joomla\CMS\Factory::getUser();
         $aid = (int) $user->get('aid');
@@ -490,9 +490,9 @@ class modK2ToolsHelper
     {
         $app = Joomla\CMS\Factory::getApplication();
         $root_id = (int) $params->get('root_id2');
-        $option = JRequest::getCmd('option');
-        $view = JRequest::getCmd('view');
-        $category = JRequest::getInt('id');
+        $option = K2Request::getCmd('option');
+        $view = K2Request::getCmd('view');
+        $category = K2Request::getInt('id');
         $id = (int) $id;
         $user = Joomla\CMS\Factory::getUser();
         $aid = (int) $user->get('aid');
@@ -554,11 +554,11 @@ class modK2ToolsHelper
             <input name="option" value="com_k2" type="hidden" />
             <input name="view" value="itemlist" type="hidden" />
             <input name="task" value="category" type="hidden" />
-            <input name="Itemid" value="'.JRequest::getInt('Itemid').'" type="hidden" />';
+            <input name="Itemid" value="'.K2Request::getInt('Itemid').'" type="hidden" />';
 
             // For Joom!Fish compatibility
-            if (JRequest::getCmd('lang')) {
-                echo '<input name="lang" value="'.JRequest::getCmd('lang').'" type="hidden" />';
+            if (K2Request::getCmd('lang')) {
+                echo '<input name="lang" value="'.K2Request::getCmd('lang').'" type="hidden" />';
             }
 
             echo '
@@ -574,10 +574,10 @@ class modK2ToolsHelper
     {
         $app = Joomla\CMS\Factory::getApplication();
         $array = [];
-        $view = JRequest::getCmd('view');
-        $id = JRequest::getInt('id');
-        $option = JRequest::getCmd('option');
-        $task = JRequest::getCmd('task');
+        $view = K2Request::getCmd('view');
+        $id = K2Request::getInt('id');
+        $option = K2Request::getCmd('option');
+        $task = K2Request::getCmd('task');
 
         $db = Joomla\CMS\Factory::getDbo();
         $user = Joomla\CMS\Factory::getUser();
@@ -847,8 +847,8 @@ class modK2ToolsHelper
 
     public static function calendar($params)
     {
-        $month = JRequest::getInt('month');
-        $year = JRequest::getInt('year');
+        $month = K2Request::getInt('month');
+        $year = K2Request::getInt('year');
 
         $months = [
             Joomla\CMS\Language\Text::_('K2_JANUARY'),
@@ -891,8 +891,8 @@ class modK2ToolsHelper
     {
         $app = Joomla\CMS\Factory::getApplication();
 
-        $month = JRequest::getInt('month');
-        $year = JRequest::getInt('year');
+        $month = K2Request::getInt('month');
+        $year = K2Request::getInt('year');
 
         $months = [Joomla\CMS\Language\Text::_('K2_JANUARY'), Joomla\CMS\Language\Text::_('K2_FEBRUARY'), Joomla\CMS\Language\Text::_('K2_MARCH'), Joomla\CMS\Language\Text::_('K2_APRIL'), Joomla\CMS\Language\Text::_('K2_MAY'), Joomla\CMS\Language\Text::_('K2_JUNE'), Joomla\CMS\Language\Text::_('K2_JULY'), Joomla\CMS\Language\Text::_('K2_AUGUST'), Joomla\CMS\Language\Text::_('K2_SEPTEMBER'), Joomla\CMS\Language\Text::_('K2_OCTOBER'), Joomla\CMS\Language\Text::_('K2_NOVEMBER'), Joomla\CMS\Language\Text::_('K2_DECEMBER')];
         $days = [Joomla\CMS\Language\Text::_('K2_SUN'), Joomla\CMS\Language\Text::_('K2_MON'), Joomla\CMS\Language\Text::_('K2_TUE'), Joomla\CMS\Language\Text::_('K2_WED'), Joomla\CMS\Language\Text::_('K2_THU'), Joomla\CMS\Language\Text::_('K2_FRI'), Joomla\CMS\Language\Text::_('K2_SAT')];
@@ -900,7 +900,7 @@ class modK2ToolsHelper
         $myCalendar = new MyCalendar();
         $myCalendar->setMonthNames($months);
         $myCalendar->setDayNames($days);
-        $myCalendar->category = JRequest::getInt('catid');
+        $myCalendar->category = K2Request::getInt('catid');
         $myCalendar->setStartDay(1);
         if (($month) && ($year)) {
             echo $myCalendar->getMonthView($month, $year);
@@ -1031,7 +1031,7 @@ class MyCalendar extends Calendar
 
     public function getCalendarLink($month, $year)
     {
-        $itemID = JRequest::getInt('Itemid');
+        $itemID = K2Request::getInt('Itemid');
         if ($this->category > 0) {
             return Joomla\CMS\Uri\Uri::root(true).sprintf('/index.php?option=com_k2&amp;view=itemlist&amp;task=calendar&amp;month=%s&amp;year=%s&amp;catid=%s&amp;Itemid=%s', $month, $year, $this->category, $itemID);
         }

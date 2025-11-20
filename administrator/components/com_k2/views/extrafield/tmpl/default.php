@@ -129,8 +129,8 @@ defined('_JEXEC') || die;
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
     <input type="hidden" name="isNew" id="isNew" value="<?php echo ($this->row->group) ? '0' : '1'; ?>" />
     <input type="hidden" name="option" value="com_k2" />
-    <input type="hidden" name="view" value="<?php echo JRequest::getVar('view'); ?>" />
-    <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
+    <input type="hidden" name="view" value="<?php echo K2Request::getVar('view'); ?>" />
+    <input type="hidden" name="task" value="<?php echo K2Request::getVar('task'); ?>" />
     <input type="hidden" id="value" name="value" value="<?php echo htmlentities($this->row->value); ?>" />
     <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

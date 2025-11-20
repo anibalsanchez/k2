@@ -57,7 +57,7 @@ class modK2UserHelper
             }
 
             require_once JPATH_SITE.'/components/com_k2/helpers/permissions.php';
-            if (JRequest::getCmd('option') != 'com_k2') {
+            if (K2Request::getCmd('option') != 'com_k2') {
                 K2HelperPermissions::setPermissions();
             }
 

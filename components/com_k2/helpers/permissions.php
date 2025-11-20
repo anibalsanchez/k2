@@ -127,12 +127,12 @@ class K2HelperPermissions
 
     public static function checkPermissions()
     {
-        $view = JRequest::getCmd('view');
+        $view = K2Request::getCmd('view');
         if ($view != 'item') {
             return;
         }
 
-        $task = JRequest::getCmd('task');
+        $task = K2Request::getCmd('task');
         $user = Joomla\CMS\Factory::getUser();
         $app = Joomla\CMS\Factory::getApplication();
         if ($user->guest && ($task == 'add' || $task == 'edit')) {
@@ -157,7 +157,7 @@ class K2HelperPermissions
             case 'edit':
             case 'deleteAttachment':
             case 'checkin':
-                $cid = JRequest::getInt('cid');
+                $cid = K2Request::getInt('cid');
                 if ($cid) {
                     Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
                     $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
@@ -177,7 +177,7 @@ class K2HelperPermissions
                 break;
 
             case 'save':
-                $cid = JRequest::getInt('id');
+                $cid = K2Request::getInt('id');
                 if ($cid) {
                     Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
                     $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');

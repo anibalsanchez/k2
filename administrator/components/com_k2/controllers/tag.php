@@ -21,7 +21,7 @@ class K2ControllerTag extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'tag');
+        K2Request::setVar('view', 'tag');
         parent::display();
     }
 
@@ -32,7 +32,7 @@ class K2ControllerTag extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tag');
         $model->save();
     }

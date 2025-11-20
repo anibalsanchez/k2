@@ -21,7 +21,7 @@ class K2ControllerInfo extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        JRequest::setVar('view', 'info');
+        K2Request::setVar('view', 'info');
         parent::display();
     }
 }

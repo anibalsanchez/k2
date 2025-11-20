@@ -25,7 +25,7 @@ class K2ControllerSettings extends K2Controller
             $app = Joomla\CMS\Factory::getApplication();
             $app->redirect('index.php?option=com_config&view=component&component=com_k2&path=&tmpl=component');
         } else {
-            JRequest::setVar('tmpl', 'component');
+            K2Request::setVar('tmpl', 'component');
             parent::display();
         }
     }
@@ -33,7 +33,7 @@ class K2ControllerSettings extends K2Controller
     public function save()
     {
         $app = Joomla\CMS\Factory::getApplication();
-        JRequest::checkToken() || jexit('Invalid Token');
+        K2Request::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('settings');
         $model->save();
 

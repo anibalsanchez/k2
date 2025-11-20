@@ -18,11 +18,11 @@ defined('_JEXEC') || die;
 $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 $user = Joomla\CMS\Factory::getUser();
 
-$option = JRequest::getCmd('option');
-$view = JRequest::getCmd('view', 'items');
-$task = JRequest::getCmd('task');
-$tmpl = JRequest::getCmd('tmpl');
-$context = JRequest::getCmd('context');
+$option = K2Request::getCmd('option');
+$view = K2Request::getCmd('view', 'items');
+$task = K2Request::getCmd('task');
+$tmpl = K2Request::getCmd('tmpl');
+$context = K2Request::getCmd('context');
 
 if (K2_JVERSION == '15') {
     if (
@@ -81,7 +81,7 @@ if (K2_JVERSION == '15') {
     $k2CSSContainerClass = '';
 }
 
-if (JRequest::getCmd('context') == 'modalselector' || ($view == 'media' && $tmpl == 'component') || $view == 'settings') {
+if (K2Request::getCmd('context') == 'modalselector' || ($view == 'media' && $tmpl == 'component') || $view == 'settings') {
     $k2CSSContainerClass .= ' inModalSelector';
     $k2FooterClass = 'inModalSelector';
 } else {

@@ -47,8 +47,8 @@ class TableK2UserGroup extends K2Table
         if (array_key_exists('params', $array) && is_array($array['params'])) {
             $jRegistry = new JRegistry();
             $jRegistry->loadArray($array['params']);
-            if (JRequest::getVar('categories') == 'all' || JRequest::getVar('categories') == 'none') {
-                $jRegistry->set('categories', JRequest::getVar('categories'));
+            if (K2Request::getVar('categories') == 'all' || K2Request::getVar('categories') == 'none') {
+                $jRegistry->set('categories', K2Request::getVar('categories'));
             }
 
             $array['permissions'] = $jRegistry->toString();

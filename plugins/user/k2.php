@@ -49,19 +49,19 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
         jimport('joomla.filesystem.file');
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $task = JRequest::getCmd('task');
+        $task = K2Request::getCmd('task');
 
         if ($app->isClient('site') && ($task == 'activate' || $isnew) && $params->get('stopForumSpam')) {
             $this->checkSpammer($user);
         }
 
-        if ($app->isClient('site') && $task != 'activate' && JRequest::getInt('K2UserForm')) {
+        if ($app->isClient('site') && $task != 'activate' && K2Request::getInt('K2UserForm')) {
             Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2');
             Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
             $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
             $k2id = $this->getK2UserID($user['id']);
-            JRequest::setVar('id', $k2id, 'post');
-            $row->bind(JRequest::get('post'));
+            K2Request::setVar('id', $k2id, 'post');
+            $row->bind(K2Request::getPost());
             $row->set('userID', $user['id']);
             $row->set('userName', $user['name']);
             $row->set('ip', $_SERVER['REMOTE_ADDR']);
@@ -74,8 +74,8 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
                 $row->set('group', $params->get('K2UserGroup', 1));
             } else {
                 $row->set('group', null);
-                $row->set('gender', JRequest::getVar('gender', 'n'));
-                $row->set('url', JRequest::getString('url'));
+                $row->set('gender', K2Request::getVar('gender', 'n'));
+                $row->set('url', K2Request::getString('url'));
             }
 
             /*
@@ -88,7 +88,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
             $row->url = JString::str_ireplace('<', '', $row->url);
             $row->url = JString::str_ireplace('>', '', $row->url);
             $row->url = JString::str_ireplace("'", '', $row->url);
-            $row->set('description', JRequest::getVar('description', '', 'post', 'string', 4));
+            $row->set('description', K2Request::getVar('description', '', 'post', 'string', 4));
             if ($params->get('xssFiltering')) {
                 $jFilterInput = new JFilterInput([], [], 1, 1, 0);
                 $row->description = $jFilterInput->clean($row->description);
@@ -96,9 +96,9 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
 
             $row->store();
 
-            $file = JRequest::get('files');
+            $file = K2Request::getFiles();
 
-            if (isset($file['image']) && $file['image']['error'] == 0 && !JRequest::getBool('del_image')) {
+            if (isset($file['image']) && $file['image']['error'] == 0 && !K2Request::getBool('del_image')) {
                 require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
                 $savepath = JPATH_ROOT.'/media/k2/users/';
 
@@ -131,7 +131,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
                 }
             }
 
-            if (JRequest::getBool('del_image')) {
+            if (K2Request::getBool('del_image')) {
                 $currentImage = basename($row->image);
                 if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/users/'.$currentImage)) {
                     Joomla\CMS\Filesystem\File::delete(JPATH_ROOT.'/media/k2/users/'.$currentImage);
