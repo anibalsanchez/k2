@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -34,9 +34,9 @@ defined('_JEXEC') or die;
             <a class="abAuthorLatestItem" href="<?php echo $author->latest->link; ?>" title="<?php echo K2HelperUtilities::cleanHtml($author->latest->title); ?>">
                 <?php echo $author->latest->title; ?>
                 <span class="abAuthorCommentsCount">(<?php echo $author->latest->numOfComments; ?> <?php if ($author->latest->numOfComments == '1') {
-                    echo JText::_('K2_MODK2TOOLS_COMMENT');
+                    echo Joomla\CMS\Language\Text::_('K2_MODK2TOOLS_COMMENT');
                 } else {
-                    echo JText::_('K2_MODK2TOOLS_COMMENTS');
+                    echo Joomla\CMS\Language\Text::_('K2_MODK2TOOLS_COMMENTS');
                 } ?>)</span>
             </a>
             <?php endif; ?>

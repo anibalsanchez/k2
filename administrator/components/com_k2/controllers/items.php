@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,139 +27,145 @@ class K2ControllerItems extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->unpublish();
     }
 
     public function saveorder()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $result = $model->saveorder();
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         if ($document->getType() == 'raw') {
             echo '1';
 
             return $this;
         }
-        $this->setRedirect('index.php?option=com_k2&view=items', JText::_('K2_NEW_ORDERING_SAVED'));
+
+        $this->setRedirect('index.php?option=com_k2&view=items', Joomla\CMS\Language\Text::_('K2_NEW_ORDERING_SAVED'));
+
+        return null;
     }
 
     public function orderup()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->orderup();
     }
 
     public function orderdown()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->orderdown();
     }
 
     public function savefeaturedorder()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $result = $model->savefeaturedorder();
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         if ($document->getType() == 'raw') {
             echo '1';
 
             return $this;
         }
-        $this->setRedirect('index.php?option=com_k2&view=items', JText::_('K2_NEW_FEATURED_ORDERING_SAVED'));
+
+        $this->setRedirect('index.php?option=com_k2&view=items', Joomla\CMS\Language\Text::_('K2_NEW_FEATURED_ORDERING_SAVED'));
+
+        return null;
     }
 
     public function featuredorderup()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->featuredorderup();
     }
 
     public function featuredorderdown()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->featuredorderdown();
     }
 
     public function accessregistered()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->accessregistered();
     }
 
     public function accessspecial()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->accessspecial();
     }
 
     public function accesspublic()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->accesspublic();
     }
 
     public function featured()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->featured();
     }
 
     public function trash()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->trash();
     }
 
     public function restore()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->restore();
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->remove();
     }
 
     public function add()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=item');
     }
 
     public function edit()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $cid = JRequest::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=item&cid='.$cid[0]);
     }
 
     public function copy()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->copy();
     }
@@ -176,19 +182,19 @@ class K2ControllerItems extends K2Controller
 
     public function saveBatch()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('items');
         $model->saveBatch();
     }
 
     public function logStats()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $status = JRequest::getInt('status');
         $response = JRequest::getString('response');
-        $date = JFactory::getDate();
+        $date = Joomla\CMS\Factory::getDate();
         $now = version_compare(JVERSION, '2.5', 'ge') ? $date->toSql() : $date->toMySQL();
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         $query = 'DELETE FROM #__k2_log';
         $db->setQuery($query);

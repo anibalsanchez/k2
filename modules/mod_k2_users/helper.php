@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
 require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
@@ -22,15 +22,15 @@ class modK2UsersHelper
 {
     public static function getUsers(&$params)
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
 
-        $jnow = JFactory::getDate();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = (K2_JVERSION != '15') ? $jnow->toSql() : $jnow->toMySQL();
         $nullDate = $db->getNullDate();
 
         // Get ACL
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (K2_JVERSION != '15') {
             $userLevels = array_unique($user->getAuthorisedViewLevels());
             $aclCheck = 'IN('.implode(',', $userLevels).')';
@@ -41,11 +41,9 @@ class modK2UsersHelper
 
         // Get language on Joomla 2.5+
         $languageFilter = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
+            $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
         }
 
         $userObjects = [];
@@ -68,13 +66,14 @@ class modK2UsersHelper
 
             $newUserObjects = [];
             foreach ($IDs as $id) {
-                foreach ($userObjects as $uO) {
-                    if ($uO->UID == $id) {
-                        $newUserObjects[] = $uO;
+                foreach ($userObjects as $userObject) {
+                    if ($userObject->UID == $id) {
+                        $newUserObjects[] = $userObject;
                         break;
                     }
                 }
             }
+
             $userObjects = $newUserObjects;
         } else {
             switch ($params->get('filter', 0)) {
@@ -100,14 +99,14 @@ class modK2UsersHelper
                             AND i.trash = 0
                             AND i.access {$aclCheck}
                             AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
-                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
-                            AND i.created_by_alias=''
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).(')
+                            AND i.created_by_alias=\'\'
                             AND c.published = 1
                             AND c.trash = 0
-                            AND c.access {$aclCheck}";
+                            AND c.access '.$aclCheck);
 
-                        if ($languageFilter) {
-                            $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
+                        if ($languageFilter !== '' && $languageFilter !== '0') {
+                            $query .= sprintf(' AND i.language IN (%s) AND c.language IN (%s)', $languageFilter, $languageFilter);
                         }
                     }
 
@@ -123,7 +122,7 @@ class modK2UsersHelper
                             break;
                     }
 
-                    $query .= " GROUP BY users.id ORDER BY {$orderby}";
+                    $query .= ' GROUP BY users.id ORDER BY '.$orderby;
                     break;
 
                     // With most items
@@ -138,14 +137,14 @@ class modK2UsersHelper
                             AND i.trash = 0
                             AND i.access {$aclCheck}
                             AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
-                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
-                            AND i.created_by_alias=''
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).(')
+                            AND i.created_by_alias=\'\'
                             AND c.published = 1
                             AND c.trash = 0
-                            AND c.access {$aclCheck}";
+                            AND c.access '.$aclCheck);
 
-                    if ($languageFilter) {
-                        $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
+                    if ($languageFilter !== '' && $languageFilter !== '0') {
+                        $query .= sprintf(' AND i.language IN (%s) AND c.language IN (%s)', $languageFilter, $languageFilter);
                     }
 
                     $query .= ' GROUP BY users.id ORDER BY counter DESC';
@@ -163,14 +162,14 @@ class modK2UsersHelper
                             AND i.trash = 0
                             AND i.access {$aclCheck}
                             AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
-                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
-                            AND i.created_by_alias=''
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).(')
+                            AND i.created_by_alias=\'\'
                             AND c.published = 1
                             AND c.trash = 0
-                            AND c.access {$aclCheck}";
+                            AND c.access '.$aclCheck);
 
-                    if ($languageFilter) {
-                        $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
+                    if ($languageFilter !== '' && $languageFilter !== '0') {
+                        $query .= sprintf(' AND i.language IN (%s) AND c.language IN (%s)', $languageFilter, $languageFilter);
                     }
 
                     $query .= ' GROUP BY users.id ORDER BY counter DESC';
@@ -189,14 +188,14 @@ class modK2UsersHelper
                             AND i.trash = 0
                             AND i.access {$aclCheck}
                             AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
-                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
-                            AND i.created_by_alias=''
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).(')
+                            AND i.created_by_alias=\'\'
                             AND c.published = 1
                             AND c.trash = 0
-                            AND c.access {$aclCheck}";
+                            AND c.access '.$aclCheck);
 
-                    if ($languageFilter) {
-                        $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
+                    if ($languageFilter !== '' && $languageFilter !== '0') {
+                        $query .= sprintf(' AND i.language IN (%s) AND c.language IN (%s)', $languageFilter, $languageFilter);
                     }
 
                     $query .= ' GROUP BY users.id ORDER BY counter DESC';
@@ -208,11 +207,11 @@ class modK2UsersHelper
         }
 
         // Render the query results
-        if (count($userObjects)) {
+        if (count($userObjects) > 0) {
             foreach ($userObjects as $userObject) {
                 $userObject->avatar = K2HelperUtilities::getAvatar($userObject->UID, $userObject->email, $params->get('userImageWidth'));
-                $userObject->link = JRoute::_(K2HelperRoute::getUserRoute($userObject->UID));
-                $userObject->feed = JRoute::_(K2HelperRoute::getUserRoute($userObject->UID).'&format=feed');
+                $userObject->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($userObject->UID));
+                $userObject->feed = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($userObject->UID).'&format=feed');
                 $userObject->url = htmlspecialchars($userObject->url, ENT_QUOTES, 'UTF-8');
 
                 if ($params->get('userItemCount')) {
@@ -224,14 +223,14 @@ class modK2UsersHelper
                             AND i.access {$aclCheck}
                             AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
                             AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')
-                            AND i.created_by='.(int) $userObject->UID."
-                            AND i.created_by_alias=''
+                            AND i.created_by='.(int) $userObject->UID.('
+                            AND i.created_by_alias=\'\'
                             AND c.published = 1
                             AND c.trash = 0
-                            AND c.access {$aclCheck}";
+                            AND c.access '.$aclCheck);
 
-                    if ($languageFilter) {
-                        $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
+                    if ($languageFilter !== '' && $languageFilter !== '0') {
+                        $query .= sprintf(' AND i.language IN (%s) AND c.language IN (%s)', $languageFilter, $languageFilter);
                     }
 
                     $query .= ' ORDER BY i.created DESC';
@@ -239,11 +238,11 @@ class modK2UsersHelper
                     $db->setQuery($query, 0, $params->get('userItemCount'));
                     $userObject->items = $db->loadObjectList();
 
-                    if (count($userObject->items)) {
+                    if (count($userObject->items) > 0) {
                         foreach ($userObject->items as $item) {
                             $link = K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($item->categoryalias));
-                            $item->link = urldecode(JRoute::_($link));
-                            $item->categoryLink = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($item->catid.':'.urlencode($item->categoryalias))));
+                            $item->link = urldecode(Joomla\CMS\Router\Route::_($link));
+                            $item->categoryLink = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($item->catid.':'.urlencode($item->categoryalias))));
                         }
                     }
                 } else {

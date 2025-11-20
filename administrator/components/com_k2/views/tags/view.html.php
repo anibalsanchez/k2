@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,9 +21,9 @@ class K2ViewTags extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
+        $user = Joomla\CMS\Factory::getUser();
 
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
@@ -31,7 +31,7 @@ class K2ViewTags extends K2View
 
         $context = JRequest::getCmd('context');
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -53,23 +53,24 @@ class K2ViewTags extends K2View
         }
 
         foreach ($tags as $key => $tag) {
-            $tag->status = (K2_JVERSION == '15') ? JHTML::_('grid.published', $tag, $key) : JHtml::_('jgrid.published', $tag->published, $key, '', $context != 'modalselector');
+            $tag->status = (K2_JVERSION == '15') ? Joomla\CMS\HTML\HTMLHelper::_('grid.published', $tag, $key) : Joomla\CMS\HTML\HTMLHelper::_('jgrid.published', $tag->published, $key, '', $context != 'modalselector');
         }
+
         $this->assignRef('rows', $tags);
 
         jimport('joomla.html.pagination');
-        $pageNav = new JPagination($total, $limitstart, $limit);
-        $this->assignRef('page', $pageNav);
+        $jPagination = new JPagination($total, $limitstart, $limit);
+        $this->assignRef('page', $jPagination);
 
         $lists = [];
         $lists['search'] = $search;
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;
 
-        $filter_state_options[] = JHTML::_('select.option', -1, JText::_('K2_SELECT_STATE'));
-        $filter_state_options[] = JHTML::_('select.option', 1, JText::_('K2_PUBLISHED'));
-        $filter_state_options[] = JHTML::_('select.option', 0, JText::_('K2_UNPUBLISHED'));
-        $lists['state'] = JHTML::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', -1, Joomla\CMS\Language\Text::_('K2_SELECT_STATE'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_PUBLISHED'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_UNPUBLISHED'));
+        $lists['state'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
 
         $this->assignRef('lists', $lists);
 
@@ -77,7 +78,7 @@ class K2ViewTags extends K2View
         $document->addScriptDeclaration("
             Joomla.submitbutton = function(pressbutton) {
                 if (pressbutton == 'remove') {
-                    if (confirm('".JText::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_TAGS', true)."')) {
+                    if (confirm('".Joomla\CMS\Language\Text::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_TAGS', true)."')) {
                         submitform(pressbutton);
                     }
                 } else {
@@ -87,20 +88,20 @@ class K2ViewTags extends K2View
         ");
 
         // Toolbar
-        JToolBarHelper::title(JText::_('K2_TAGS'), 'k2.png');
+        Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_TAGS'), 'k2.png');
 
-        JToolBarHelper::addNew();
-        JToolBarHelper::editList();
-        JToolBarHelper::publishList();
-        JToolBarHelper::unpublishList();
-        JToolBarHelper::deleteList('', 'remove', 'K2_DELETE');
-        JToolBarHelper::custom('removeOrphans', 'delete', 'delete', 'K2_DELETE_ORPHAN_TAGS', false);
+        Joomla\CMS\Toolbar\ToolbarHelper::addNew();
+        Joomla\CMS\Toolbar\ToolbarHelper::editList();
+        Joomla\CMS\Toolbar\ToolbarHelper::publishList();
+        Joomla\CMS\Toolbar\ToolbarHelper::unpublishList();
+        Joomla\CMS\Toolbar\ToolbarHelper::deleteList('', 'remove', 'K2_DELETE');
+        Joomla\CMS\Toolbar\ToolbarHelper::custom('removeOrphans', 'delete', 'delete', 'K2_DELETE_ORPHAN_TAGS', false);
 
         // Preferences (Parameters/Settings)
         if (K2_JVERSION != '15') {
-            JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+            Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
         } else {
-            $toolbar = JToolBar::getInstance('toolbar');
+            $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
             $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
         }
 

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 /**
  * K2 migration class from Joomla 1.5 to Joomla 2.5+
@@ -60,8 +60,8 @@ class jUpgradeComponentK2 extends jUpgradeExtensions
 
     protected function copyTable_k2_categories($table)
     {
-        $this->source = $this->destination = "#__{$table}";
-
+        $this->source = '#__'.$table;
+        $this->destination = '#__'.$table;
         // Clone table
         $this->cloneTable($this->source, $this->destination);
 
@@ -73,6 +73,7 @@ class jUpgradeComponentK2 extends jUpgradeExtensions
             $row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
             $row['params'] = $this->convertParams($row['params']);
         }
+
         $this->setDestinationData($rows);
 
         return true;
@@ -80,8 +81,8 @@ class jUpgradeComponentK2 extends jUpgradeExtensions
 
     protected function copyTable_k2_items($table)
     {
-        $this->source = $this->destination = "#__{$table}";
-
+        $this->source = '#__'.$table;
+        $this->destination = '#__'.$table;
         // Clone table
         $this->cloneTable($this->source, $this->destination);
 
@@ -94,6 +95,7 @@ class jUpgradeComponentK2 extends jUpgradeExtensions
             $row['params'] = $this->convertParams($row['params']);
             $row['plugins'] = $this->convertParams($row['plugins']);
         }
+
         $this->setDestinationData($rows);
 
         return true;

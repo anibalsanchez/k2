@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 

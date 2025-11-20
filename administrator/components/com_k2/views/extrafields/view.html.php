@@ -13,20 +13,22 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
 class K2ViewExtraFields extends K2View
 {
+    public $lists;
+
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -37,6 +39,7 @@ class K2ViewExtraFields extends K2View
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
+
         $filter_type = $app->getUserStateFromRequest($option.$view.'filter_type', 'filter_type', '', 'string');
         $filter_group = $app->getUserStateFromRequest($option.$view.'filter_group', 'filter_group', '', 'string');
 
@@ -46,71 +49,74 @@ class K2ViewExtraFields extends K2View
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
+
         $extraFields = $model->getData();
         foreach ($extraFields as $key => $extraField) {
-            $extraField->status = K2_JVERSION == '15' ? JHTML::_('grid.published', $extraField, $key) : JHtml::_('jgrid.published', $extraField->published, $key);
+            $extraField->status = K2_JVERSION == '15' ? Joomla\CMS\HTML\HTMLHelper::_('grid.published', $extraField, $key) : Joomla\CMS\HTML\HTMLHelper::_('jgrid.published', $extraField->published, $key);
             $values = json_decode($extraField->value);
             if (isset($values[0]->alias) && !empty($values[0]->alias)) {
                 $extraField->alias = $values[0]->alias;
             } else {
-                $filter = JFilterInput::getInstance();
+                $filter = Joomla\CMS\Filter\InputFilter::getInstance();
                 $extraField->alias = $filter->clean($extraField->name, 'WORD');
             }
         }
+
         $this->assignRef('rows', $extraFields);
 
         jimport('joomla.html.pagination');
-        $pageNav = new JPagination($total, $limitstart, $limit);
-        $this->assignRef('page', $pageNav);
+        $jPagination = new JPagination($total, $limitstart, $limit);
+        $this->assignRef('page', $jPagination);
 
         $lists = [];
         $lists['search'] = $search;
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;
-        $filter_state_options[] = JHTML::_('select.option', -1, JText::_('K2_SELECT_STATE'));
-        $filter_state_options[] = JHTML::_('select.option', 1, JText::_('K2_PUBLISHED'));
-        $filter_state_options[] = JHTML::_('select.option', 0, JText::_('K2_UNPUBLISHED'));
-        $lists['state'] = JHTML::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', -1, Joomla\CMS\Language\Text::_('K2_SELECT_STATE'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_PUBLISHED'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_UNPUBLISHED'));
+        $lists['state'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
 
         $extraFieldGroups = $model->getGroups(true);
-        $groups[] = JHTML::_('select.option', '0', JText::_('K2_SELECT_GROUP'));
+        $groups[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '0', Joomla\CMS\Language\Text::_('K2_SELECT_GROUP'));
 
         foreach ($extraFieldGroups as $extraFieldGroup) {
-            $groups[] = JHTML::_('select.option', $extraFieldGroup->id, $extraFieldGroup->name);
+            $groups[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $extraFieldGroup->id, $extraFieldGroup->name);
         }
-        $lists['group'] = JHTML::_('select.genericlist', $groups, 'filter_group', '', 'value', 'text', $filter_group);
 
-        $typeOptions[] = JHTML::_('select.option', 0, JText::_('K2_SELECT_TYPE'));
+        $lists['group'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $groups, 'filter_group', '', 'value', 'text', $filter_group);
 
-        $typeOptions[] = JHTML::_('select.option', 'textfield', JText::_('K2_TEXT_FIELD'));
-        $typeOptions[] = JHTML::_('select.option', 'textarea', JText::_('K2_TEXTAREA'));
-        $typeOptions[] = JHTML::_('select.option', 'select', JText::_('K2_DROPDOWN_SELECTION'));
-        $typeOptions[] = JHTML::_('select.option', 'multipleSelect', JText::_('K2_MULTISELECT_LIST'));
-        $typeOptions[] = JHTML::_('select.option', 'radio', JText::_('K2_RADIO_BUTTONS'));
-        $typeOptions[] = JHTML::_('select.option', 'link', JText::_('K2_LINK'));
-        $typeOptions[] = JHTML::_('select.option', 'csv', JText::_('K2_CSV_DATA'));
-        $typeOptions[] = JHTML::_('select.option', 'labels', JText::_('K2_SEARCHABLE_LABELS'));
-        $typeOptions[] = JHTML::_('select.option', 'date', JText::_('K2_DATE'));
-        $typeOptions[] = JHTML::_('select.option', 'image', JText::_('K2_IMAGE'));
-        $typeOptions[] = JHTML::_('select.option', 'header', JText::_('K2_HEADER'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_SELECT_TYPE'));
 
-        $lists['type'] = JHTML::_('select.genericlist', $typeOptions, 'filter_type', '', 'value', 'text', $filter_type);
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'textfield', Joomla\CMS\Language\Text::_('K2_TEXT_FIELD'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'textarea', Joomla\CMS\Language\Text::_('K2_TEXTAREA'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'select', Joomla\CMS\Language\Text::_('K2_DROPDOWN_SELECTION'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'multipleSelect', Joomla\CMS\Language\Text::_('K2_MULTISELECT_LIST'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'radio', Joomla\CMS\Language\Text::_('K2_RADIO_BUTTONS'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'link', Joomla\CMS\Language\Text::_('K2_LINK'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'csv', Joomla\CMS\Language\Text::_('K2_CSV_DATA'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'labels', Joomla\CMS\Language\Text::_('K2_SEARCHABLE_LABELS'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'date', Joomla\CMS\Language\Text::_('K2_DATE'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'image', Joomla\CMS\Language\Text::_('K2_IMAGE'));
+        $typeOptions[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 'header', Joomla\CMS\Language\Text::_('K2_HEADER'));
+
+        $lists['type'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $typeOptions, 'filter_type', '', 'value', 'text', $filter_type);
 
         $this->assignRef('lists', $lists);
 
         // Toolbar
-        JToolBarHelper::title(JText::_('K2_EXTRA_FIELDS'), 'k2.png');
+        Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_EXTRA_FIELDS'), 'k2.png');
 
-        JToolBarHelper::addNew();
-        JToolBarHelper::editList();
-        JToolBarHelper::publishList();
-        JToolBarHelper::unpublishList();
-        JToolBarHelper::deleteList('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_EXTRA_FIELDS', 'remove', 'K2_DELETE');
+        Joomla\CMS\Toolbar\ToolbarHelper::addNew();
+        Joomla\CMS\Toolbar\ToolbarHelper::editList();
+        Joomla\CMS\Toolbar\ToolbarHelper::publishList();
+        Joomla\CMS\Toolbar\ToolbarHelper::unpublishList();
+        Joomla\CMS\Toolbar\ToolbarHelper::deleteList('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_EXTRA_FIELDS', 'remove', 'K2_DELETE');
 
         if (K2_JVERSION != '15') {
-            JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+            Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
         } else {
-            $toolbar = JToolBar::getInstance('toolbar');
+            $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
             $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
         }
 
@@ -123,9 +129,10 @@ class K2ViewExtraFields extends K2View
         // Joomla 3.x drag-n-drop sorting variables
         if (K2_JVERSION == '30') {
             if ($ordering) {
-                JHtml::_('sortablelist.sortable', 'k2ExtraFieldsList', 'adminForm', strtolower($this->lists['order_Dir']), 'index.php?option=com_k2&view=extrafields&task=saveorder&format=raw');
+                Joomla\CMS\HTML\HTMLHelper::_('sortablelist.sortable', 'k2ExtraFieldsList', 'adminForm', strtolower($this->lists['order_Dir']), 'index.php?option=com_k2&view=extrafields&task=saveorder&format=raw');
             }
-            $document = JFactory::getDocument();
+
+            $document = Joomla\CMS\Factory::getDocument();
             $document->addScriptDeclaration('
             Joomla.orderTable = function() {
                 table = document.getElementById("sortTable");

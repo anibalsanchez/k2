@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -20,15 +20,15 @@ defined('_JEXEC') or die;
 
     <div class="k2UserBlockDetails">
         <?php if ($params->get('userAvatar')): ?>
-        <a class="k2Avatar ubAvatar" href="<?php echo JRoute::_(K2HelperRoute::getUserRoute($user->id)); ?>" title="<?php echo JText::_('K2_MY_PAGE'); ?>">
+        <a class="k2Avatar ubAvatar" href="<?php echo Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($user->id)); ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_MY_PAGE'); ?>">
             <img src="<?php echo K2HelperUtilities::getAvatar($user->id, $user->email); ?>" alt="<?php echo K2HelperUtilities::cleanHtml($user->name); ?>" style="width:<?php echo $avatarWidth; ?>px;height:auto;" />
         </a>
         <?php endif; ?>
         <span class="ubName"><?php echo $user->name; ?></span>
-        <span class="ubCommentsCount"><?php echo JText::_('K2_YOU_HAVE'); ?> <b><?php echo $user->numOfComments; ?></b> <?php if ($user->numOfComments == 1) {
-            echo JText::_('K2_PUBLISHED_COMMENT');
+        <span class="ubCommentsCount"><?php echo Joomla\CMS\Language\Text::_('K2_YOU_HAVE'); ?> <b><?php echo $user->numOfComments; ?></b> <?php if ($user->numOfComments == 1) {
+            echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_COMMENT');
         } else {
-            echo JText::_('K2_PUBLISHED_COMMENTS');
+            echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_COMMENTS');
         } ?></span>
         <div class="clr"></div>
     </div>
@@ -36,18 +36,18 @@ defined('_JEXEC') or die;
     <ul class="k2UserBlockActions">
         <?php if (isset($addItemLink)): ?>
         <li>
-            <a data-k2-modal="edit" href="<?php echo $addItemLink; ?>"><?php echo JText::_('K2_ADD_NEW_ITEM'); ?></a>
+            <a data-k2-modal="edit" href="<?php echo $addItemLink; ?>"><?php echo Joomla\CMS\Language\Text::_('K2_ADD_NEW_ITEM'); ?></a>
         </li>
         <?php endif; ?>
         <li>
-            <a href="<?php echo $viewProfileLink; ?>"><?php echo JText::_('K2_MY_PAGE'); ?></a>
+            <a href="<?php echo $viewProfileLink; ?>"><?php echo Joomla\CMS\Language\Text::_('K2_MY_PAGE'); ?></a>
         </li>
         <li>
-            <a href="<?php echo $editProfileLink; ?>"><?php echo JText::_('K2_MY_ACCOUNT'); ?></a>
+            <a href="<?php echo $editProfileLink; ?>"><?php echo Joomla\CMS\Language\Text::_('K2_MY_ACCOUNT'); ?></a>
         </li>
         <?php if ($K2CommentsEnabled): ?>
         <li>
-            <a data-k2-modal="iframe" href="<?php echo $editCommentsLink; ?>"><?php echo JText::_('K2_MODERATE_COMMENTS_TO_MY_PUBLISHED_ITEMS'); ?></a>
+            <a data-k2-modal="iframe" href="<?php echo $editCommentsLink; ?>"><?php echo Joomla\CMS\Language\Text::_('K2_MODERATE_COMMENTS_TO_MY_PUBLISHED_ITEMS'); ?></a>
         </li>
         <?php endif; ?>
     </ul>
@@ -80,11 +80,11 @@ foreach ($menu as $key => $link): $level++; ?>
         <?php endforeach; ?>
     </ul>
 
-    <form action="<?php echo JURI::root(true); ?>/index.php" method="post">
-        <input type="submit" name="Submit" class="button ubLogout" value="<?php echo JText::_('K2_LOGOUT'); ?>" />
+    <form action="<?php echo Joomla\CMS\Uri\Uri::root(true); ?>/index.php" method="post">
+        <input type="submit" name="Submit" class="button ubLogout" value="<?php echo Joomla\CMS\Language\Text::_('K2_LOGOUT'); ?>" />
         <input type="hidden" name="option" value="<?php echo $option; ?>" />
         <input type="hidden" name="task" value="<?php echo $task; ?>" />
         <input type="hidden" name="return" value="<?php echo $return; ?>" />
-        <?php echo JHTML::_('form.token'); ?>
+        <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 </div>

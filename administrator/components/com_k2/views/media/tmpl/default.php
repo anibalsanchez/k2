@@ -7,14 +7,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 <script type="text/javascript">
     (function($) {
         $(document).ready(function() {
             $('#elfinder').elfinder({
-                url: '<?php echo JURI::base(true); ?>/index.php?option=com_k2&view=media&task=connector',
+                url: '<?php echo Joomla\CMS\Uri\Uri::base(true); ?>/index.php?option=com_k2&view=media&task=connector',
                 customData: {
                     '<?php echo $this->token; ?>': 1
                 },
@@ -23,7 +23,7 @@ defined('_JEXEC') or die;
                 <?php endif; ?>
                 <?php if ($this->fieldID): ?>
                 getFileCallback: function(image) {
-                    var basePath = '<?php echo JURI::root(true); ?>';
+                    var basePath = '<?php echo Joomla\CMS\Uri\Uri::root(true); ?>';
                     var imgPath = image.path;
                     var newImgPath = imgPath.replace(basePath, '');
                     parent.elFinderUpdate('<?php echo $this->fieldID; ?>', newImgPath);

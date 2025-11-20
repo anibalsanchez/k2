@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -15,15 +15,15 @@ defined('_JEXEC') or die;
     <div class="xmlParamsFields k2GenericForm">
         <h3>
             <?php if ($this->row->id): ?>
-            <?php echo JText::_('K2_EDIT_EXTRA_FIELD_GROUP'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_EDIT_EXTRA_FIELD_GROUP'); ?>
             <?php else: ?>
-            <?php echo JText::_('K2_ADD_EXTRA_FIELD_GROUP'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_ADD_EXTRA_FIELD_GROUP'); ?>
             <?php endif; ?>
         </h3>
         <ul class="adminformlist">
             <li>
                 <div class="paramLabel">
-                    <label for="name"><?php echo JText::_('K2_GROUP_NAME'); ?></label>
+                    <label for="name"><?php echo Joomla\CMS\Language\Text::_('K2_GROUP_NAME'); ?></label>
                 </div>
                 <div class="paramValue">
                     <input class="text_area k2TitleBox" type="text" name="name" id="name" value="<?php echo $this->row->name; ?>" size="50" maxlength="250" />
@@ -35,5 +35,5 @@ defined('_JEXEC') or die;
     <input type="hidden" name="view" value="extrafieldsgroup" />
     <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
     <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
-    <?php echo JHTML::_('form.token'); ?>
+    <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

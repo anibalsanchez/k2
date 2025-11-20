@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -21,33 +21,35 @@ class K2ElementCategory extends K2Element
 {
     public function fetchElement($name, $value, &$node, $control_name)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT m.* FROM #__k2_categories m WHERE trash = 0 ORDER BY parent, ordering';
         $db->setQuery($query);
         $mitems = $db->loadObjectList();
         $children = [];
         if ($mitems) {
-            foreach ($mitems as $v) {
+            foreach ($mitems as $mitem) {
                 if (K2_JVERSION != '15') {
-                    $v->title = $v->name;
-                    $v->parent_id = $v->parent;
+                    $mitem->title = $mitem->name;
+                    $mitem->parent_id = $mitem->parent;
                 }
-                $pt = $v->parent;
+
+                $pt = $mitem->parent;
                 $list = @$children[$pt] ? $children[$pt] : [];
-                array_push($list, $v);
+                $list[] = $mitem;
                 $children[$pt] = $list;
             }
         }
 
-        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+        $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         $mitems = [];
         $option = JRequest::getCmd('option');
         $prefix = ($option == 'com_joomfish') ? 'refField_' : '';
         if ($name == 'categories' || $name == 'jform[params][categories]') {
             if (version_compare(JVERSION, '3.5', 'ge')) {
-                JHtml::_('behavior.framework');
+                Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
             }
-            $doc = JFactory::getDocument();
+
+            $doc = Joomla\CMS\Factory::getDocument();
             $js = "
 			window.addEvent('domready', function() {
 				setTask();
@@ -218,22 +220,14 @@ class K2ElementCategory extends K2Element
 
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
-            @$mitems[] = JHTML::_('select.option', $item->id, $item->treename);
+            @$mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, $item->treename);
         }
 
-        if (K2_JVERSION != '15') {
-            $fieldName = $name.'[]';
-        } else {
-            $fieldName = $control_name.'['.$name.'][]';
-        }
+        $fieldName = K2_JVERSION != '15' ? $name.'[]' : $control_name.'['.$name.'][]';
 
-        if ($name == 'categories' || $name == 'jform[params][categories]') {
-            $onChange = 'onchange="setTask();"';
-        } else {
-            $onChange = '';
-        }
+        $onChange = $name == 'categories' || $name == 'jform[params][categories]' ? 'onchange="setTask();"' : '';
 
-        return JHTML::_('select.genericlist', $mitems, $fieldName, $onChange.' class="inputbox" style="width:90%;" multiple="multiple" size="15"', 'value', 'text', $value);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $mitems, $fieldName, $onChange.' class="inputbox" style="width:90%;" multiple="multiple" size="15"', 'value', 'text', $value);
     }
 }
 

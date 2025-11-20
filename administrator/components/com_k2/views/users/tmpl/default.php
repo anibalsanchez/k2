@@ -7,9 +7,9 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-$app = JFactory::getApplication();
+$app = Joomla\CMS\Factory::getApplication();
 $context = JRequest::getCmd('context');
 
 ?>
@@ -18,12 +18,12 @@ $context = JRequest::getCmd('context');
 <!-- Modal View -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
-        <h2 id="k2ModalLogo"><span><?php echo JText::_('K2_USERS'); ?></span></h2>
+        <h2 id="k2ModalLogo"><span><?php echo Joomla\CMS\Language\Text::_('K2_USERS'); ?></span></h2>
         <table id="k2ModalToolbar" cellpadding="2" cellspacing="4">
             <tr>
                 <td id="toolbar-close" class="button">
                     <a href="#" id="k2CloseMfp">
-                        <i class="fa fa-times-circle" aria-hidden="true"></i> <?php echo JText::_('K2_CLOSE'); ?>
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> <?php echo Joomla\CMS\Language\Text::_('K2_CLOSE'); ?>
                     </a>
                 </td>
             </tr>
@@ -35,11 +35,11 @@ $context = JRequest::getCmd('context');
         <table class="k2AdminTableFilters table">
             <tr>
                 <td class="k2AdminTableFiltersSearch">
-                    <label class="k2ui-not-visible"><?php echo JText::_('K2_FILTER'); ?></label>
+                    <label class="k2ui-not-visible"><?php echo Joomla\CMS\Language\Text::_('K2_FILTER'); ?></label>
                     <div class="btn-wrapper input-append">
-                        <input type="text" name="search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" title="<?php echo JText::_('K2_FILTER_BY_TITLE'); ?>" placeholder="<?php echo JText::_('K2_FILTER'); ?>" />
-                        <button id="k2SubmitButton" class="btn"><?php echo JText::_('K2_GO'); ?></button>
-                        <button id="k2ResetButton" class="btn"><?php echo JText::_('K2_RESET'); ?></button>
+                        <input type="text" name="search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" title="<?php echo Joomla\CMS\Language\Text::_('K2_FILTER_BY_TITLE'); ?>" placeholder="<?php echo Joomla\CMS\Language\Text::_('K2_FILTER'); ?>" />
+                        <button id="k2SubmitButton" class="btn"><?php echo Joomla\CMS\Language\Text::_('K2_GO'); ?></button>
+                        <button id="k2ResetButton" class="btn"><?php echo Joomla\CMS\Language\Text::_('K2_RESET'); ?></button>
                     </div>
                 </td>
                 <td class="k2AdminTableFiltersSelects k2ui-hide-on-mobile">
@@ -55,24 +55,24 @@ $context = JRequest::getCmd('context');
                     <tr>
                         <th class="k2ui-hide-on-mobile">#</th>
                         <th<?php echo ($context == 'modalselector') ? ' class="k2ui-not-visible"' : ' class="k2ui-center"'; ?>><input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" /></th>
-                        <th><?php echo JHTML::_('grid.sort', 'K2_NAME', 'juser.name', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                        <th class="k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_USERNAME', 'juser.username', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                        <th class="k2ui-center"><?php echo JText::_('K2_LOGGED_IN'); ?></th>
-                        <th class="k2ui-center"><?php echo JHTML::_('grid.sort', 'K2_ENABLED', 'juser.block', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_NAME', 'juser.name', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_USERNAME', 'juser.username', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-center"><?php echo Joomla\CMS\Language\Text::_('K2_LOGGED_IN'); ?></th>
+                        <th class="k2ui-center"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_ENABLED', 'juser.block', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                         <th class="k2ui-hide-on-mobile">
                             <?php if (K2_JVERSION == '30'): ?>
-                            <?php echo JText::_('K2_JOOMLA_GROUP'); ?>
+                            <?php echo Joomla\CMS\Language\Text::_('K2_JOOMLA_GROUP'); ?>
                             <?php else: ?>
-                            <?php echo JHTML::_('grid.sort', 'K2_JOOMLA_GROUP', 'juser.usertype', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+                            <?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_JOOMLA_GROUP', 'juser.usertype', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                             <?php endif; ?>
                         </th>
-                        <th class="k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_GROUP', 'groupname', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                        <th class="k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_EMAIL', 'juser.email', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_LAST_VISIT', 'juser.lastvisitDate', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_GROUP', 'groupname', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_EMAIL', 'juser.email', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_LAST_VISIT', 'juser.lastvisitDate', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                         <th class="k2ui-center k2ui-hide-on-mobile">IP</th>
-                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JText::_('K2_IMAGE'); ?></th>
-                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JText::_('K2_FLAG_AS_SPAMMER'); ?></th>
-                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_ID', 'juser.id', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\Language\Text::_('K2_IMAGE'); ?></th>
+                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\Language\Text::_('K2_FLAG_AS_SPAMMER'); ?></th>
+                        <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_ID', 'juser.id', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                     </tr>
                 </thead>
                 <?php
@@ -104,28 +104,28 @@ if ($context == "modalselector") {
                         <td class="k2ui-hide-on-mobile"><?php echo $key + 1; ?></td>
                         <td class="k2ui-center<?php echo ($context == 'modalselector') ? ' k2ui-not-visible' : ''; ?>">
                             <?php $row->checked_out = 0;
-                        echo JHTML::_('grid.id', $key, $row->id); ?>
+                        echo Joomla\CMS\HTML\HTMLHelper::_('grid.id', $key, $row->id); ?>
                         </td>
                         <td>
                             <?php if ($context == 'modalselector'): ?>
                             <?php
                         if (JRequest::getCmd('output') == 'list') {
-                            $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\', \''.JRequest::getCmd('output').'\'); return false;';
+                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".JRequest::getCmd('fid')."', '".JRequest::getVar('fname')."', '".JRequest::getCmd('output')."'); return false;";
                         } else {
-                            $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\'); return false;';
+                            $onClick = "window.parent.k2ModalSelector('".$row->id."', '".str_replace(["'", '"'], ["\\'", ''], $row->name)."', '".JRequest::getCmd('fid')."', '".JRequest::getVar('fname')."'); return false;";
                         }
                         ?>
-                            <a class="k2ListItemDisabled" title="<?php echo JText::_('K2_CLICK_TO_ADD_THIS_ENTRY'); ?>" href="#" onclick="<?php echo $onClick; ?>"><?php echo $row->name; ?></a>
+                            <a class="k2ListItemDisabled" title="<?php echo Joomla\CMS\Language\Text::_('K2_CLICK_TO_ADD_THIS_ENTRY'); ?>" href="#" onclick="<?php echo $onClick; ?>"><?php echo $row->name; ?></a>
                             <?php else: ?>
                             <a href="<?php echo $row->link; ?>"><?php echo $row->name; ?></a>
                             <?php endif; ?>
 
                             <div class="k2ui-show-on-mobile">
                                 <div class="k2ui-list-mobile-attribute">
-                                    <?php echo JText::_('K2_USERNAME'); ?>: <?php echo $row->username; ?>
+                                    <?php echo Joomla\CMS\Language\Text::_('K2_USERNAME'); ?>: <?php echo $row->username; ?>
                                 </div>
                                 <div class="k2ui-list-mobile-attribute">
-                                    <?php echo JText::_('K2_EMAIL'); ?>: <?php echo $row->email; ?>
+                                    <?php echo Joomla\CMS\Language\Text::_('K2_EMAIL'); ?>: <?php echo $row->email; ?>
                                 </div>
                             </div>
                         </td>
@@ -136,7 +136,7 @@ if ($context == "modalselector") {
                         <td class="k2ui-hide-on-mobile"><?php echo $row->groupname; ?></td>
                         <td class="k2ui-hide-on-mobile"><?php echo $row->email; ?></td>
                         <td class="k2ui-center k2ui-nowrap k2ui-hide-on-mobile">
-                            <?php echo ($row->lvisit) ? JHTML::_('date', $row->lvisit, $this->dateFormat) : JText::_('K2_NEVER'); ?>
+                            <?php echo ($row->lvisit) ? Joomla\CMS\HTML\HTMLHelper::_('date', $row->lvisit, $this->dateFormat) : Joomla\CMS\Language\Text::_('K2_NEVER'); ?>
                         </td>
                         <td class="k2ui-center k2ui-hide-on-mobile">
                             <?php if ($row->ip): ?>
@@ -150,21 +150,21 @@ if ($context == "modalselector") {
                                 if (file_exists($avatarFile) && filemtime($avatarFile)) {
                                     $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                                 }
-                                $avatar = JURI::root(true).'/media/k2/users/'.$row->image.$avatarTimestamp;
+                                $avatar = Joomla\CMS\Uri\Uri::root(true).'/media/k2/users/'.$row->image.$avatarTimestamp;
                                 ?>
-                            <a href="<?php echo $avatar; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $row->name; ?>">
-                                <i class="fa fa-picture-o" aria-hidden="true" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>"></i>
+                            <a href="<?php echo $avatar; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $row->name; ?>">
+                                <i class="fa fa-picture-o" aria-hidden="true" title="<?php echo Joomla\CMS\Language\Text::_('K2_PREVIEW_IMAGE'); ?>"></i>
                             </a>
                             <?php endif; ?>
                         </td>
                         <td class="k2ui-center k2ui-hide-on-mobile">
                             <?php if (!$row->block): ?>
                             <?php if ($context == 'modalselector'): ?>
-                            <a class="k2ReportUserButton k2IsIcon" href="<?php echo JRoute::_('index.php?option=com_k2&view=user&task=report&tmpl=component&context=modalselector&id='.$row->id); ?>">
+                            <a class="k2ReportUserButton k2IsIcon" href="<?php echo Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=user&task=report&tmpl=component&context=modalselector&id='.$row->id); ?>">
                                 <i class="fa fa-ban" aria-hidden="true"></i>
                             </a>
                             <?php else: ?>
-                            <a class="k2ReportUserButton k2IsIcon" href="<?php echo JRoute::_('index.php?option=com_k2&view=user&task=report&id='.$row->id); ?>">
+                            <a class="k2ReportUserButton k2IsIcon" href="<?php echo Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=user&task=report&id='.$row->id); ?>">
                                 <i class="fa fa-ban" aria-hidden="true"></i>
                             </a>
                             <?php endif; ?>
@@ -177,7 +177,7 @@ if ($context == "modalselector") {
                     <tr>
                         <td colspan="<?php echo $tfootColspan; ?>" class="k2ui-nocontent">
                             <div class="k2ui-nocontent-message">
-                                <i class="fa fa-list" aria-hidden="true"></i><?php echo JText::_('K2_BE_NO_USERS_FOUND'); ?>
+                                <i class="fa fa-list" aria-hidden="true"></i><?php echo Joomla\CMS\Language\Text::_('K2_BE_NO_USERS_FOUND'); ?>
                             </div>
                         </td>
                     </tr>
@@ -199,7 +199,7 @@ if ($context == "modalselector") {
         <input type="hidden" name="fname" value="<?php echo JRequest::getVar('fname'); ?>" />
         <input type="hidden" name="output" value="<?php echo JRequest::getCmd('output'); ?>" />
         <?php endif; ?>
-        <?php echo JHTML::_('form.token'); ?>
+        <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 
 <?php if ($app->isSite() || $context == 'modalselector'): ?>

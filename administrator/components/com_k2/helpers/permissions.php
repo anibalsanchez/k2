@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.html.parameter');
 
@@ -21,8 +21,8 @@ class K2HelperPermissions
 {
     public static function checkPermissions()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
         $task = JRequest::getCmd('task');
@@ -30,7 +30,7 @@ class K2HelperPermissions
 
         // Generic access check
         if (!$user->authorise('core.manage', $option)) {
-            JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
+            JError::raiseWarning(403, Joomla\CMS\Language\Text::_('JERROR_ALERTNOAUTHOR'));
             $app->redirect('index.php');
         }
 
@@ -41,11 +41,8 @@ class K2HelperPermissions
                 case '':
                 case 'save':
                 case 'apply':
-                    if (!$id) {
-                        $action = 'core.create';
-                    } else {
-                        $action = 'core.edit';
-                    }
+                    $action = $id ? 'core.edit' : 'core.create';
+
                     break;
                 case 'trash':
                 case 'remove':
@@ -59,8 +56,8 @@ class K2HelperPermissions
 
             // Edit or edit own action
             if ($action == 'core.edit' && $view == 'item' && $id) {
-                JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-                $item = JTable::getInstance('K2Item', 'Table');
+                Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+                $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($id);
                 if ($item->created_by == $user->id) {
                     $action = 'core.edit.own';
@@ -68,11 +65,9 @@ class K2HelperPermissions
             }
 
             // Check the determined action
-            if ($action) {
-                if (!$user->authorise($action, $option)) {
-                    JError::raiseWarning(403, JText::_('JERROR_ALERTNOAUTHOR'));
-                    $app->redirect('index.php?option=com_k2');
-                }
+            if ($action && !$user->authorise($action, $option)) {
+                JError::raiseWarning(403, Joomla\CMS\Language\Text::_('JERROR_ALERTNOAUTHOR'));
+                $app->redirect('index.php?option=com_k2');
             }
         }
     }

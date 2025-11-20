@@ -7,9 +7,9 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-$app = JFactory::getApplication();
+$app = Joomla\CMS\Factory::getApplication();
 
 ?>
 
@@ -17,17 +17,17 @@ $app = JFactory::getApplication();
 <!-- Frontend Item Editing (Modal View) -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
-        <h2 id="k2ModalLogo"><span><?php echo (JRequest::getInt('cid')) ? JText::_('K2_EDIT_ITEM') : JText::_('K2_ADD_ITEM'); ?></span></h2>
+        <h2 id="k2ModalLogo"><span><?php echo (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_ITEM') : Joomla\CMS\Language\Text::_('K2_ADD_ITEM'); ?></span></h2>
         <table id="k2ModalToolbar" cellpadding="2" cellspacing="4">
             <tr>
                 <td id="toolbar-save" class="button">
                     <a href="#" onclick="Joomla.submitbutton('save');return false;">
-                        <i class="fa fa-check" aria-hidden="true"></i> <?php echo JText::_('K2_SAVE'); ?>
+                        <i class="fa fa-check" aria-hidden="true"></i> <?php echo Joomla\CMS\Language\Text::_('K2_SAVE'); ?>
                     </a>
                 </td>
                 <td id="toolbar-cancel" class="button">
                     <a href="#">
-                        <i class="fa fa-times-circle" aria-hidden="true"></i> <?php echo JText::_('K2_CLOSE'); ?>
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> <?php echo Joomla\CMS\Language\Text::_('K2_CLOSE'); ?>
                     </a>
                 </td>
             </tr>
@@ -35,22 +35,22 @@ $app = JFactory::getApplication();
     </div>
 <?php endif; ?>
 
-    <form action="<?php echo JRoute::_('index.php'); ?>" enctype="multipart/form-data" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Joomla\CMS\Router\Route::_('index.php'); ?>" enctype="multipart/form-data" method="post" name="adminForm" id="adminForm">
         <?php if ($app->isSite() && !$this->permissions->get('publish') && !$this->row->published): ?>
         <div id="k2ModalPermissionsNotice">
-            <p><?php echo JText::_('K2_FRONTEND_PERMISSIONS_NOTICE'); ?></p>
+            <p><?php echo Joomla\CMS\Language\Text::_('K2_FRONTEND_PERMISSIONS_NOTICE'); ?></p>
         </div>
         <?php endif; ?>
 
         <!-- Top Nav Tabs START here -->
         <div id="k2FormTopNav" class="k2Tabs">
             <div class="k2NavTabsWrapper">
-                <h2><?php echo JText::_('K2_EDIT_ITEM'); ?></h2>
+                <h2><?php echo Joomla\CMS\Language\Text::_('K2_EDIT_ITEM'); ?></h2>
                 <ul class="k2NavTabs">
-                    <li id="tabContent"><a href="#k2TabBasic"><i class="fa fa-home"></i><?php echo JText::_('K2_BASIC'); ?></a></li>
-                    <li id="tabContent"><a href="#k2TabPubAndMeta"><i class="fa fa-info-circle"></i><?php echo JText::_('K2_PUBLISHING_AND_METADATA'); ?></a></li>
+                    <li id="tabContent"><a href="#k2TabBasic"><i class="fa fa-home"></i><?php echo Joomla\CMS\Language\Text::_('K2_BASIC'); ?></a></li>
+                    <li id="tabContent"><a href="#k2TabPubAndMeta"><i class="fa fa-info-circle"></i><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHING_AND_METADATA'); ?></a></li>
                     <?php if ($app->isAdmin()): ?>
-                    <li id="tabContent"><a href="#k2TabDisplaySet"><i class="fa fa-desktop"></i><?php echo JText::_('K2_DISPLAY_SETTINGS'); ?></a></li>
+                    <li id="tabContent"><a href="#k2TabDisplaySet"><i class="fa fa-desktop"></i><?php echo Joomla\CMS\Language\Text::_('K2_DISPLAY_SETTINGS'); ?></a></li>
                     <?php endif; ?>
                 </ul>
             </div>
@@ -58,30 +58,30 @@ $app = JFactory::getApplication();
             <!-- BASIC [start] -->
             <div class="k2NavTabContent" id="k2TabBasic">
                 <?php if ($this->row->id): ?>
-                <div id="k2ID"><strong><?php echo JText::_('K2_ID'); ?></strong> <?php echo $this->row->id; ?></div>
+                <div id="k2ID"><strong><?php echo Joomla\CMS\Language\Text::_('K2_ID'); ?></strong> <?php echo $this->row->id; ?></div>
                 <?php endif; ?>
 
                 <div class="k2ui-table-basic">
                     <div class="k2ui-field-label">
-                        <label for="title"><?php echo JText::_('K2_TITLE'); ?></label>
+                        <label for="title"><?php echo Joomla\CMS\Language\Text::_('K2_TITLE'); ?></label>
                     </div>
                     <div class="k2ui-field-value k2ui-title">
                         <input type="text" name="title" id="title" maxlength="250" value="<?php echo $this->row->title; ?>" />
                     </div>
                     <div class="k2ui-field-label">
-                        <label for="alias"><?php echo JText::_('K2_TITLE_ALIAS'); ?></label>
+                        <label for="alias"><?php echo Joomla\CMS\Language\Text::_('K2_TITLE_ALIAS'); ?></label>
                     </div>
                     <div class="k2ui-field-value k2ui-title-alias">
                         <input type="text" name="alias" id="alias" maxlength="250" value="<?php echo $this->row->alias; ?>" />
                     </div>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_CATEGORY'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_CATEGORY'); ?></label>
                     </div>
                     <div class="k2ui-field-value k2ui-category">
                         <?php echo $this->lists['categories']; ?>
                     </div>
                     <div class="k2ui-field-label">
-                        <label for="tags"><?php echo JText::_('K2_TAGS'); ?></label>
+                        <label for="tags"><?php echo Joomla\CMS\Language\Text::_('K2_TAGS'); ?></label>
                     </div>
                     <div class="k2ui-field-value">
                         <?php if ($this->params->get('taggingSystem') == 'free'): ?>
@@ -91,7 +91,7 @@ $app = JFactory::getApplication();
                             <?php foreach ($this->row->tags as $tag): ?>
                             <li class="tagAdded">
                                 <?php echo $tag->name; ?>
-                                <span title="<?php echo JText::_('K2_CLICK_TO_REMOVE_TAG'); ?>" class="tagRemove">&times;</span>
+                                <span title="<?php echo Joomla\CMS\Language\Text::_('K2_CLICK_TO_REMOVE_TAG'); ?>" class="tagRemove">&times;</span>
                                 <input type="hidden" name="tags[]" value="<?php echo $tag->name; ?>" />
                             </li>
                             <?php endforeach; ?>
@@ -102,33 +102,33 @@ $app = JFactory::getApplication();
                             <li class="clr"></li>
                         </ul>
                         <p class="k2TagsNotice">
-                            <?php echo JText::_('K2_WRITE_A_TAG_AND_PRESS_RETURN_OR_COMMA_TO_ADD_IT'); ?>
+                            <?php echo Joomla\CMS\Language\Text::_('K2_WRITE_A_TAG_AND_PRESS_RETURN_OR_COMMA_TO_ADD_IT'); ?>
                         </p>
                         <?php else: ?>
                         <!-- Selection based tagging -->
                         <?php if (!$this->params->get('lockTags') || $this->user->gid > 23): ?>
                         <input type="text" name="tag" id="tag" />
-                        <input type="button" id="newTagButton" class="k2Selector" value="<?php echo JText::_('K2_ADD'); ?>" />
+                        <input type="button" id="newTagButton" class="k2Selector" value="<?php echo Joomla\CMS\Language\Text::_('K2_ADD'); ?>" />
                         <div id="tagsLog"></div>
                         <div class="clr"></div>
                         <span class="k2Note">
-                            <?php echo JText::_('K2_WRITE_A_TAG_AND_PRESS_ADD_TO_INSERT_IT_TO_THE_AVAILABLE_TAGS_LISTNEW_TAGS_ARE_APPENDED_AT_THE_BOTTOM_OF_THE_AVAILABLE_TAGS_LIST_LEFT'); ?>
+                            <?php echo Joomla\CMS\Language\Text::_('K2_WRITE_A_TAG_AND_PRESS_ADD_TO_INSERT_IT_TO_THE_AVAILABLE_TAGS_LISTNEW_TAGS_ARE_APPENDED_AT_THE_BOTTOM_OF_THE_AVAILABLE_TAGS_LIST_LEFT'); ?>
                         </span>
                         <?php endif; ?>
                         <table cellspacing="0" cellpadding="0" border="0" id="tagLists">
                             <tr>
                                 <td id="tagListsLeft">
-                                    <span><?php echo JText::_('K2_AVAILABLE_TAGS'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_AVAILABLE_TAGS'); ?></span>
                                     <?php echo $this->lists['tags']; ?>
                                 </td>
                                 <td id="tagListsButtons">
-                                    <input type="button" id="addTagButton" class="k2Selector" value="<?php echo JText::_('K2_ADD'); ?> &raquo;" />
+                                    <input type="button" id="addTagButton" class="k2Selector" value="<?php echo Joomla\CMS\Language\Text::_('K2_ADD'); ?> &raquo;" />
                                     <br />
                                     <br />
-                                    <input type="button" id="removeTagButton" class="k2Selector" value="&laquo; <?php echo JText::_('K2_REMOVE'); ?>" />
+                                    <input type="button" id="removeTagButton" class="k2Selector" value="&laquo; <?php echo Joomla\CMS\Language\Text::_('K2_REMOVE'); ?>" />
                                 </td>
                                 <td id="tagListsRight">
-                                    <span><?php echo JText::_('K2_SELECTED_TAGS'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_SELECTED_TAGS'); ?></span>
                                     <?php echo $this->lists['selectedTags']; ?>
                                 </td>
                             </tr>
@@ -139,26 +139,26 @@ $app = JFactory::getApplication();
                 <div class="k2ui-table-additional">
                     <?php if ($app->isAdmin() || ($app->isSite() && $this->permissions->get('publish'))): ?>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_PUBLISHED'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED'); ?></label>
                     </div>
                     <div class="k2ui-field-value k2ui-button-set">
                         <?php echo $this->lists['published']; ?>
                     </div>
                     <div class="k2ui-field-label">
-                        <label for="featured"><?php echo JText::_('K2_IS_IT_FEATURED'); ?></label>
+                        <label for="featured"><?php echo Joomla\CMS\Language\Text::_('K2_IS_IT_FEATURED'); ?></label>
                     </div>
                     <div class="k2ui-field-value k2ui-button-set">
                         <?php echo $this->lists['featured']; ?>
                     </div>
                     <?php endif; ?>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_ACCESS_LEVEL'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_ACCESS_LEVEL'); ?></label>
                     </div>
                     <div class="k2ui-field-value">
                         <?php echo $this->lists['access']; ?>
                     </div>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_AUTHOR'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_AUTHOR'); ?></label>
                     </div>
                     <div class="k2ui-field-value">
                         <span id="k2Author">
@@ -172,14 +172,14 @@ $app = JFactory::getApplication();
                         <?php endif; ?>
                     </div>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_AUTHOR_ALIAS'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_AUTHOR_ALIAS'); ?></label>
                     </div>
                     <div class="k2ui-field-value">
                         <input class="text_area" type="text" name="created_by_alias" maxlength="250" value="<?php echo $this->row->created_by_alias; ?>" />
                     </div>
                     <?php if (isset($this->lists['language'])): ?>
                     <div class="k2ui-field-label">
-                        <label><?php echo JText::_('K2_LANGUAGE'); ?></label>
+                        <label><?php echo Joomla\CMS\Language\Text::_('K2_LANGUAGE'); ?></label>
                     </div>
                     <div class="k2ui-field-value">
                         <?php echo $this->lists['language']; ?>
@@ -189,33 +189,33 @@ $app = JFactory::getApplication();
 
                 <!-- Required extra field warning -->
                 <div id="k2ExtraFieldsValidationResults">
-                    <h3><?php echo JText::_('K2_THE_FOLLOWING_FIELDS_ARE_REQUIRED'); ?></h3>
+                    <h3><?php echo Joomla\CMS\Language\Text::_('K2_THE_FOLLOWING_FIELDS_ARE_REQUIRED'); ?></h3>
                     <ul id="k2ExtraFieldsMissing">
-                        <li><?php echo JText::_('K2_LOADING'); ?></li>
+                        <li><?php echo Joomla\CMS\Language\Text::_('K2_LOADING'); ?></li>
                     </ul>
                 </div>
 
                 <!-- Sub-tabs for BASIC [start] -->
                 <div class="k2Tabs" id="k2Tabs">
                     <ul class="k2TabsNavigation">
-                        <li id="tabContent"><a href="#k2TabContent"><i class="fa fa-file-text-o"></i><?php echo JText::_('K2_CONTENT'); ?></a></li>
+                        <li id="tabContent"><a href="#k2TabContent"><i class="fa fa-file-text-o"></i><?php echo Joomla\CMS\Language\Text::_('K2_CONTENT'); ?></a></li>
                         <?php if ($this->params->get('showImageTab')): ?>
-                        <li id="tabImage"><a href="#k2TabImage"><i class="fa fa-camera"></i><?php echo JText::_('K2_IMAGE'); ?></a></li>
+                        <li id="tabImage"><a href="#k2TabImage"><i class="fa fa-camera"></i><?php echo Joomla\CMS\Language\Text::_('K2_IMAGE'); ?></a></li>
                         <?php endif; ?>
                         <?php if ($this->params->get('showImageGalleryTab')): ?>
-                        <li id="tabImageGallery"><a href="#k2TabImageGallery"><i class="fa fa-file-image-o"></i><?php echo JText::_('K2_IMAGE_GALLERY'); ?></a></li>
+                        <li id="tabImageGallery"><a href="#k2TabImageGallery"><i class="fa fa-file-image-o"></i><?php echo Joomla\CMS\Language\Text::_('K2_IMAGE_GALLERY'); ?></a></li>
                         <?php endif; ?>
                         <?php if ($this->params->get('showVideoTab')): ?>
-                        <li id="tabVideo"><a href="#k2TabMedia"><i class="fa fa-file-video-o"></i><?php echo JText::_('K2_MEDIA'); ?></a></li>
+                        <li id="tabVideo"><a href="#k2TabMedia"><i class="fa fa-file-video-o"></i><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA'); ?></a></li>
                         <?php endif; ?>
                         <?php if ($this->params->get('showExtraFieldsTab')): ?>
-                        <li id="tabExtraFields"><a href="#k2TabExtraFields"><i class="fa fa-gear"></i><?php echo JText::_('K2_EXTRA_FIELDS'); ?></a></li>
+                        <li id="tabExtraFields"><a href="#k2TabExtraFields"><i class="fa fa-gear"></i><?php echo Joomla\CMS\Language\Text::_('K2_EXTRA_FIELDS'); ?></a></li>
                         <?php endif; ?>
                         <?php if ($this->params->get('showAttachmentsTab')): ?>
-                        <li id="tabAttachments"><a href="#k2TabAttachments"><i class="fa fa-file-o"></i><?php echo JText::_('K2_ATTACHMENTS'); ?></a></li>
+                        <li id="tabAttachments"><a href="#k2TabAttachments"><i class="fa fa-file-o"></i><?php echo Joomla\CMS\Language\Text::_('K2_ATTACHMENTS'); ?></a></li>
                         <?php endif; ?>
                         <?php if (count(array_filter($this->K2PluginsItemOther)) && $this->params->get('showK2Plugins')): ?>
-                        <li id="tabPlugins"><a href="#k2TabPlugins"><i class="fa fa-wrench"></i><?php echo JText::_('K2_PLUGINS'); ?></a></li>
+                        <li id="tabPlugins"><a href="#k2TabPlugins"><i class="fa fa-wrench"></i><?php echo Joomla\CMS\Language\Text::_('K2_PLUGINS'); ?></a></li>
                         <?php endif; ?>
                     </ul>
 
@@ -229,26 +229,26 @@ $app = JFactory::getApplication();
                         </div>
                         <?php else: ?>
                         <div class="k2ItemFormEditor">
-                            <span class="k2ItemFormEditorTitle"><?php echo JText::_('K2_INTROTEXT_TEASER_CONTENTEXCERPT'); ?></span>
+                            <span class="k2ItemFormEditorTitle"><?php echo Joomla\CMS\Language\Text::_('K2_INTROTEXT_TEASER_CONTENTEXCERPT'); ?></span>
                             <?php echo $this->introtext; ?>
                             <div class="dummyHeight"></div>
                             <div class="clr"></div>
                         </div>
                         <div class="k2ItemFormEditor">
-                            <span class="k2ItemFormEditorTitle"><?php echo JText::_('K2_FULLTEXT_MAIN_CONTENT'); ?></span>
+                            <span class="k2ItemFormEditorTitle"><?php echo Joomla\CMS\Language\Text::_('K2_FULLTEXT_MAIN_CONTENT'); ?></span>
                             <?php echo $this->fulltext; ?>
                             <div class="dummyHeight"></div>
                             <div class="clr"></div>
                         </div>
                         <?php endif; ?>
-                        <?php if (count($this->K2PluginsItemContent)): ?>
+                        <?php if (count($this->K2PluginsItemContent) > 0): ?>
                         <div class="itemPlugins itemPluginsContent">
-                            <?php foreach ($this->K2PluginsItemContent as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemContent as $K2PluginItemContent): ?>
+                            <?php if (!is_null($K2PluginItemContent)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemContent->name))); ?>">
+                                <h3><?php echo $K2PluginItemContent->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemContent->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -263,36 +263,36 @@ $app = JFactory::getApplication();
                     <div class="k2TabsContent" id="k2TabImage">
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_ITEM_IMAGE'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_IMAGE'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="file" name="image" class="fileUpload k2Selector" accept="image/*" />
-                                <i>(<?php echo JText::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
+                                <i>(<?php echo Joomla\CMS\Language\Text::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
 
-                                <span class="sep"><?php echo JText::_('K2_OR'); ?></span>
+                                <span class="sep"><?php echo Joomla\CMS\Language\Text::_('K2_OR'); ?></span>
 
                                 <input type="text" name="existingImage" id="existingImageValue" class="text_area" readonly />
-                                <input type="button" value="<?php echo JText::_('K2_BROWSE_SERVER'); ?>" id="k2ImageBrowseServer" />
+                                <input type="button" value="<?php echo Joomla\CMS\Language\Text::_('K2_BROWSE_SERVER'); ?>" id="k2ImageBrowseServer" />
                             </div>
                         </div>
                         <?php if (!empty($this->row->image)): ?>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_ITEM_IMAGE_PREVIEW'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_IMAGE_PREVIEW'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
-                                <a data-fancybox="images" data-caption="<?php echo $this->row->title; ?>" href="<?php echo $this->row->image; ?>" title="<?php echo JText::_('K2_CLICK_ON_IMAGE_TO_PREVIEW_IN_ORIGINAL_SIZE'); ?>">
+                                <a data-fancybox="images" data-caption="<?php echo $this->row->title; ?>" href="<?php echo $this->row->image; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_CLICK_ON_IMAGE_TO_PREVIEW_IN_ORIGINAL_SIZE'); ?>">
                                     <img class="k2AdminImage" src="<?php echo $this->row->thumb; ?>" alt="<?php echo $this->row->title; ?>" />
                                 </a>
                                 <br />
                                 <input type="checkbox" name="del_image" id="del_image" />
-                                <label for="del_image"><?php echo JText::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_OR_JUST_UPLOAD_A_NEW_IMAGE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
+                                <label for="del_image"><?php echo Joomla\CMS\Language\Text::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_OR_JUST_UPLOAD_A_NEW_IMAGE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
                             </div>
                         </div>
                         <?php endif; ?>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_ITEM_IMAGE_CAPTION'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_IMAGE_CAPTION'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="text" name="image_caption" size="30" class="text_area" value="<?php echo $this->row->image_caption; ?>" />
@@ -300,20 +300,20 @@ $app = JFactory::getApplication();
                         </div>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_ITEM_IMAGE_CREDITS'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_IMAGE_CREDITS'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="text" name="image_credits" size="30" class="text_area" value="<?php echo $this->row->image_credits; ?>" />
                             </div>
                         </div>
-                        <?php if (count($this->K2PluginsItemImage)): ?>
+                        <?php if (count($this->K2PluginsItemImage) > 0): ?>
                         <div class="itemPlugins itemPluginsImage">
-                            <?php foreach ($this->K2PluginsItemImage as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemImage as $K2PluginItemImage): ?>
+                            <?php if (!is_null($K2PluginItemImage)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemImage->name))); ?>">
+                                <h3><?php echo $K2PluginItemImage->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemImage->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -330,47 +330,47 @@ $app = JFactory::getApplication();
                         <?php if ($this->sigPro): ?>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_COM_BE_ITEM_SIGPRO_UPLOAD_NOTE'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_COM_BE_ITEM_SIGPRO_UPLOAD_NOTE'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <a class="k2Button modal k2Selector" rel="{handler: 'iframe', size: {x: (window.innerWidth)*0.9, y: (window.innerHeight)*0.9}}" href="index.php?option=com_sigpro&view=galleries&task=create&newFolder=<?php echo $this->sigProFolder; ?>&type=k2&tmpl=component">
-                                    <?php echo JText::_('K2_COM_BE_ITEM_SIGPRO_UPLOAD'); ?>
+                                    <?php echo Joomla\CMS\Language\Text::_('K2_COM_BE_ITEM_SIGPRO_UPLOAD'); ?>
                                 </a>
                                 <input name="sigProFolder" type="hidden" value="<?php echo $this->sigProFolder; ?>" />
                             </div>
                         </div>
                         <div class="itemAdditionalField separator">
                             <div class="itemAdditionalValue">
-                                <?php echo JText::_('K2_OR'); ?>
+                                <?php echo Joomla\CMS\Language\Text::_('K2_OR'); ?>
                             </div>
                             <div class="itemAdditionalData"></div>
                         </div>
                         <?php endif; ?>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_UPLOAD_A_ZIP_FILE_WITH_IMAGES'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_UPLOAD_A_ZIP_FILE_WITH_IMAGES'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="file" name="gallery" class="fileUpload k2Selector" accept=".zip" />
-                                <span class="hasTip k2GalleryNotice" title="<?php echo JText::_('K2_UPLOAD_A_ZIP_FILE_HELP_HEADER'); ?>::<?php echo JText::_('K2_UPLOAD_A_ZIP_FILE_HELP_TEXT'); ?>">
+                                <span class="hasTip k2GalleryNotice" title="<?php echo Joomla\CMS\Language\Text::_('K2_UPLOAD_A_ZIP_FILE_HELP_HEADER'); ?>::<?php echo Joomla\CMS\Language\Text::_('K2_UPLOAD_A_ZIP_FILE_HELP_TEXT'); ?>">
                                     <i class="fa fa-question-circle" aria-hidden="true"></i>
                                 </span>
-                                <i>(<?php echo JText::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
+                                <i>(<?php echo Joomla\CMS\Language\Text::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
                             </div>
                         </div>
                         <div class="itemAdditionalField separator">
                             <div class="itemAdditionalValue">
-                                <?php echo JText::_('K2_OR'); ?>
+                                <?php echo Joomla\CMS\Language\Text::_('K2_OR'); ?>
                             </div>
                             <div class="itemAdditionalData"></div>
                         </div>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_OR_ENTER_A_FLICKR_SET_URL'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_OR_ENTER_A_FLICKR_SET_URL'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="text" name="flickrGallery" size="50" value="<?php echo ($this->row->galleryType == 'flickr') ? $this->row->galleryValue : ''; ?>" />
-                                <span class="hasTip k2GalleryNotice" title="<?php echo JText::_('K2_VALID_FLICK_API_KEY_HELP_HEADER'); ?>::<?php echo JText::_('K2_VALID_FLICK_API_KEY_HELP_TEXT'); ?>">
+                                <span class="hasTip k2GalleryNotice" title="<?php echo Joomla\CMS\Language\Text::_('K2_VALID_FLICK_API_KEY_HELP_HEADER'); ?>::<?php echo Joomla\CMS\Language\Text::_('K2_VALID_FLICK_API_KEY_HELP_TEXT'); ?>">
                                     <i class="fa fa-question-circle" aria-hidden="true"></i>
                                 </span>
                             </div>
@@ -379,30 +379,30 @@ $app = JFactory::getApplication();
                         <!-- Preview -->
                         <div id="itemGallery" class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_PREVIEW'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_PREVIEW'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <?php echo $this->row->gallery; ?>
                                 <div class="clr"></div>
                                 <input type="checkbox" name="del_gallery" id="del_gallery" />
-                                <label for="del_gallery"><?php echo JText::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_GALLERY_OR_JUST_UPLOAD_A_NEW_IMAGE_GALLERY_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
+                                <label for="del_gallery"><?php echo Joomla\CMS\Language\Text::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_GALLERY_OR_JUST_UPLOAD_A_NEW_IMAGE_GALLERY_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
                             </div>
                         </div>
                         <?php endif; ?>
                         <?php else: /* SIGPro not present */ ?>
                         <div class="k2-generic-message">
-                            <h3><?php echo JText::_('K2_NOTICE'); ?></h3>
-                            <p><?php echo JText::_('K2_NOTICE_PLEASE_INSTALL_JOOMLAWORKS_SIMPLE_IMAGE_GALLERY_PRO_PLUGIN_IF_YOU_WANT_TO_USE_THE_IMAGE_GALLERY_FEATURES_OF_K2'); ?></p>
+                            <h3><?php echo Joomla\CMS\Language\Text::_('K2_NOTICE'); ?></h3>
+                            <p><?php echo Joomla\CMS\Language\Text::_('K2_NOTICE_PLEASE_INSTALL_JOOMLAWORKS_SIMPLE_IMAGE_GALLERY_PRO_PLUGIN_IF_YOU_WANT_TO_USE_THE_IMAGE_GALLERY_FEATURES_OF_K2'); ?></p>
                         </div>
                         <?php endif; ?>
-                        <?php if (count($this->K2PluginsItemGallery)): ?>
+                        <?php if (count($this->K2PluginsItemGallery) > 0): ?>
                         <div class="itemPlugins itemPluginsImageGallery">
-                            <?php foreach ($this->K2PluginsItemGallery as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemGallery as $K2PluginItemGallery): ?>
+                            <?php if (!is_null($K2PluginItemGallery)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemGallery->name))); ?>">
+                                <h3><?php echo $K2PluginItemGallery->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemGallery->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -419,20 +419,20 @@ $app = JFactory::getApplication();
                         <div id="item_video_content">
                             <div class="itemAdditionalField">
                                 <div class="itemAdditionalValue">
-                                    <label><?php echo JText::_('K2_MEDIA_SOURCE'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_SOURCE'); ?></label>
                                 </div>
                                 <div class="itemAdditionalData">
                                     <div id="k2MediaTabs" class="k2Tabs">
                                         <ul class="k2TabsNavigation">
-                                            <li><a href="#k2MediaTab1"><?php echo JText::_('K2_UPLOAD'); ?></a></li>
-                                            <li><a href="#k2MediaTab2"><?php echo JText::_('K2_BROWSE_SERVERUSE_REMOTE_MEDIA'); ?></a></li>
-                                            <li><a href="#k2MediaTab3"><?php echo JText::_('K2_MEDIA_USE_THIRD_PARTY_MEDIA_SERVICE'); ?></a></li>
-                                            <li><a href="#k2MediaTab4"><?php echo JText::_('K2_EMBED'); ?></a></li>
+                                            <li><a href="#k2MediaTab1"><?php echo Joomla\CMS\Language\Text::_('K2_UPLOAD'); ?></a></li>
+                                            <li><a href="#k2MediaTab2"><?php echo Joomla\CMS\Language\Text::_('K2_BROWSE_SERVERUSE_REMOTE_MEDIA'); ?></a></li>
+                                            <li><a href="#k2MediaTab3"><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_USE_THIRD_PARTY_MEDIA_SERVICE'); ?></a></li>
+                                            <li><a href="#k2MediaTab4"><?php echo Joomla\CMS\Language\Text::_('K2_EMBED'); ?></a></li>
                                         </ul>
                                         <div id="k2MediaTab1" class="k2TabsContent">
                                             <div class="panel" id="Upload_video">
                                                 <input type="file" name="video" class="fileUpload k2Selector" accept="video/*,audio/*" />
-                                                <i>(<?php echo JText::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
+                                                <i>(<?php echo Joomla\CMS\Language\Text::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
                                                 <input type="hidden" name="uploadedVideo" value="<?php echo $this->lists['uploadedVideo']; ?>" />
                                             </div>
                                         </div>
@@ -440,14 +440,14 @@ $app = JFactory::getApplication();
                                             <div class="panel" id="Remote_video">
                                                 <div class="itemAdditionalBlock">
                                                     <a id="k2MediaBrowseServer" class="k2Button" href="index.php?option=com_k2&amp;view=media&amp;type=video&amp;tmpl=component&amp;fieldID=remoteVideo">
-                                                        <?php echo JText::_('K2_BROWSE_VIDEOS_ON_SERVER'); ?>
+                                                        <?php echo Joomla\CMS\Language\Text::_('K2_BROWSE_VIDEOS_ON_SERVER'); ?>
                                                     </a>
                                                 </div>
                                                 <div class="itemAdditionalBlock sep">
-                                                    <?php echo JText::_('K2_OR'); ?>
+                                                    <?php echo Joomla\CMS\Language\Text::_('K2_OR'); ?>
                                                 </div>
                                                 <div class="itemAdditionalBlock">
-                                                    <label><?php echo JText::_('K2_PASTE_REMOTE_VIDEO_URL'); ?></label>
+                                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_PASTE_REMOTE_VIDEO_URL'); ?></label>
                                                 </div>
                                                 <div class="itemAdditionalBlock">
                                                     <input type="text" size="50" name="remoteVideo" id="remoteVideo" value="<?php echo $this->lists['remoteVideo']; ?>" />
@@ -457,7 +457,7 @@ $app = JFactory::getApplication();
                                         <div id="k2MediaTab3" class="k2TabsContent">
                                             <div class="panel" id="Video_from_provider">
                                                 <div class="itemAdditionalBlock">
-                                                    <label><?php echo JText::_('K2_SELECT_THIRD_PARTY_MEDIA_PROVIDER'); ?></label>
+                                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_SELECT_THIRD_PARTY_MEDIA_PROVIDER'); ?></label>
                                                 </div>
                                                 <div class="itemAdditionalBlock">
                                                     <?php echo $this->lists['providers']; ?>
@@ -465,7 +465,7 @@ $app = JFactory::getApplication();
                                                 <br />
                                                 <br />
                                                 <div class="itemAdditionalBlock">
-                                                    <label><?php echo JText::_('K2_AND_ENTER_MEDIA_URL_OR_ID'); ?></label>
+                                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_AND_ENTER_MEDIA_URL_OR_ID'); ?></label>
                                                 </div>
                                                 <div class="itemAdditionalBlock">
                                                     <input type="text" size="50" name="videoID" value="<?php echo $this->lists['providerVideo'] ?>" />
@@ -473,7 +473,7 @@ $app = JFactory::getApplication();
                                                 <div class="k2Right k2DocLink">
                                                     <a data-k2-modal="iframe" href="https://www.joomlaworks.net/allvideos-documentation">
                                                         <i class="fa fa-info"></i>
-                                                        <span><?php echo JText::_('K2_READ_THE_ALLVIDEOS_DOCUMENTATION_FOR_MORE'); ?></span>
+                                                        <span><?php echo Joomla\CMS\Language\Text::_('K2_READ_THE_ALLVIDEOS_DOCUMENTATION_FOR_MORE'); ?></span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -481,7 +481,7 @@ $app = JFactory::getApplication();
                                         <div id="k2MediaTab4" class="k2TabsContent">
                                             <div class="itemAdditionalField panel" id="embedVideo">
                                                 <div class="itemAdditionalValue">
-                                                    <label><?php echo JText::_('K2_PASTE_HTML_EMBED_CODE_BELOW'); ?></label>
+                                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_PASTE_HTML_EMBED_CODE_BELOW'); ?></label>
                                                 </div>
                                                 <div class="itemAdditionalData">
                                                     <textarea name="embedVideo" rows="5" cols="50" class="textarea"><?php echo $this->lists['embedVideo']; ?></textarea>
@@ -495,19 +495,19 @@ $app = JFactory::getApplication();
                             <?php if ($this->row->video): ?>
                             <div class="itemAdditionalField">
                                 <div class="itemAdditionalValue">
-                                    <label><?php echo JText::_('K2_MEDIA_PREVIEW'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_PREVIEW'); ?></label>
                                 </div>
                                 <div class="itemAdditionalData">
                                     <?php echo $this->row->video; ?>
                                     <div class="clr"></div>
                                     <input type="checkbox" name="del_video" id="del_video" />
-                                    <label for="del_video"><?php echo JText::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_VIDEO_OR_USE_THE_FORM_ABOVE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
+                                    <label for="del_video"><?php echo Joomla\CMS\Language\Text::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_VIDEO_OR_USE_THE_FORM_ABOVE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
                                 </div>
                             </div>
                             <?php endif; ?>
                             <div class="itemAdditionalField">
                                 <div class="itemAdditionalValue">
-                                    <label><?php echo JText::_('K2_MEDIA_CAPTION'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_CAPTION'); ?></label>
                                 </div>
                                 <div class="itemAdditionalData">
                                     <input type="text" name="video_caption" size="50" class="text_area" value="<?php echo $this->row->video_caption; ?>" />
@@ -515,7 +515,7 @@ $app = JFactory::getApplication();
                             </div>
                             <div class="itemAdditionalField">
                                 <div class="itemAdditionalValue">
-                                    <label><?php echo JText::_('K2_MEDIA_CREDITS'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_CREDITS'); ?></label>
                                 </div>
                                 <div class="itemAdditionalData">
                                     <input type="text" name="video_credits" size="50" class="text_area" value="<?php echo $this->row->video_credits; ?>" />
@@ -526,19 +526,19 @@ $app = JFactory::getApplication();
 
                         <!-- No AllVideos alert goes here -->
                         <div class="k2-generic-message">
-                            <h3><?php echo JText::_('K2_NOTICE'); ?></h3>
-                            <p><?php echo JText::_('K2_NOTICE_PLEASE_INSTALL_JOOMLAWORKS_ALLVIDEOS_PLUGIN_IF_YOU_WANT_TO_USE_THE_FULL_VIDEO_FEATURES_OF_K2'); ?></p>
+                            <h3><?php echo Joomla\CMS\Language\Text::_('K2_NOTICE'); ?></h3>
+                            <p><?php echo Joomla\CMS\Language\Text::_('K2_NOTICE_PLEASE_INSTALL_JOOMLAWORKS_ALLVIDEOS_PLUGIN_IF_YOU_WANT_TO_USE_THE_FULL_VIDEO_FEATURES_OF_K2'); ?></p>
                         </div>
                         <!-- End of the alert -->
 
                         <div id="k2MediaTabs" class="k2Tabs">
                             <ul class="k2TabsNavigation">
-                                <li><a href="#k2MediaTab4"><?php echo JText::_('K2_EMBED'); ?></a></li>
+                                <li><a href="#k2MediaTab4"><?php echo Joomla\CMS\Language\Text::_('K2_EMBED'); ?></a></li>
                             </ul>
 
                             <div class="k2TabsContent" id="k2MediaTab4">
                                 <div class="panel" id="embedVideo">
-                                    <?php echo JText::_('K2_PASTE_HTML_EMBED_CODE_BELOW'); ?>
+                                    <?php echo Joomla\CMS\Language\Text::_('K2_PASTE_HTML_EMBED_CODE_BELOW'); ?>
                                     <br />
                                     <textarea name="embedVideo" rows="5" cols="50" class="textarea"><?php echo $this->lists['embedVideo']; ?></textarea>
                                 </div>
@@ -548,19 +548,19 @@ $app = JFactory::getApplication();
                         <?php if ($this->row->video): ?>
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_MEDIA_PREVIEW'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_PREVIEW'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <?php echo $this->row->video; ?>
                                 <input type="checkbox" name="del_video" id="del_video" />
-                                <label for="del_video"><?php echo JText::_('K2_USE_THE_FORM_ABOVE_TO_REPLACE_THE_EXISTING_VIDEO_OR_CHECK_THIS_BOX_TO_DELETE_CURRENT_VIDEO'); ?></label>
+                                <label for="del_video"><?php echo Joomla\CMS\Language\Text::_('K2_USE_THE_FORM_ABOVE_TO_REPLACE_THE_EXISTING_VIDEO_OR_CHECK_THIS_BOX_TO_DELETE_CURRENT_VIDEO'); ?></label>
                             </div>
                         </div>
                         <?php endif; ?>
 
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_MEDIA_CAPTION'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_CAPTION'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="text" name="video_caption" size="50" class="text_area" value="<?php echo $this->row->video_caption; ?>" />
@@ -569,7 +569,7 @@ $app = JFactory::getApplication();
 
                         <div class="itemAdditionalField">
                             <div class="itemAdditionalValue">
-                                <label><?php echo JText::_('K2_MEDIA_CREDITS'); ?></label>
+                                <label><?php echo Joomla\CMS\Language\Text::_('K2_MEDIA_CREDITS'); ?></label>
                             </div>
                             <div class="itemAdditionalData">
                                 <input type="text" name="video_credits" size="50" class="text_area" value="<?php echo $this->row->video_credits; ?>" />
@@ -578,14 +578,14 @@ $app = JFactory::getApplication();
                         <?php endif; ?>
                         <!-- END of the AllVideos check -->
 
-                        <?php if (count($this->K2PluginsItemVideo)): ?>
+                        <?php if (count($this->K2PluginsItemVideo) > 0): ?>
                         <div class="itemPlugins itemPluginsMedia">
-                            <?php foreach ($this->K2PluginsItemVideo as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemVideo as $K2PluginItemVideo): ?>
+                            <?php if (!is_null($K2PluginItemVideo)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemVideo->name))); ?>">
+                                <h3><?php echo $K2PluginItemVideo->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemVideo->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -599,7 +599,7 @@ $app = JFactory::getApplication();
                     <!-- Tab extra fields -->
                     <div class="k2TabsContent" id="k2TabExtraFields">
                         <div id="extraFieldsContainer">
-                            <?php if (count($this->extraFields)): ?>
+                            <?php if (count($this->extraFields) > 0): ?>
                             <div id="extraFields">
                                 <?php foreach ($this->extraFields as $extraField): ?>
                                 <div class="itemAdditionalField fieldIs<?php echo ucfirst($extraField->type); ?>">
@@ -618,19 +618,19 @@ $app = JFactory::getApplication();
                             </div>
                             <?php else: ?>
                             <div class="k2-generic-message">
-                                <h3><?php echo JText::_('K2_NOTICE'); ?></h3>
-                                <p><?php echo JText::_('K2_PLEASE_SELECT_A_CATEGORY_FIRST_TO_RETRIEVE_ITS_RELATED_EXTRA_FIELDS'); ?></p>
+                                <h3><?php echo Joomla\CMS\Language\Text::_('K2_NOTICE'); ?></h3>
+                                <p><?php echo Joomla\CMS\Language\Text::_('K2_PLEASE_SELECT_A_CATEGORY_FIRST_TO_RETRIEVE_ITS_RELATED_EXTRA_FIELDS'); ?></p>
                             </div>
                             <?php endif; ?>
                         </div>
-                        <?php if (count($this->K2PluginsItemExtraFields)): ?>
+                        <?php if (count($this->K2PluginsItemExtraFields) > 0): ?>
                         <div class="itemPlugins itemPluginsExtraFields">
-                            <?php foreach ($this->K2PluginsItemExtraFields as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemExtraFields as $K2PluginItemExtraField): ?>
+                            <?php if (!is_null($K2PluginItemExtraField)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemExtraField->name))); ?>">
+                                <h3><?php echo $K2PluginItemExtraField->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemExtraField->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -647,11 +647,11 @@ $app = JFactory::getApplication();
                             <?php if ($this->row->attachments && count($this->row->attachments)): ?>
                             <table class="itemAttachmentsTable">
                                 <tr>
-                                    <th><?php echo JText::_('K2_FILENAME'); ?></th>
-                                    <th><?php echo JText::_('K2_TITLE'); ?></th>
-                                    <th><?php echo JText::_('K2_TITLE_ATTRIBUTE'); ?></th>
-                                    <th><?php echo JText::_('K2_DOWNLOADS'); ?></th>
-                                    <th class="k2Center"><?php echo JText::_('K2_OPERATIONS'); ?></th>
+                                    <th><?php echo Joomla\CMS\Language\Text::_('K2_FILENAME'); ?></th>
+                                    <th><?php echo Joomla\CMS\Language\Text::_('K2_TITLE'); ?></th>
+                                    <th><?php echo Joomla\CMS\Language\Text::_('K2_TITLE_ATTRIBUTE'); ?></th>
+                                    <th><?php echo Joomla\CMS\Language\Text::_('K2_DOWNLOADS'); ?></th>
+                                    <th class="k2Center"><?php echo Joomla\CMS\Language\Text::_('K2_OPERATIONS'); ?></th>
                                 </tr>
                                 <?php foreach ($this->row->attachments as $attachment): ?>
                                 <tr>
@@ -660,13 +660,13 @@ $app = JFactory::getApplication();
                                     <td><?php echo $attachment->titleAttribute; ?></td>
                                     <td><?php echo $attachment->hits; ?></td>
                                     <td class="k2Center">
-                                        <a class="downloadAttachmentButton" href="<?php echo $attachment->link; ?>" title="<?php echo JText::_('K2_DOWNLOAD'); ?>">
+                                        <a class="downloadAttachmentButton" href="<?php echo $attachment->link; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_DOWNLOAD'); ?>">
                                             <i class="fa fa-download"></i>
-                                            <span class="hidden"><?php echo JText::_('K2_DOWNLOAD'); ?></span>
+                                            <span class="hidden"><?php echo Joomla\CMS\Language\Text::_('K2_DOWNLOAD'); ?></span>
                                         </a>
-                                        <a class="deleteAttachmentButton" title="<?php echo JText::_('K2_DELETE'); ?>" href="<?php echo JURI::base(true); ?>/index.php?option=com_k2&amp;view=item&amp;task=deleteAttachment&amp;id=<?php echo $attachment->id?>&amp;cid=<?php echo $this->row->id; ?>">
+                                        <a class="deleteAttachmentButton" title="<?php echo Joomla\CMS\Language\Text::_('K2_DELETE'); ?>" href="<?php echo Joomla\CMS\Uri\Uri::base(true); ?>/index.php?option=com_k2&amp;view=item&amp;task=deleteAttachment&amp;id=<?php echo $attachment->id?>&amp;cid=<?php echo $this->row->id; ?>">
                                             <i class="fa fa-remove"></i>
-                                            <span class="hidden"><?php echo JText::_('K2_DELETE'); ?></span>
+                                            <span class="hidden"><?php echo Joomla\CMS\Language\Text::_('K2_DELETE'); ?></span>
                                         </a>
                                     </td>
                                 </tr>
@@ -675,19 +675,19 @@ $app = JFactory::getApplication();
                             <?php endif; ?>
                         </div>
                         <div id="addAttachment">
-                            <input type="button" id="addAttachmentButton" class="k2Button" value="<?php echo JText::_('K2_ADD_ATTACHMENT_FIELD'); ?>" />
-                            <i>(<?php echo JText::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
+                            <input type="button" id="addAttachmentButton" class="k2Button" value="<?php echo Joomla\CMS\Language\Text::_('K2_ADD_ATTACHMENT_FIELD'); ?>" />
+                            <i>(<?php echo Joomla\CMS\Language\Text::_('K2_MAX_UPLOAD_SIZE'); ?>: <?php echo ini_get('upload_max_filesize'); ?>)</i>
                         </div>
                         <div id="itemAttachments"></div>
 
-                        <?php if (count($this->K2PluginsItemAttachments)): ?>
+                        <?php if (count($this->K2PluginsItemAttachments) > 0): ?>
                         <div class="itemPlugins itemPluginsAttachments">
-                            <?php foreach ($this->K2PluginsItemAttachments as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemAttachments as $K2PluginItemAttachment): ?>
+                            <?php if (!is_null($K2PluginItemAttachment)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemAttachment->name))); ?>">
+                                <h3><?php echo $K2PluginItemAttachment->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemAttachment->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -701,12 +701,12 @@ $app = JFactory::getApplication();
                     <!-- Tab other plugins -->
                     <div class="k2TabsContent" id="k2TabPlugins">
                         <div class="itemPlugins itemPluginsPlugins">
-                            <?php foreach ($this->K2PluginsItemOther as $K2Plugin): ?>
-                            <?php if (!is_null($K2Plugin)): ?>
-                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
-                                <h3><?php echo $K2Plugin->name; ?></h3>
+                            <?php foreach ($this->K2PluginsItemOther as $K2PluginItemOther): ?>
+                            <?php if (!is_null($K2PluginItemOther)): ?>
+                            <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2PluginItemOther->name))); ?>">
+                                <h3><?php echo $K2PluginItemOther->name; ?></h3>
                                 <div class="itemAdditionalData">
-                                    <?php echo $K2Plugin->fields; ?>
+                                    <?php echo $K2PluginItemOther->fields; ?>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -723,45 +723,45 @@ $app = JFactory::getApplication();
             <div class="k2NavTabContent" id="k2TabPubAndMeta">
                 <ul class="k2ScrollSpyMenu">
                     <?php if ($this->row->id): ?>
-                    <li><a href="#iteminfo"><?php echo JText::_('K2_ITEM_INFO'); ?></a></li>
+                    <li><a href="#iteminfo"><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_INFO'); ?></a></li>
                     <?php endif; ?>
-                    <li><a href="#publishing"><?php echo JText::_('K2_PUBLISHING'); ?></a></li>
-                    <li><a href="#metadata"><?php echo JText::_('K2_METADATA'); ?></a></li>
+                    <li><a href="#publishing"><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHING'); ?></a></li>
+                    <li><a href="#metadata"><?php echo Joomla\CMS\Language\Text::_('K2_METADATA'); ?></a></li>
                 </ul>
                 <div class="k2ScrollingContent">
                     <?php if ($this->row->id): ?>
-                    <h3><?php echo JText::_('K2_ITEM_INFO'); ?></h3>
+                    <h3><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_INFO'); ?></h3>
                     <div class="k2ui-table-publishing-meta">
                         <div class="k2ui-column">
                             <a id="iteminfo"></a>
                             <ul class="k2ui-table-details">
                                 <li>
-                                    <span><?php echo JText::_('K2_ITEM_ID'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_ID'); ?></span>
                                     <span><?php echo $this->row->id; ?></span>
                                 </li>
                                 <li>
-                                    <span><?php echo JText::_('K2_PUBLISHED'); ?></span>
-                                    <span><?php echo ($this->row->published > 0) ? JText::_('K2_YES') : JText::_('K2_NO'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED'); ?></span>
+                                    <span><?php echo ($this->row->published > 0) ? Joomla\CMS\Language\Text::_('K2_YES') : Joomla\CMS\Language\Text::_('K2_NO'); ?></span>
                                 </li>
                                 <li>
-                                    <span><?php echo JText::_('K2_FEATURED'); ?></span>
-                                    <span><?php echo ($this->row->featured > 0) ? JText::_('K2_YES') : JText::_('K2_NO'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_FEATURED'); ?></span>
+                                    <span><?php echo ($this->row->featured > 0) ? Joomla\CMS\Language\Text::_('K2_YES') : Joomla\CMS\Language\Text::_('K2_NO'); ?></span>
                                 </li>
                                 <li>
-                                    <span><?php echo JText::_('K2_CREATED_DATE'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_CREATED_DATE'); ?></span>
                                     <span><?php echo $this->lists['created']; ?></span>
                                 </li>
                                 <li>
-                                    <span><?php echo JText::_('K2_CREATED_BY'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_CREATED_BY'); ?></span>
                                     <span><?php echo $this->row->author; ?></span>
                                 </li>
                                 <li>
-                                    <span><?php echo JText::_('K2_MODIFIED_DATE'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_MODIFIED_DATE'); ?></span>
                                     <span><?php echo $this->lists['modified']; ?></span>
                                 </li>
                                 <?php if ($this->row->moderator): ?>
                                 <li>
-                                    <span><?php echo JText::_('K2_MODIFIED_BY'); ?></span>
+                                    <span><?php echo Joomla\CMS\Language\Text::_('K2_MODIFIED_BY'); ?></span>
                                     <span><?php echo $this->row->moderator; ?></span>
                                 </li>
                                 <?php endif; ?>
@@ -769,26 +769,26 @@ $app = JFactory::getApplication();
                         </div>
                         <div class="k2ui-column">
                             <div class="itemHits">
-                                <?php echo JText::_('K2_HITS'); ?>
+                                <?php echo Joomla\CMS\Language\Text::_('K2_HITS'); ?>
                                 <span><?php echo $this->row->hits; ?></span>
                                 <?php if ($this->row->hits): ?>
                                 <div class="itemHitsReset">
-                                    <input id="resetHitsButton" type="button" value="<?php echo JText::_('K2_RESET'); ?>" class="button" name="resetHits" />
+                                    <input id="resetHitsButton" type="button" value="<?php echo Joomla\CMS\Language\Text::_('K2_RESET'); ?>" class="button" name="resetHits" />
                                 </div>
                                 <?php endif; ?>
                             </div>
                         </div>
                         <div class="k2ui-column">
                             <div class="itemRating">
-                                <?php echo JText::_('K2_RATING'); ?>
+                                <?php echo Joomla\CMS\Language\Text::_('K2_RATING'); ?>
                                 <?php if ($this->row->ratingCount): ?>
                                 <span><?php echo number_format(($this->row->ratingSum / $this->row->ratingCount), 2); ?>/5.00</span>
                                 <?php else: ?>
                                 <span>0.00/5.00</span>
                                 <?php endif; ?>
-                                <?php echo $this->row->ratingCount; ?> <?php echo ($this->row->ratingCount == 1) ? JText::_('K2_VOTE') : JText::_('K2_VOTES'); ?>
+                                <?php echo $this->row->ratingCount; ?> <?php echo ($this->row->ratingCount == 1) ? Joomla\CMS\Language\Text::_('K2_VOTE') : Joomla\CMS\Language\Text::_('K2_VOTES'); ?>
                                 <div class="itemRatingReset">
-                                    <input id="resetRatingButton" type="button" value="<?php echo JText::_('K2_RESET'); ?>" class="button" name="resetRating" />
+                                    <input id="resetRatingButton" type="button" value="<?php echo Joomla\CMS\Language\Text::_('K2_RESET'); ?>" class="button" name="resetRating" />
                                 </div>
                             </div>
                         </div>
@@ -797,11 +797,11 @@ $app = JFactory::getApplication();
 
                     <div class="xmlParamsFields">
                         <a id="publishing"></a>
-                        <h3><?php echo JText::_('K2_PUBLISHING'); ?></h3>
+                        <h3><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHING'); ?></h3>
                         <ul class="adminformlist">
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_CREATION_DATE'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_CREATION_DATE'); ?></label>
                                 </div>
                                 <div class="paramValue k2DateTimePickerControl">
                                     <input type="text" data-k2-datetimepicker id="created" name="created" value="<?php echo $this->lists['createdCalendar']; ?>" autocomplete="off" />
@@ -809,7 +809,7 @@ $app = JFactory::getApplication();
                                 </div>
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_START_PUBLISHING'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_START_PUBLISHING'); ?></label>
                                 </div>
                                 <div class="paramValue k2DateTimePickerControl">
                                     <input type="text" data-k2-datetimepicker id="publish_up" name="publish_up" value="<?php echo $this->lists['publish_up']; ?>" autocomplete="off" />
@@ -818,7 +818,7 @@ $app = JFactory::getApplication();
                             </li>
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_FINISH_PUBLISHING'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_FINISH_PUBLISHING'); ?></label>
                                 </div>
                                 <div class="paramValue k2DateTimePickerControl">
                                     <input type="text" data-k2-datetimepicker id="publish_down" name="publish_down" value="<?php echo $this->lists['publish_down']; ?>" autocomplete="off" />
@@ -830,11 +830,11 @@ $app = JFactory::getApplication();
                         <div class="clr"></div>
                         <a id="metadata"></a>
 
-                        <h3><?php echo JText::_('K2_METADATA'); ?></h3>
+                        <h3><?php echo Joomla\CMS\Language\Text::_('K2_METADATA'); ?></h3>
                         <ul class="adminformlist">
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_DESCRIPTION'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_DESCRIPTION'); ?></label>
                                 </div>
                                 <div class="paramValue">
                                     <textarea name="metadesc" rows="5" cols="20" data-k2-chars="160"><?php echo $this->row->metadesc; ?></textarea>
@@ -842,7 +842,7 @@ $app = JFactory::getApplication();
                             </li>
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_KEYWORDS'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_KEYWORDS'); ?></label>
                                 </div>
                                 <div class="paramValue">
                                     <textarea name="metakey" rows="5" cols="20"><?php echo $this->row->metakey; ?></textarea>
@@ -850,7 +850,7 @@ $app = JFactory::getApplication();
                             </li>
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_ROBOTS'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_ROBOTS'); ?></label>
                                 </div>
                                 <div class="paramValue">
                                     <?php echo $this->lists['metarobots']; ?>
@@ -858,7 +858,7 @@ $app = JFactory::getApplication();
                             </li>
                             <li>
                                 <div class="paramLabel">
-                                    <label><?php echo JText::_('K2_AUTHOR'); ?></label>
+                                    <label><?php echo Joomla\CMS\Language\Text::_('K2_AUTHOR'); ?></label>
                                 </div>
                                 <div class="paramValue">
                                     <input type="text" name="meta[author]" value="<?php echo $this->lists['metadata']->get('author'); ?>" />
@@ -874,12 +874,12 @@ $app = JFactory::getApplication();
             <!-- DISPLAY SETTINGS [start] -->
             <div class="k2NavTabContent" id="k2TabDisplaySet">
                 <ul class="k2ScrollSpyMenu">
-                    <li><a href="#catViewOptions"><?php echo JText::_('K2_ITEM_VIEW_OPTIONS_IN_CATEGORY_LISTINGS'); ?></a></li>
-                    <li><a href="#itemViewOptions"><?php echo JText::_('K2_ITEM_VIEW_OPTIONS'); ?></a></li>
+                    <li><a href="#catViewOptions"><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_VIEW_OPTIONS_IN_CATEGORY_LISTINGS'); ?></a></li>
+                    <li><a href="#itemViewOptions"><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_VIEW_OPTIONS'); ?></a></li>
                 </ul>
                 <div class="k2ScrollingContent">
                     <a id="catViewOptions"></a>
-                    <h3><?php echo JText::_('K2_ITEM_VIEW_OPTIONS_IN_CATEGORY_LISTINGS'); ?></h3>
+                    <h3><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_VIEW_OPTIONS_IN_CATEGORY_LISTINGS'); ?></h3>
                     <div class="xmlParamsFields">
                         <fieldset class="panelform">
                             <ul class="adminformlist">
@@ -902,10 +902,10 @@ $app = JFactory::getApplication();
                                 <?php endforeach; ?>
                                 <?php else: ?>
                                 <?php foreach ($this->form->getParams('params', 'item-view-options-listings') as $param): ?>
-                                <li<?php if ((string) $param[1] == '' || $param[5] == '') {
+                                <li<?php if ((string) $param[1] === '' || $param[5] == '') {
                                     echo ' class="headerElement"';
                                 } ?>>
-                                    <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
+                                    <?php if ((string) $param[1] === '' || $param[5] == ''): ?>
                                     <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                                     <?php else: ?>
                                     <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -919,7 +919,7 @@ $app = JFactory::getApplication();
                         </fieldset>
                     </div>
                     <a id="itemViewOptions"></a>
-                    <h3><?php echo JText::_('K2_ITEM_VIEW_OPTIONS'); ?></h3>
+                    <h3><?php echo Joomla\CMS\Language\Text::_('K2_ITEM_VIEW_OPTIONS'); ?></h3>
                     <div class="xmlParamsFields">
                         <fieldset class="panelform">
                             <ul class="adminformlist">
@@ -942,10 +942,10 @@ $app = JFactory::getApplication();
                                 <?php endforeach; ?>
                                 <?php else: ?>
                                 <?php foreach ($this->form->getParams('params', 'item-view-options') as $param): ?>
-                                <li<?php if ((string) $param[1] == '' || $param[5] == '') {
+                                <li<?php if ((string) $param[1] === '' || $param[5] == '') {
                                     echo ' class="headerElement"';
                                 } ?>>
-                                    <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
+                                    <?php if ((string) $param[1] === '' || $param[5] == ''): ?>
                                     <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                                     <?php else: ?>
                                     <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -974,7 +974,7 @@ $app = JFactory::getApplication();
         <input type="hidden" name="view" value="item" />
         <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
         <input type="hidden" name="Itemid" value="<?php echo JRequest::getInt('Itemid'); ?>" />
-        <?php echo JHTML::_('form.token'); ?>
+        <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 
 <?php if ($app->isSite()): ?>

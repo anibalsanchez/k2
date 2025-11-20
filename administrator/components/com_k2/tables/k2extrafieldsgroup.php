@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
@@ -32,7 +32,7 @@ class TableK2ExtraFieldsGroup extends K2Table
     {
         $this->name = JString::trim($this->name);
         if ($this->name == '') {
-            $this->setError(JText::_('K2_GROUP_MUST_HAVE_A_NAME'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_GROUP_MUST_HAVE_A_NAME'));
 
             return false;
         }

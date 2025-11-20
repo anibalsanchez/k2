@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
 require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
@@ -22,12 +22,12 @@ class modK2CommentsHelper
 {
     public static function getLatestComments(&$params)
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
-        $config = JFactory::getConfig();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
+        $config = Joomla\CMS\Factory::getConfig();
 
         // Time used for DB queries
-        $jnow = JFactory::getDate();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = (K2_JVERSION != '15') ? $jnow->toSql() : $jnow->toMySQL();
         $nullDate = $db->getNullDate();
 
@@ -41,13 +41,13 @@ class modK2CommentsHelper
             $isNow->setOffset($tzoffset);
         }
 
-        $componentParams = JComponentHelper::getParams('com_k2');
+        $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         $limit = $params->get('comments_limit', '5');
         $cid = $params->get('category_id', null);
 
         // Get ACL
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (K2_JVERSION != '15') {
             $userLevels = array_unique($user->getAuthorisedViewLevels());
             $aclCheck = 'IN('.implode(',', $userLevels).')';
@@ -58,11 +58,9 @@ class modK2CommentsHelper
 
         // Get language on Joomla 2.5+
         $languageFilter = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
+            $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
         }
 
         $query = 'SELECT c.*, i.catid, i.title, i.alias, category.alias AS catalias, category.name AS categoryname
@@ -86,17 +84,15 @@ class modK2CommentsHelper
                 } else {
                     $query .= ' AND i.catid = '.(int) $cid;
                 }
+            } elseif (is_array($cid)) {
+                $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
             } else {
-                if (is_array($cid)) {
-                    $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
-                } else {
-                    $query .= ' AND i.catid != '.(int) $cid;
-                }
+                $query .= ' AND i.catid != '.(int) $cid;
             }
         }
 
-        if ($languageFilter) {
-            $query .= " AND i.language IN ({$languageFilter}) AND category.language IN ({$languageFilter})";
+        if ($languageFilter !== '' && $languageFilter !== '0') {
+            $query .= sprintf(' AND i.language IN (%s) AND category.language IN (%s)', $languageFilter, $languageFilter);
         }
 
         $query .= ' ORDER BY c.id DESC';
@@ -108,7 +104,7 @@ class modK2CommentsHelper
 
         $comments = [];
 
-        if (count($rows)) {
+        if (count($rows) > 0) {
             foreach ($rows as $row) {
                 // Relative comment date
                 if ($params->get('commentDateFormat') == 'relative') {
@@ -118,17 +114,17 @@ class modK2CommentsHelper
 
                     if ($dayDiff == 0) {
                         if ($diff < 5) {
-                            $row->commentDate = JText::_('K2_JUST_NOW');
+                            $row->commentDate = Joomla\CMS\Language\Text::_('K2_JUST_NOW');
                         } elseif ($diff < 60) {
-                            $row->commentDate = $diff.' '.JText::_('K2_SECONDS_AGO');
+                            $row->commentDate = $diff.' '.Joomla\CMS\Language\Text::_('K2_SECONDS_AGO');
                         } elseif ($diff < 120) {
-                            $row->commentDate = JText::_('K2_1_MINUTE_AGO');
+                            $row->commentDate = Joomla\CMS\Language\Text::_('K2_1_MINUTE_AGO');
                         } elseif ($diff < 3600) {
-                            $row->commentDate = floor($diff / 60).' '.JText::_('K2_MINUTES_AGO');
+                            $row->commentDate = floor($diff / 60).' '.Joomla\CMS\Language\Text::_('K2_MINUTES_AGO');
                         } elseif ($diff < 7200) {
-                            $row->commentDate = JText::_('K2_1_HOUR_AGO');
+                            $row->commentDate = Joomla\CMS\Language\Text::_('K2_1_HOUR_AGO');
                         } elseif ($diff < 86400) {
-                            $row->commentDate = floor($diff / 3600).' '.JText::_('K2_HOURS_AGO');
+                            $row->commentDate = floor($diff / 3600).' '.Joomla\CMS\Language\Text::_('K2_HOURS_AGO');
                         }
                     }
                 }
@@ -138,16 +134,16 @@ class modK2CommentsHelper
                 $row->commentText = preg_replace($pattern, '<a target="_blank" rel="nofollow" href="\0">\0</a>', $row->commentText);
 
                 // Comment anchor link
-                $row->itemLink = urldecode(JRoute::_(K2HelperRoute::getItemRoute($row->itemID.':'.urlencode($row->alias), $row->catid.':'.urlencode($row->catalias))));
-                $row->link = $row->itemLink."#comment{$row->id}";
+                $row->itemLink = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getItemRoute($row->itemID.':'.urlencode($row->alias), $row->catid.':'.urlencode($row->catalias))));
+                $row->link = $row->itemLink.('#comment'.$row->id);
 
                 // Category link
-                $row->catLink = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($row->catid.':'.urlencode($row->catalias))));
+                $row->catLink = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($row->catid.':'.urlencode($row->catalias))));
 
                 // User
                 if ($row->userID > 0) {
-                    $row->userLink = JRoute::_(K2HelperRoute::getUserRoute($row->userID));
-                    $getExistingUser = JFactory::getUser($row->userID);
+                    $row->userLink = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($row->userID));
+                    $getExistingUser = Joomla\CMS\Factory::getUser($row->userID);
                     $row->userUsername = $getExistingUser->username;
                 } else {
                     $row->userUsername = $row->userName;
@@ -170,15 +166,17 @@ class modK2CommentsHelper
 
             return $comments;
         }
+
+        return null;
     }
 
     public static function getTopCommenters(&$params)
     {
-        JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
 
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
-        $componentParams = JComponentHelper::getParams('com_k2');
+        $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         $limit = $params->get('commenters_limit', '5');
 
@@ -195,15 +193,15 @@ class modK2CommentsHelper
 
         $commenters = [];
 
-        if (count($rows)) {
+        if (count($rows) > 0) {
             foreach ($rows as $row) {
                 if ($row->counter > 0) {
                     // User link
-                    $row->link = JRoute::_(K2HelperRoute::getUserRoute($row->userID));
+                    $row->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($row->userID));
 
                     // User name
                     if ($params->get('commenterNameOrUsername', 1) == 2) {
-                        $getExistingUser = JFactory::getUser($row->userID);
+                        $getExistingUser = Joomla\CMS\Factory::getUser($row->userID);
                         $row->userName = $getExistingUser->username;
                     }
 
@@ -219,16 +217,16 @@ class modK2CommentsHelper
                         $db->setQuery($query, 0, 1);
                         $comment = $db->loadObject();
 
-                        $item = JTable::getInstance('K2Item', 'Table');
+                        $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                         $item->load($comment->itemID);
 
-                        $category = JTable::getInstance('K2Category', 'Table');
+                        $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                         $category->load($item->catid);
 
                         $row->latestCommentText = $comment->commentText;
                         $row->latestCommentText = preg_replace($pattern, '<a target="_blank" rel="nofollow" href="\0">\0</a>', $row->latestCommentText);
 
-                        $row->latestCommentLink = urldecode(JRoute::_(K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($category->alias))))."#comment{$comment->id}";
+                        $row->latestCommentLink = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($category->alias)))).('#comment'.$comment->id);
 
                         $row->latestCommentDate = $comment->commentDate;
                     }
@@ -240,5 +238,7 @@ class modK2CommentsHelper
 
             return $commenters;
         }
+
+        return null;
     }
 }

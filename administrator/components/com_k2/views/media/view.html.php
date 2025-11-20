@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,9 +21,9 @@ class K2ViewMedia extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
-        $document = JFactory::getDocument();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
+        $document = Joomla\CMS\Factory::getDocument();
         $type = JRequest::getCmd('type');
         $fieldID = JRequest::getCmd('fieldID');
         if ($type == 'video') {
@@ -33,7 +33,8 @@ class K2ViewMedia extends K2View
         } else {
             $mimes = '';
         }
-        $token = version_compare(JVERSION, '2.5', 'ge') ? JSession::getFormToken() : JUtility::getToken();
+
+        $token = version_compare(JVERSION, '2.5', 'ge') ? Joomla\CMS\Session\Session::getFormToken() : Joomla\CMS\Utility\Utility::getToken();
 
         $this->assignRef('mimes', $mimes);
         $this->assignRef('type', $type);
@@ -42,11 +43,11 @@ class K2ViewMedia extends K2View
 
         if ($app->isAdmin()) {
             // Toolbar
-            JToolBarHelper::title(JText::_('K2_MEDIA_MANAGER'), 'k2.png');
+            Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_MEDIA_MANAGER'), 'k2.png');
             if (K2_JVERSION != '15') {
-                JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+                Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
             } else {
-                $toolbar = JToolBar::getInstance('toolbar');
+                $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
                 $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
             }
 

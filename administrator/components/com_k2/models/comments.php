@@ -13,11 +13,11 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
 class K2ModelComments extends K2Model
 {
@@ -25,11 +25,11 @@ class K2ModelComments extends K2Model
 
     public function getData()
     {
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
         $filter_order = $app->getUserStateFromRequest($option.$view.'filter_order', 'filter_order', 'c.id', 'cmd');
@@ -50,24 +50,20 @@ class K2ModelComments extends K2Model
 			WHERE c.id > 0';
 
         if ($filter_state > -1) {
-            $query .= " AND c.published = {$filter_state}";
+            $query .= ' AND c.published = '.$filter_state;
         }
 
         if ($filter_category) {
-            $query .= " AND i.catid = {$filter_category}";
+            $query .= ' AND i.catid = '.$filter_category;
         }
 
         if ($filter_author) {
-            $query .= " AND i.created_by = {$filter_author}";
+            $query .= ' AND i.created_by = '.$filter_author;
         }
 
-        if ($search) {
+        if ($search !== '' && $search !== '0') {
             // Detect exact search phrase using double quotes in search string
-            if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
-                $exact = true;
-            } else {
-                $exact = false;
-            }
+            $exact = str_starts_with($search, '"') && str_ends_with($search, '"');
 
             // Now completely strip double quotes
             $search = trim(str_replace('"', '', $search));
@@ -76,12 +72,13 @@ class K2ModelComments extends K2Model
             $escaped = K2_JVERSION == '15' ? $db->getEscaped($search, true) : $db->escape($search, true);
 
             // Full phrase or set of words
-            if (strpos($escaped, ' ') !== false && !$exact) {
+            if (str_contains($escaped, ' ') && !$exact) {
                 $escaped = explode(' ', $escaped);
                 $quoted = [];
                 foreach ($escaped as $key => $escapedWord) {
                     $quoted[] = $db->Quote('%'.$escapedWord.'%', false);
                 }
+
                 if ($params->get('adminSearch') == 'full') {
                     $searchPerTerm = [];
                     $query .= ' AND (';
@@ -96,6 +93,7 @@ class K2ModelComments extends K2Model
 							LOWER(u.ip) LIKE '.$quotedWord.'
  						';
                     }
+
                     $query .= implode(' OR ', $searchPerTerm);
                     $query .= ')';
                 } else {
@@ -126,7 +124,8 @@ class K2ModelComments extends K2Model
         if (!$filter_order) {
             $filter_order = 'c.commentDate';
         }
-        $queryEnd = " ORDER BY {$filter_order} {$filter_order_Dir}";
+
+        $queryEnd = sprintf(' ORDER BY %s %s', $filter_order, $filter_order_Dir);
 
         // --- Final query ---
         $combinedQuery = $queryStart.$query.$queryEnd;
@@ -135,7 +134,7 @@ class K2ModelComments extends K2Model
         $rows = $db->loadObjectList();
 
         // --- Row counter ---
-        if (count($rows)) {
+        if (count($rows) > 0) {
             $countQuery = '/* Backend / K2 / Comments Count */ SELECT COUNT(*)'.$query;
             $db->setQuery($countQuery);
             $this->getTotal = $db->loadResult();
@@ -151,33 +150,36 @@ class K2ModelComments extends K2Model
 
     public function publish()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $cid = JRequest::getVar('cid');
-        if (!count($cid)) {
+        if (count($cid) === 0) {
             $cid[] = JRequest::getInt('commentID');
         }
 
         foreach ($cid as $id) {
-            $row = JTable::getInstance('K2Comment', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
             if ($app->isSite()) {
-                $item = JTable::getInstance('K2Item', 'Table');
+                $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                     $app->close();
                 }
             }
+
             $row->published = 1;
             $row->store();
         }
-        $cache = JFactory::getCache('com_k2');
+
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
         if (JRequest::getCmd('format') == 'raw') {
             echo 'true';
             $app->close();
         }
+
         if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
@@ -187,24 +189,26 @@ class K2ModelComments extends K2Model
 
     public function unpublish()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $cid = JRequest::getVar('cid');
         foreach ($cid as $id) {
-            $row = JTable::getInstance('K2Comment', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
             if ($app->isSite()) {
-                $item = JTable::getInstance('K2Item', 'Table');
+                $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                     $app->close();
                 }
             }
+
             $row->published = 0;
             $row->store();
         }
-        $cache = JFactory::getCache('com_k2');
+
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
         if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
@@ -215,33 +219,37 @@ class K2ModelComments extends K2Model
 
     public function remove()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
+        $db = Joomla\CMS\Factory::getDbo();
         $cid = JRequest::getVar('cid');
-        if (!count($cid)) {
+        if (count($cid) === 0) {
             $cid[] = JRequest::getInt('commentID');
         }
+
         foreach ($cid as $id) {
-            $row = JTable::getInstance('K2Comment', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
             $row->load($id);
             if ($app->isSite()) {
-                $item = JTable::getInstance('K2Item', 'Table');
+                $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                 $item->load($row->itemID);
                 if ($item->created_by != $user->id) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                     $app->close();
                 }
             }
+
             $row->delete($id);
         }
-        $cache = JFactory::getCache('com_k2');
+
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
         if (JRequest::getCmd('format') == 'raw') {
             echo 'true';
             $app->close();
         }
-        $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
         if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
@@ -251,9 +259,9 @@ class K2ModelComments extends K2Model
 
     public function deleteUnpublished()
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
+        $user = Joomla\CMS\Factory::getUser();
         $userID = $user->id;
         if ($app->isSite()) {
             $query = "SELECT c.id FROM #__k2_comments AS c
@@ -261,7 +269,7 @@ class K2ModelComments extends K2Model
 			WHERE i.created_by = {$userID} AND c.published=0";
             $db->setQuery($query);
             $ids = K2_JVERSION == '30' ? $db->loadColumn() : $db->loadResultArray();
-            if (count($ids)) {
+            if (count($ids) > 0) {
                 $query = 'DELETE FROM #__k2_comments WHERE id IN('.implode(',', $ids).')';
                 $db->setQuery($query);
                 $db->query();
@@ -272,9 +280,10 @@ class K2ModelComments extends K2Model
             $db->query();
         }
 
-        $cache = JFactory::getCache('com_k2');
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
         if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
@@ -284,26 +293,29 @@ class K2ModelComments extends K2Model
 
     public function save()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
+        $db = Joomla\CMS\Factory::getDbo();
         $id = JRequest::getInt('commentID');
-        $item = JTable::getInstance('K2Item', 'Table');
-        $row = JTable::getInstance('K2Comment', 'Table');
+        $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
         $row->load($id);
         if ($app->isSite()) {
             $item->load($row->itemID);
             if ($item->created_by != $user->id) {
-                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
             }
         }
+
         $row->commentText = JRequest::getVar('commentText', '', 'default', 'string', 4);
         $row->store();
-        $cache = JFactory::getCache('com_k2');
+
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
+
         $response = new stdClass();
         $response->comment = $row->commentText;
-        $response->message = JText::_('K2_COMMENT_SAVED');
+        $response->message = Joomla\CMS\Language\Text::_('K2_COMMENT_SAVED');
         echo json_encode($response);
         $app->close();
     }
@@ -314,40 +326,43 @@ class K2ModelComments extends K2Model
         $name = JString::trim($this->getState('name'));
         $reportReason = JString::trim($this->getState('reportReason'));
         $params = K2HelperUtilities::getParams('com_k2');
-        $user = JFactory::getUser();
-        $row = JTable::getInstance('K2Comment', 'Table');
+        $user = Joomla\CMS\Factory::getUser();
+        $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
         $row->load($id);
         if (!$row->published) {
-            $this->setError(JText::_('K2_COMMENT_NOT_FOUND'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_COMMENT_NOT_FOUND'));
 
             return false;
         }
+
         if (empty($name)) {
-            $this->setError(JText::_('K2_PLEASE_TYPE_YOUR_NAME'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_PLEASE_TYPE_YOUR_NAME'));
 
             return false;
         }
+
         if (empty($reportReason)) {
-            $this->setError(JText::_('K2_PLEASE_TYPE_THE_REPORT_REASON'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_PLEASE_TYPE_THE_REPORT_REASON'));
 
             return false;
         }
+
         if (($params->get('antispam') == 'recaptcha' || $params->get('antispam') == 'both') && $user->guest) {
             require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
             if (!K2HelperUtilities::verifyRecaptcha()) {
-                $this->setError(JText::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT'));
+                $this->setError(Joomla\CMS\Language\Text::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT'));
 
                 return false;
             }
         }
 
-        $app = JFactory::getApplication();
-        $mail = JFactory::getMailer();
+        $app = Joomla\CMS\Factory::getApplication();
+        $mail = Joomla\CMS\Factory::getMailer();
         $senderEmail = $app->getCfg('mailfrom');
         $senderName = $app->getCfg('fromname');
 
         $mail->setSender([$senderEmail, $senderName]);
-        $mail->setSubject(JText::_('K2_COMMENT_REPORT'));
+        $mail->setSubject(Joomla\CMS\Language\Text::_('K2_COMMENT_REPORT'));
         $mail->IsHTML(true);
 
         switch (substr(strtoupper(PHP_OS), 0, 3)) {
@@ -364,9 +379,9 @@ class K2ModelComments extends K2Model
 
         // K2 embedded email template (to do: move to separate HTML template/override)
         $body = '
-        <strong>'.JText::_('K2_NAME').'</strong>: '.$name.' <br/>
-        <strong>'.JText::_('K2_REPORT_REASON').'</strong>: '.$reportReason.' <br/>
-        <strong>'.JText::_('K2_COMMENT').'</strong>: '.nl2br($row->commentText).' <br/>
+        <strong>'.Joomla\CMS\Language\Text::_('K2_NAME').'</strong>: '.$name.' <br/>
+        <strong>'.Joomla\CMS\Language\Text::_('K2_REPORT_REASON').'</strong>: '.$reportReason.' <br/>
+        <strong>'.Joomla\CMS\Language\Text::_('K2_COMMENT').'</strong>: '.nl2br($row->commentText).' <br/>
         ';
 
         $mail->setBody($body);

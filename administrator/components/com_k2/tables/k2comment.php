@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 

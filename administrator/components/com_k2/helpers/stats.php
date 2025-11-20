@@ -13,25 +13,26 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 class K2HelperStats
 {
     public static function getScripts()
     {
         $data = self::getData();
-        $token = version_compare(JVERSION, '2.5', 'ge') ? JSession::getFormToken() : JUtility::getToken();
+        $token = version_compare(JVERSION, '2.5', 'ge') ? Joomla\CMS\Session\Session::getFormToken() : Joomla\CMS\Utility\Utility::getToken();
 
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
-            JHtml::_('behavior.framework');
+            Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
         } else {
-            JHTML::_('behavior.mootools');
-        }
-        if (version_compare(JVERSION, '3.0.0', 'ge')) {
-            JHtml::_('jquery.framework');
+            Joomla\CMS\HTML\HTMLHelper::_('behavior.mootools');
         }
 
-        $document = JFactory::getDocument();
+        if (version_compare(JVERSION, '3.0.0', 'ge')) {
+            Joomla\CMS\HTML\HTMLHelper::_('jquery.framework');
+        }
+
+        $document = Joomla\CMS\Factory::getDocument();
 
         // For IE8/9 only (to be removed in K2 v3.x)
         $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.4/jquery.xdomainrequest.min.js');
@@ -89,7 +90,7 @@ class K2HelperStats
 
     public static function getIdentifier()
     {
-        $configuration = JFactory::getConfig();
+        $configuration = Joomla\CMS\Factory::getConfig();
         $secret = version_compare(JVERSION, '2.5', 'ge') ? $configuration->get('secret') : $configuration->getValue('config.secret');
 
         return md5($secret.$_SERVER['SERVER_ADDR']);
@@ -102,15 +103,15 @@ class K2HelperStats
 
     public static function getDbType()
     {
-        $configuration = JFactory::getConfig();
+        $configuration = Joomla\CMS\Factory::getConfig();
         $type = version_compare(JVERSION, '2.5', 'ge') ? $configuration->get('dbtype') : $configuration->getValue('config.dbtype');
         if ($type == 'mysql' || $type == 'mysqli' || $type == 'pdomysql') {
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             $query = 'SELECT version();';
             $db->setQuery($query);
             $result = $db->loadResult();
             $result = strtolower($result);
-            if (strpos($result, 'mariadb') !== false) {
+            if (str_contains($result, 'mariadb')) {
                 $type = 'mariadb';
             }
         }
@@ -120,7 +121,7 @@ class K2HelperStats
 
     public static function getDbVersion()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         return $db->getVersion();
     }
@@ -132,7 +133,7 @@ class K2HelperStats
 
     public static function getServerInterface()
     {
-        return php_sapi_name();
+        return PHP_SAPI;
     }
 
     public static function getCmsVersion()
@@ -147,28 +148,29 @@ class K2HelperStats
 
     public static function getCaching()
     {
-        $configuration = JFactory::getConfig();
+        $configuration = Joomla\CMS\Factory::getConfig();
 
         return version_compare(JVERSION, '2.5', 'ge') ? $configuration->get('caching') : $configuration->getValue('config.caching');
     }
 
     public static function getCachingDriver()
     {
-        $configuration = JFactory::getConfig();
+        $configuration = Joomla\CMS\Factory::getConfig();
 
         return version_compare(JVERSION, '2.5', 'ge') ? $configuration->get('cache_handler') : $configuration->getValue('config.cache_handler');
     }
 
     public static function shouldLog()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_log';
         $db->setQuery($query, 0, 1);
         $result = $db->loadObject();
         if (!$result) {
             return true;
         }
-        $now = JFactory::getDate()->toUnix();
+
+        $now = Joomla\CMS\Factory::getDate()->toUnix();
         $days = floor(($now - strtotime($result->timestamp)) / (60 * 60 * 24));
 
         return (bool) ($days >= 30 || $result->status != 200);

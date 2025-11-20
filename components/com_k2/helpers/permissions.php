@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.html.parameter');
 
@@ -22,45 +22,55 @@ class K2HelperPermissions
     public static function setPermissions()
     {
         $params = K2HelperUtilities::getParams('com_k2');
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
             return;
         }
+
         $K2User = self::getK2User($user->id);
         if (!is_object($K2User)) {
             return;
         }
+
         $K2UserGroup = self::getK2UserGroup($K2User->group);
         if (is_null($K2UserGroup)) {
             return;
         }
+
         $K2Permissions = K2Permissions::getInstance();
         $permissions = (K2_JVERSION == '15') ? new JParameter($K2UserGroup->permissions) : new JRegistry($K2UserGroup->permissions);
         $K2Permissions->permissions = $permissions;
         if ($permissions->get('categories') == 'none') {
             return;
-        } elseif ($permissions->get('categories') == 'all') {
+        }
+
+        if ($permissions->get('categories') == 'all') {
             if ($permissions->get('add') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                 $K2Permissions->actions[] = 'add.category.all';
                 $K2Permissions->actions[] = 'tag';
                 $K2Permissions->actions[] = 'extraFields';
             }
+
             if ($permissions->get('editOwn') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                 $K2Permissions->actions[] = 'editOwn.item.'.$user->id;
                 $K2Permissions->actions[] = 'tag';
                 $K2Permissions->actions[] = 'extraFields';
             }
+
             if ($permissions->get('editAll') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                 $K2Permissions->actions[] = 'editAll.category.all';
                 $K2Permissions->actions[] = 'tag';
                 $K2Permissions->actions[] = 'extraFields';
             }
+
             if ($permissions->get('publish') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                 $K2Permissions->actions[] = 'publish.category.all';
             }
+
             if ($permissions->get('comment')) {
                 $K2Permissions->actions[] = 'comment.category.all';
             }
+
             if ($permissions->get('editPublished')) {
                 $K2Permissions->actions[] = 'editPublished.category.all';
             }
@@ -71,12 +81,14 @@ class K2HelperPermissions
             } else {
                 $searchIDs = $selectedCategories;
             }
+
             if ($permissions->get('inheritance')) {
                 $model = K2Model::getInstance('Itemlist', 'K2Model');
                 $categories = $model->getCategoryTree($searchIDs);
             } else {
                 $categories = $searchIDs;
             }
+
             if (is_array($categories) && count($categories)) {
                 foreach ($categories as $category) {
                     if ($permissions->get('add') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
@@ -84,29 +96,33 @@ class K2HelperPermissions
                         $K2Permissions->actions[] = 'tag';
                         $K2Permissions->actions[] = 'extraFields';
                     }
+
                     if ($permissions->get('editOwn') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                         $K2Permissions->actions[] = 'editOwn.item.'.$user->id.'.'.$category;
                         $K2Permissions->actions[] = 'tag';
                         $K2Permissions->actions[] = 'extraFields';
                     }
+
                     if ($permissions->get('editAll') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                         $K2Permissions->actions[] = 'editAll.category.'.$category;
                         $K2Permissions->actions[] = 'tag';
                         $K2Permissions->actions[] = 'extraFields';
                     }
+
                     if ($permissions->get('publish') && $permissions->get('frontEdit') && $params->get('frontendEditing')) {
                         $K2Permissions->actions[] = 'publish.category.'.$category;
                     }
+
                     if ($permissions->get('comment')) {
                         $K2Permissions->actions[] = 'comment.category.'.$category;
                     }
+
                     if ($permissions->get('editPublished')) {
                         $K2Permissions->actions[] = 'editPublished.category.'.$category;
                     }
                 }
             }
         }
-
     }
 
     public static function checkPermissions()
@@ -115,13 +131,14 @@ class K2HelperPermissions
         if ($view != 'item') {
             return;
         }
+
         $task = JRequest::getCmd('task');
-        $user = JFactory::getUser();
-        $app = JFactory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
         if ($user->guest && ($task == 'add' || $task == 'edit')) {
-            $uri = JURI::getInstance();
+            $uri = Joomla\CMS\Uri\Uri::getInstance();
             $return = base64_encode($uri->toString());
-            $app->enqueueMessage(JText::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
+            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
             if (K2_JVERSION == '15') {
                 $app->redirect('index.php?option=com_user&view=login&return='.$return.'&tmpl=component');
             } else {
@@ -132,8 +149,9 @@ class K2HelperPermissions
         switch ($task) {
             case 'add':
                 if (!self::canAddItem()) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                 }
+
                 break;
 
             case 'edit':
@@ -141,56 +159,57 @@ class K2HelperPermissions
             case 'checkin':
                 $cid = JRequest::getInt('cid');
                 if ($cid) {
-                    JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-                    $item = JTable::getInstance('K2Item', 'Table');
+                    Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+                    $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                     $item->load($cid);
 
                     if (!self::canEditItem($item->created_by, $item->catid)) {
                         // Handle in a different way the case when user can add an item but not edit it.
                         if ($task == 'edit' && !$user->guest && $item->created_by == $user->id && (int) $item->modified == 0 && self::canAddItem()) {
-                            echo '<script>parent.location.href = "'.JUri::root().'";</script>';
+                            echo '<script>parent.location.href = "'.Joomla\CMS\Uri\Uri::root().'";</script>';
                             exit;
                         }
-                        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+
+                        JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                     }
                 }
+
                 break;
 
             case 'save':
                 $cid = JRequest::getInt('id');
                 if ($cid) {
-                    JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-                    $item = JTable::getInstance('K2Item', 'Table');
+                    Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+                    $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
                     $item->load($cid);
-
                     if (!self::canEditItem($item->created_by, $item->catid)) {
-                        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                        JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                     }
-                } else {
-                    if (!self::canAddItem()) {
-                        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
-                    }
+                } elseif (!self::canAddItem()) {
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                 }
 
                 break;
 
             case 'tag':
                 if (!self::canAddTag()) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                 }
+
                 break;
 
             case 'extraFields':
                 if (!self::canRenderExtraFields()) {
-                    JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
                 }
+
                 break;
         }
     }
 
     public static function getK2User($userID)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_users WHERE userID = '.(int) $userID;
         $db->setQuery($query);
         $row = $db->loadObject();
@@ -200,7 +219,7 @@ class K2HelperPermissions
 
     public static function getK2UserGroup($id)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_user_groups WHERE id = '.(int) $id;
         $db->setQuery($query);
         $row = $db->loadObject();
@@ -210,22 +229,25 @@ class K2HelperPermissions
 
     public static function canAddItem($category = false)
     {
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         $K2Permissions = K2Permissions::getInstance();
         if (in_array('add.category.all', $K2Permissions->actions)) {
             return true;
         }
+
         if ($category) {
             return in_array('add.category.'.$category, $K2Permissions->actions);
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT id FROM #__k2_categories WHERE published=1 AND trash=0';
         if (K2_JVERSION != '15') {
             $query .= ' AND access IN('.implode(',', $user->getAuthorisedViewLevels()).')';
         } else {
             $aid = (int) $user->get('aid');
-            $query .= " AND access<={$aid}";
+            $query .= ' AND access<='.$aid;
         }
+
         $db->setQuery($query);
         $categories = K2_JVERSION == '30' ? $db->loadColumn() : $db->loadResultArray();
         foreach ($categories as $category) {

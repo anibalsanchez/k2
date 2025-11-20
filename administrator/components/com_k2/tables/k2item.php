@@ -13,12 +13,18 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
 class TableK2Item extends K2Table
 {
+    public $_db;
+
+    public $_tbl_key;
+
+    public $_tbl;
+
     public $id = null;
 
     public $title = null;
@@ -99,27 +105,29 @@ class TableK2Item extends K2Table
     public function check()
     {
         jimport('joomla.filter.output');
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->title = JString::trim($this->title);
         if ($this->title == '') {
-            $this->setError(JText::_('K2_ITEM_MUST_HAVE_A_TITLE'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_ITEM_MUST_HAVE_A_TITLE'));
 
             return false;
         }
+
         if (!$this->catid) {
-            $this->setError(JText::_('K2_ITEM_MUST_HAVE_A_CATEGORY'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_ITEM_MUST_HAVE_A_CATEGORY'));
 
             return false;
         }
+
         if (empty($this->alias)) {
             $this->alias = $this->title;
         }
 
         /* Offload the alias processing block to a simplified external function/method call */
         if (K2_JVERSION == '15') {
-            if (JPluginHelper::isEnabled('system', 'unicodeslug') || JPluginHelper::isEnabled('system', 'jw_unicodeSlugsExtended')) {
-                $this->alias = JFilterOutput::stringURLSafe($this->alias);
+            if (Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'unicodeslug') || Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'jw_unicodeSlugsExtended')) {
+                $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLSafe($this->alias);
             } else {
                 mb_internal_encoding('UTF-8');
                 mb_regex_encoding('UTF-8');
@@ -136,31 +144,30 @@ class TableK2Item extends K2Table
                 foreach ($strips as $strip) {
                     $this->alias = str_replace($strip, '', $this->alias);
                 }
-                if (trim(str_replace('-', '', $this->alias)) == '') {
-                    $datenow = JFactory::getDate();
+
+                if (trim(str_replace('-', '', $this->alias)) === '') {
+                    $datenow = Joomla\CMS\Factory::getDate();
                     $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
                 }
+
                 $this->alias = trim($this->alias, '-.');
             }
+        } elseif (Joomla\CMS\Factory::getConfig()->get('unicodeslugs') == 1) {
+            $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLUnicodeSlug($this->alias);
         } else {
-            if (JFactory::getConfig()->get('unicodeslugs') == 1) {
-                $this->alias = JFilterOutput::stringURLUnicodeSlug($this->alias);
+            // Detect the site language we will transliterate
+            if ($this->language == '*') {
+                $langParams = Joomla\CMS\Component\ComponentHelper::getParams('com_languages');
+                $languageTag = $langParams->get('site');
+            } else {
+                $languageTag = $this->language;
             }
-            // Transliterate properly...
-            else {
-                // Detect the site language we will transliterate
-                if ($this->language == '*') {
-                    $langParams = JComponentHelper::getParams('com_languages');
-                    $languageTag = $langParams->get('site');
-                } else {
-                    $languageTag = $this->language;
-                }
-                $language = JLanguage::getInstance($languageTag);
-                $this->alias = $language->transliterate($this->alias);
-                $this->alias = JFilterOutput::stringURLSafe($this->alias);
-                if (trim(str_replace('-', '', $this->alias)) == '') {
-                    $this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
-                }
+
+            $language = Joomla\CMS\Language\Language::getInstance($languageTag);
+            $this->alias = $language->transliterate($this->alias);
+            $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLSafe($this->alias);
+            if (trim(str_replace('-', '', $this->alias)) === '') {
+                $this->alias = Joomla\CMS\Factory::getDate()->format('Y-m-d-H-i-s');
             }
         }
 
@@ -168,7 +175,7 @@ class TableK2Item extends K2Table
             $SEFReplacements = [];
             $items = explode(',', $params->get('SEFReplacements'));
             foreach ($items as $item) {
-                if (!empty($item)) {
+                if ($item !== '' && $item !== '0') {
                     @[$src, $dst] = explode('|', trim($item));
                     $SEFReplacements[trim($src)] = trim($dst);
                 }
@@ -181,30 +188,28 @@ class TableK2Item extends K2Table
             $this->alias = trim($this->alias, '-.');
         }
 
-        if (K2_JVERSION == '15') {
-            if (trim(str_replace('-', '', $this->alias)) == '') {
-                $datenow = JFactory::getDate();
-                $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
-            }
+        if (K2_JVERSION == '15' && trim(str_replace('-', '', $this->alias)) === '') {
+            $datenow = Joomla\CMS\Factory::getDate();
+            $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
         }
 
         // Check if the item alias already exists, warn the user if it does and append the item ID to it.
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         if ($params->get('k2Sef') && !$params->get('k2SefInsertItemId')) {
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             if ($this->id) {
                 $db->setQuery('SELECT id FROM #__k2_items WHERE alias = '.$db->quote($this->alias).' AND id != '.(int) $this->id);
                 $result = count($db->loadObjectList());
                 if ($result > 0) {
                     $this->alias .= '-'.(int) $this->id;
-                    $app->enqueueMessage(JText::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
+                    $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
                 }
             } else {
                 $db->setQuery('SELECT id FROM #__k2_items WHERE alias = '.$db->quote($this->alias));
                 $result = count($db->loadObjectList());
                 if ($result > 0) {
                     $this->alias .= '-'.date('YmdHi');
-                    $app->enqueueMessage(JText::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
+                    $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
                 }
             }
         }
@@ -214,13 +219,13 @@ class TableK2Item extends K2Table
 
     public function bind($array, $ignore = '')
     {
-        if (key_exists('params', $array) && is_array($array['params'])) {
+        if (array_key_exists('params', $array) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);
             $array['params'] = $registry->toString();
         }
 
-        if (key_exists('plugins', $array) && is_array($array['plugins'])) {
+        if (array_key_exists('plugins', $array) && is_array($array['plugins'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['plugins']);
             $array['plugins'] = $registry->toString();
@@ -231,7 +236,7 @@ class TableK2Item extends K2Table
 
     public function getNextOrder($where = '', $column = 'ordering')
     {
-        $query = "SELECT MAX({$column}) FROM #__k2_items";
+        $query = sprintf('SELECT MAX(%s) FROM #__k2_items', $column);
         $query .= ($where ? ' WHERE '.$where : '');
         $this->_db->setQuery($query);
         $maxord = $this->_db->loadResult();
@@ -248,7 +253,7 @@ class TableK2Item extends K2Table
     {
         $w = ($where) ? ' AND '.$where : '';
         $k = $this->_tbl_key;
-        $query = "SELECT {$this->_tbl_key}, {$column} FROM #__k2_items WHERE {$column} > 0 {$w} ORDER BY {$column}";
+        $query = sprintf('SELECT %s, %s FROM #__k2_items WHERE %s > 0 %s ORDER BY %s', $this->_tbl_key, $column, $column, $w, $column);
         $this->_db->setQuery($query);
         if (!($orders = $this->_db->loadObjectList())) {
             $this->setError($this->_db->getErrorMsg());
@@ -257,13 +262,11 @@ class TableK2Item extends K2Table
         }
 
         for ($i = 0, $n = count($orders); $i < $n; $i++) {
-            if ($orders[$i]->$column >= 0) {
-                if ($orders[$i]->$column != $i + 1) {
-                    $orders[$i]->$column = $i + 1;
-                    $query = "UPDATE #__k2_items SET {$column} = ".(int) $orders[$i]->$column." WHERE {$k} = ".$this->_db->Quote($orders[$i]->$k);
-                    $this->_db->setQuery($query);
-                    $this->_db->query();
-                }
+            if ($orders[$i]->$column >= 0 && $orders[$i]->{$column} != $i + 1) {
+                $orders[$i]->$column = $i + 1;
+                $query = sprintf('UPDATE #__k2_items SET %s = ', $column).(int) $orders[$i]->$column.sprintf(' WHERE %s = ', $k).$this->_db->Quote($orders[$i]->$k);
+                $this->_db->setQuery($query);
+                $this->_db->query();
             }
         }
 
@@ -274,7 +277,7 @@ class TableK2Item extends K2Table
     {
         $k = $this->_tbl_key;
 
-        $sql = "SELECT $this->_tbl_key, {$column} FROM $this->_tbl";
+        $sql = sprintf('SELECT %s, %s FROM %s', $this->_tbl_key, $column, $this->_tbl);
 
         if ($dirn < 0) {
             $sql .= ' WHERE '.$column.' < '.(int) $this->$column;
@@ -311,6 +314,7 @@ class TableK2Item extends K2Table
                 $err = $this->_db->getErrorMsg();
                 JError::raiseError(500, $err);
             }
+
             $this->$column = $row->$column;
         } else {
             $query = 'UPDATE '.$this->_tbl.' SET '.$column.' = '.(int) $this->$column.' WHERE '.$this->_tbl_key.' = '.$this->_db->Quote($this->$k);

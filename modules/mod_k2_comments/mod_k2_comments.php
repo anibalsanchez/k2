@@ -13,14 +13,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION != '15') {
-    $language = JFactory::getLanguage();
+    $language = Joomla\CMS\Factory::getLanguage();
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
 }
 
-require_once dirname(__FILE__).'/helper.php';
+require_once __DIR__.'/helper.php';
 
 // Params
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
@@ -33,7 +33,7 @@ $commenterAvatarWidthSelect = $params->get('commenterAvatarWidthSelect', 'custom
 $commenterAvatarWidth = $params->get('commenterAvatarWidth', 50);
 
 // Get component params
-$componentParams = JComponentHelper::getParams('com_k2');
+$componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
 // User avatar for latest comments
 if ($commentAvatarWidthSelect == 'inherit') {
@@ -52,11 +52,11 @@ if ($commenterAvatarWidthSelect == 'inherit') {
 switch ($module_usage) {
     case '0':
         $comments = modK2CommentsHelper::getLatestComments($params);
-        require JModuleHelper::getLayoutPath('mod_k2_comments', 'comments');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_comments', 'comments');
         break;
 
     case '1':
         $commenters = modK2CommentsHelper::getTopCommenters($params);
-        require JModuleHelper::getLayoutPath('mod_k2_comments', 'commenters');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_comments', 'commenters');
         break;
 }

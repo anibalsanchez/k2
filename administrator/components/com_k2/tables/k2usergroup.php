@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
@@ -34,7 +34,7 @@ class TableK2UserGroup extends K2Table
     {
         $this->name = JString::trim($this->name);
         if ($this->name == '') {
-            $this->setError(JText::_('K2_GROUP_CANNOT_BE_EMPTY'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_GROUP_CANNOT_BE_EMPTY'));
 
             return false;
         }
@@ -44,13 +44,14 @@ class TableK2UserGroup extends K2Table
 
     public function bind($array, $ignore = '')
     {
-        if (key_exists('params', $array) && is_array($array['params'])) {
-            $registry = new JRegistry();
-            $registry->loadArray($array['params']);
+        if (array_key_exists('params', $array) && is_array($array['params'])) {
+            $jRegistry = new JRegistry();
+            $jRegistry->loadArray($array['params']);
             if (JRequest::getVar('categories') == 'all' || JRequest::getVar('categories') == 'none') {
-                $registry->set('categories', JRequest::getVar('categories'));
+                $jRegistry->set('categories', JRequest::getVar('categories'));
             }
-            $array['permissions'] = $registry->toString();
+
+            $array['permissions'] = $jRegistry->toString();
         }
 
         return parent::bind($array, $ignore);

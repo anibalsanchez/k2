@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -21,34 +21,36 @@ class K2ElementCategoriesMultiple extends K2Element
 {
     public function fetchElement($name, $value, &$node, $control_name)
     {
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
 
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT m.* FROM #__k2_categories m WHERE trash = 0 ORDER BY parent, ordering';
         $db->setQuery($query);
         $mitems = $db->loadObjectList();
         $children = [];
         if ($mitems) {
-            foreach ($mitems as $v) {
+            foreach ($mitems as $mitem) {
                 if (K2_JVERSION != '15') {
-                    $v->title = $v->name;
-                    $v->parent_id = $v->parent;
+                    $mitem->title = $mitem->name;
+                    $mitem->parent_id = $mitem->parent;
                 }
-                $pt = $v->parent;
+
+                $pt = $mitem->parent;
                 $list = @$children[$pt] ? $children[$pt] : [];
-                array_push($list, $v);
+                $list[] = $mitem;
                 $children[$pt] = $list;
             }
         }
-        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+
+        $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         $mitems = [];
 
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
-            $mitems[] = JHTML::_('select.option', $item->id, '   '.$item->treename);
+            $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, '   '.$item->treename);
         }
 
-        $doc = JFactory::getDocument();
+        $doc = Joomla\CMS\Factory::getDocument();
         if (K2_JVERSION != '15') {
             $js = "
 			\$K2(document).ready(function() {
@@ -118,14 +120,10 @@ class K2ElementCategoriesMultiple extends K2Element
 			";
         }
 
-        if (K2_JVERSION != '15') {
-            $fieldName = $name.'[]';
-        } else {
-            $fieldName = $control_name.'['.$name.'][]';
-        }
+        $fieldName = K2_JVERSION != '15' ? $name.'[]' : $control_name.'['.$name.'][]';
 
         $doc->addScriptDeclaration($js);
-        $output = JHTML::_('select.genericlist', $mitems, $fieldName, 'class="inputbox" multiple="multiple" size="10"', 'value', 'text', $value);
+        $output = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $mitems, $fieldName, 'class="inputbox" multiple="multiple" size="10"', 'value', 'text', $value);
 
         return $output;
     }

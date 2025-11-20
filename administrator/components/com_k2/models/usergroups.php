@@ -13,20 +13,20 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
 class K2ModelUserGroups extends K2Model
 {
     public function getData()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
         $filter_order = $app->getUserStateFromRequest($option.$view.'filter_order', 'filter_order', '', 'cmd');
@@ -38,7 +38,7 @@ class K2ModelUserGroups extends K2Model
             $filter_order = 'name';
         }
 
-        $query .= " ORDER BY {$filter_order} {$filter_order_Dir}";
+        $query .= sprintf(' ORDER BY %s %s', $filter_order, $filter_order_Dir);
 
         $db->setQuery($query, $limitstart, $limit);
         $rows = $db->loadObjectList();
@@ -48,10 +48,10 @@ class K2ModelUserGroups extends K2Model
 
     public function getTotal()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
 
@@ -63,17 +63,19 @@ class K2ModelUserGroups extends K2Model
 
     public function remove()
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
         $cid = JRequest::getVar('cid');
         foreach ($cid as $id) {
-            $row = JTable::getInstance('K2UserGroup', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2UserGroup', 'Table');
             $row->load($id);
             $row->delete($id);
         }
-        $cache = JFactory::getCache('com_k2');
+
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
-        $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
         $app->redirect('index.php?option=com_k2&view=usergroups');
     }
 }

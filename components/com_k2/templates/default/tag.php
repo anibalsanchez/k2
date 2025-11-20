@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -24,7 +24,7 @@ defined('_JEXEC') or die;
 
     <?php if ($this->params->get('tagName', 1)): ?>
     <!-- Title for tag listings -->
-    <h1><?php echo JText::_('K2_DISPLAYING_ITEMS_BY_TAG'); ?> <?php echo $this->title; ?></h1>
+    <h1><?php echo Joomla\CMS\Language\Text::_('K2_DISPLAYING_ITEMS_BY_TAG'); ?> <?php echo $this->title; ?></h1>
     <?php endif; ?>
 
     <?php /* if (!empty($this->description)): ?>
@@ -35,8 +35,8 @@ defined('_JEXEC') or die;
     <?php if ($this->params->get('tagFeedIcon', 1)): ?>
     <!-- RSS feed icon -->
     <div class="k2FeedIcon">
-        <a href="<?php echo $this->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-            <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+        <a href="<?php echo $this->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
         </a>
         <div class="clr"></div>
     </div>
@@ -51,7 +51,7 @@ defined('_JEXEC') or die;
                 <?php if ($item->params->get('tagItemDateCreated', 1)): ?>
                 <!-- Date created -->
                 <span class="tagItemDateCreated">
-                    <?php echo JHTML::_('date', $item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
+                    <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $item->created, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
                 </span>
                 <?php endif; ?>
 
@@ -103,11 +103,11 @@ defined('_JEXEC') or die;
             <?php if ($item->params->get('tagItemExtraFields', 0) && isset($item->extra_fields) && count($item->extra_fields)): ?>
             <!-- Item extra fields -->
             <div class="tagItemExtraFields">
-                <h4><?php echo JText::_('K2_ADDITIONAL_INFO'); ?></h4>
+                <h4><?php echo Joomla\CMS\Language\Text::_('K2_ADDITIONAL_INFO'); ?></h4>
                 <ul>
                     <?php foreach ($item->extra_fields as $key => $extraField): ?>
                     <?php if ($extraField->value != ''): ?>
-                    <li class="<?php echo ($key % 2) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
+                    <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
                         <?php if ($extraField->type == 'header'): ?>
                         <h4 class="tagItemExtraFieldsHeader"><?php echo $extraField->name; ?></h4>
                         <?php else: ?>
@@ -125,7 +125,7 @@ defined('_JEXEC') or die;
             <?php if ($item->params->get('tagItemCategory')): ?>
             <!-- Item category name -->
             <div class="tagItemCategory">
-                <span><?php echo JText::_('K2_PUBLISHED_IN'); ?></span>
+                <span><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_IN'); ?></span>
                 <a href="<?php echo $item->category->link; ?>"><?php echo $item->category->name; ?></a>
             </div>
             <?php endif; ?>
@@ -133,7 +133,7 @@ defined('_JEXEC') or die;
             <?php if ($item->params->get('tagItemTags', 1) && isset($item->tags) && count($item->tags)): ?>
             <!-- Item tags -->
             <div class="tagItemTagsBlock">
-                <span><?php echo JText::_('K2_TAGGED_UNDER'); ?></span>
+                <span><?php echo Joomla\CMS\Language\Text::_('K2_TAGGED_UNDER'); ?></span>
                 <ul class="tagItemTags">
                     <?php foreach ($item->tags as $tag): ?>
                     <li><a href="<?php echo $tag->link; ?>"><?php echo $tag->name; ?></a></li>
@@ -147,7 +147,7 @@ defined('_JEXEC') or die;
             <!-- Item "read more..." link -->
             <div class="tagItemReadMore">
                 <a class="k2ReadMore" href="<?php echo $item->link; ?>">
-                    <?php echo JText::_('K2_READ_MORE'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_READ_MORE'); ?>
                 </a>
             </div>
             <?php endif; ?>

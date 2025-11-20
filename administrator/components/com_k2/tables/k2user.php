@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
@@ -50,7 +50,7 @@ class TableK2User extends K2Table
 
     public function check()
     {
-        if (trim($this->url) != '' && substr($this->url, 0, 4) != 'http') {
+        if (trim($this->url) !== '' && !str_starts_with($this->url, 'http')) {
             $this->url = 'https://'.$this->url;
         }
 
@@ -59,10 +59,10 @@ class TableK2User extends K2Table
 
     public function bind($array, $ignore = '')
     {
-        if (key_exists('plugins', $array) && is_array($array['plugins'])) {
-            $registry = new JRegistry();
-            $registry->loadArray($array['plugins']);
-            $array['plugins'] = $registry->toString();
+        if (array_key_exists('plugins', $array) && is_array($array['plugins'])) {
+            $jRegistry = new JRegistry();
+            $jRegistry->loadArray($array['plugins']);
+            $array['plugins'] = $jRegistry->toString();
         }
 
         return parent::bind($array, $ignore);

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 /*
     HOW TO CHANGE THIS FORM'S LAYOUT:

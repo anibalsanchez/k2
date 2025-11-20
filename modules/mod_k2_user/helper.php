@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 JLoader::register('K2HelperRoute', JPATH_SITE.'/components/com_k2/helpers/route.php');
 JLoader::register('K2HelperUtilities', JPATH_SITE.'/components/com_k2/helpers/utilities.php');
@@ -23,17 +23,13 @@ class modK2UserHelper
     public static function getReturnURL($params, $type)
     {
         if ($itemid = $params->get($type)) {
-            $app = JFactory::getApplication();
+            $app = Joomla\CMS\Factory::getApplication();
             $menu = $app->getMenu();
             $item = $menu->getItem($itemid);
-            if (K2_JVERSION != '15') {
-                $url = 'index.php?Itemid='.$item->id;
-            } else {
-                $url = JRoute::_($item->link.'&Itemid='.$itemid, false);
-            }
+            $url = K2_JVERSION != '15' ? 'index.php?Itemid='.$item->id : Joomla\CMS\Router\Route::_($item->link.'&Itemid='.$itemid, false);
         } else {
             // stay on the same page
-            $uri = JFactory::getURI();
+            $uri = Joomla\CMS\Factory::getURI();
             $url = $uri->toString(['path', 'query', 'fragment']);
         }
 
@@ -42,38 +38,42 @@ class modK2UserHelper
 
     public static function getType()
     {
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
 
-        return (!$user->get('guest')) ? 'logout' : 'login';
+        return ($user->get('guest')) ? 'login' : 'logout';
     }
 
     public static function getProfile(&$params)
     {
-        $user = JFactory::getUser();
-        $db = JFactory::getDbo();
+        $user = Joomla\CMS\Factory::getUser();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_users WHERE userID='.(int) $user->id;
         $db->setQuery($query, 0, 1);
         $profile = $db->loadObject();
 
         if ($profile) {
             if ($profile->image != '') {
-                $profile->avatar = JURI::root().'media/k2/users/'.$profile->image;
+                $profile->avatar = Joomla\CMS\Uri\Uri::root().'media/k2/users/'.$profile->image;
             }
+
             require_once JPATH_SITE.'/components/com_k2/helpers/permissions.php';
             if (JRequest::getCmd('option') != 'com_k2') {
                 K2HelperPermissions::setPermissions();
             }
+
             if (K2HelperPermissions::canAddItem()) {
-                $profile->addLink = JRoute::_('index.php?option=com_k2&view=item&task=add&tmpl=component&template=system&context=modalselector');
+                $profile->addLink = Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=item&task=add&tmpl=component&template=system&context=modalselector');
             }
 
             return $profile;
         }
+
+        return null;
     }
 
     public static function countUserComments($userID)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_comments WHERE userID='.(int) $userID.' AND published=1';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -86,25 +86,29 @@ class modK2UserHelper
         $items = [];
         $children = [];
         if ($params->get('menu')) {
-            $app = JFactory::getApplication();
+            $app = Joomla\CMS\Factory::getApplication();
             $menu = $app->getMenu();
             $items = $menu->getItems('menutype', $params->get('menu'));
         }
+
         foreach ($items as $item) {
             if (K2_JVERSION != '15') {
                 $item->name = $item->title;
                 $item->parent = $item->parent_id;
             }
+
             $index = $item->parent;
             $list = @$children[$index] ? $children[$index] : [];
-            array_push($list, $item);
+            $list[] = $item;
             $children[$index] = $list;
         }
+
         if (K2_JVERSION != '15') {
-            $items = JHTML::_('menu.treerecurse', 1, '', [], $children, 9999, 0, 0);
+            $items = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 1, '', [], $children, 9999, 0, 0);
         } else {
-            $items = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+            $items = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         }
+
         $links = [];
         foreach ($items as $item) {
             if (K2_JVERSION == '15') {
@@ -114,26 +118,29 @@ class modK2UserHelper
                         continue 2;
                         break;
                     case 'url':
-                        if ((strpos($item->link, 'index.php?') === 0) && (strpos($item->link, 'Itemid=') === false)) {
+                        if ((str_starts_with($item->link, 'index.php?')) && (!str_contains($item->link, 'Itemid='))) {
                             $item->url = $item->link.'&amp;Itemid='.$item->id;
                         } else {
                             $item->url = $item->link;
                         }
+
                         break;
                     default:
                         $router = JSite::getRouter();
                         $item->url = $router->getMode() == JROUTER_MODE_SEF ? 'index.php?Itemid='.$item->id : $item->link.'&Itemid='.$item->id;
                         break;
                 }
+
                 $iParams = class_exists('JParameter') ? new JParameter($item->params) : new JRegistry($item->params);
                 $iSecure = $iParams->def('secure', 0);
                 if ($item->home == 1) {
-                    $item->url = JURI::base();
-                } elseif (strcasecmp(substr($item->url, 0, 4), 'http') && (strpos($item->link, 'index.php?') !== false)) {
-                    $item->url = JRoute::_($item->url, true, $iSecure);
+                    $item->url = Joomla\CMS\Uri\Uri::base();
+                } elseif (strcasecmp(substr($item->url, 0, 4), 'http') && (str_contains($item->link, 'index.php?'))) {
+                    $item->url = Joomla\CMS\Router\Route::_($item->url, true, $iSecure);
                 } else {
                     $item->url = str_replace('&', '&amp;', $item->url);
                 }
+
                 $item->route = $item->url;
             } else {
                 $item->flink = $item->link;
@@ -141,9 +148,10 @@ class modK2UserHelper
                     case 'separator':
                         continue 2;
                     case 'url':
-                        if ((strpos($item->link, 'index.php?') === 0) && (strpos($item->link, 'Itemid=') === false)) {
+                        if ((str_starts_with($item->link, 'index.php?')) && (!str_contains($item->link, 'Itemid='))) {
                             $item->flink = $item->link.'&Itemid='.$item->id;
                         }
+
                         break;
                     case 'alias':
                         $item->flink = 'index.php?Itemid='.$item->params->get('aliasoptions');
@@ -155,15 +163,19 @@ class modK2UserHelper
                         } else {
                             $item->flink .= '&Itemid='.$item->id;
                         }
+
                         break;
                 }
-                if (strcasecmp(substr($item->flink, 0, 4), 'http') && (strpos($item->flink, 'index.php?') !== false)) {
-                    $item->flink = JRoute::_($item->flink, true, $item->params->get('secure'));
+
+                if (strcasecmp(substr($item->flink, 0, 4), 'http') && (str_contains($item->flink, 'index.php?'))) {
+                    $item->flink = Joomla\CMS\Router\Route::_($item->flink, true, $item->params->get('secure'));
                 } else {
-                    $item->flink = JRoute::_($item->flink);
+                    $item->flink = Joomla\CMS\Router\Route::_($item->flink);
                 }
+
                 $item->route = $item->flink;
             }
+
             $links[] = $item;
         }
 

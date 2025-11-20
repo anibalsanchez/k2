@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -22,9 +22,10 @@ class K2ElementItemForm extends K2Element
     public function fetchElement($name, $value, &$node, $control_name)
     {
         if (version_compare(JVERSION, '3.5', 'ge')) {
-            JHtml::_('behavior.framework');
+            Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
         }
-        $document = JFactory::getDocument();
+
+        $document = Joomla\CMS\Factory::getDocument();
         $document->addScriptDeclaration("
         	/* Mootools Snippet */
 			window.addEvent('domready', function() {

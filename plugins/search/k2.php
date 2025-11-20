@@ -13,12 +13,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.plugin.plugin');
 jimport('joomla.html.parameter');
 
-class plgSearchK2 extends JPlugin
+class plgSearchK2 extends Joomla\CMS\Plugin\CMSPlugin
 {
     public function onContentSearchAreas()
     {
@@ -32,7 +32,7 @@ class plgSearchK2 extends JPlugin
 
     public function onSearchAreas()
     {
-        JPlugin::loadLanguage('plg_search_k2', JPATH_ADMINISTRATOR);
+        Joomla\CMS\Plugin\CMSPlugin::loadLanguage('plg_search_k2', JPATH_ADMINISTRATOR);
         static $areas = ['k2' => 'K2_ITEMS'];
 
         return $areas;
@@ -40,21 +40,22 @@ class plgSearchK2 extends JPlugin
 
     public function onSearch($text, $phrase = '', $ordering = '', $areas = null)
     {
-        JPlugin::loadLanguage('plg_search_k2', JPATH_ADMINISTRATOR);
+        Joomla\CMS\Plugin\CMSPlugin::loadLanguage('plg_search_k2', JPATH_ADMINISTRATOR);
         jimport('joomla.html.parameter');
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
-        $jnow = JFactory::getDate();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = K2_JVERSION == '15' ? $jnow->toMySQL() : $jnow->toSql();
 
         $nullDate = $db->getNullDate();
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (K2_JVERSION != '15') {
             $accessCheck = ' IN('.implode(',', $user->getAuthorisedViewLevels()).') ';
         } else {
             $aid = $user->get('aid');
-            $accessCheck = " <= {$aid} ";
+            $accessCheck = sprintf(' <= %s ', $aid);
         }
+
         $tagIDs = [];
         $itemIDs = [];
 
@@ -62,13 +63,11 @@ class plgSearchK2 extends JPlugin
         require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
 
         $searchText = $text;
-        if (is_array($areas)) {
-            if (!array_intersect($areas, array_keys($this->onSearchAreas()))) {
-                return [];
-            }
+        if (is_array($areas) && !array_intersect($areas, array_keys($this->onSearchAreas()))) {
+            return [];
         }
 
-        $plugin = JPluginHelper::getPlugin('search', 'k2');
+        $plugin = Joomla\CMS\Plugin\PluginHelper::getPlugin('search', 'k2');
         $pluginParams = class_exists('JParameter') ? new JParameter($plugin->params) : new JRegistry($plugin->params);
 
         $limit = $pluginParams->def('search_limit', 50);
@@ -116,6 +115,7 @@ class plgSearchK2 extends JPlugin
                         LOWER(i.metakey) LIKE '.$quoted.'
                     )';
                 }
+
                 $where = '('.implode(($phrase == 'all' ? ') AND (' : ') OR ('), $wheres).')';
             }
 
@@ -126,13 +126,13 @@ class plgSearchK2 extends JPlugin
                 $query = 'SELECT id FROM #__k2_tags WHERE published = 1 AND LOWER(name) LIKE '.$quoted;
                 $db->setQuery($query);
                 $tagIDs = (K2_JVERSION == '30') ? $db->loadColumn() : $db->loadResultArray();
-                if (count($tagIDs)) {
+                if (count($tagIDs) > 0) {
                     sort($tagIDs);
                     $query = 'SELECT itemID FROM #__k2_tags_xref WHERE tagID IN ('.implode(',', $tagIDs).')';
                     $db->setQuery($query);
                     $itemIDs = (K2_JVERSION == '30') ? $db->loadColumn() : $db->loadResultArray();
                     $itemIDs = array_unique($itemIDs);
-                    if (count($itemIDs)) {
+                    if ($itemIDs !== []) {
                         //JArrayHelper::toInteger($itemIDs);
                         sort($itemIDs);
                         $where .= ' OR i.id IN ('.implode(',', $itemIDs).')';
@@ -166,7 +166,7 @@ class plgSearchK2 extends JPlugin
                     AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')';
 
             if (K2_JVERSION != '15' && $app->isSite() && $app->getLanguageFilter()) {
-                $languageTag = JFactory::getLanguage()->getTag();
+                $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
                 $query .= ' AND c.language IN ('.$db->Quote($languageTag).', '.$db->Quote('*').') AND i.language IN ('.$db->Quote($languageTag).', '.$db->Quote('*').')';
             }
 
@@ -199,14 +199,15 @@ class plgSearchK2 extends JPlugin
             $limit -= count($list);
             if (isset($list)) {
                 foreach ($list as $key => $item) {
-                    $list[$key]->href = JRoute::_(K2HelperRoute::getItemRoute($item->slug, $item->catslug));
+                    $list[$key]->href = Joomla\CMS\Router\Route::_(K2HelperRoute::getItemRoute($item->slug, $item->catslug));
                 }
             }
+
             $rows[] = $list;
         }
 
         $results = [];
-        if (count($rows)) {
+        if ($rows !== []) {
             foreach ($rows as $row) {
                 $new_row = [];
                 foreach ($row as $key => $item) {
@@ -216,6 +217,7 @@ class plgSearchK2 extends JPlugin
                         $new_row[] = $item;
                     }
                 }
+
                 $results = array_merge($results, (array) $new_row);
             }
         }

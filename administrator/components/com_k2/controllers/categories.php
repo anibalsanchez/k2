@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,97 +27,101 @@ class K2ControllerCategories extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->unpublish();
     }
 
     public function saveorder()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->saveorder();
-        $document = JFactory::getDocument();
+
+        $document = Joomla\CMS\Factory::getDocument();
         if ($document->getType() == 'raw') {
             echo '1';
 
             return $this;
         }
-        $this->setRedirect('index.php?option=com_k2&view=categories', JText::_('K2_NEW_ORDERING_SAVED'));
+
+        $this->setRedirect('index.php?option=com_k2&view=categories', Joomla\CMS\Language\Text::_('K2_NEW_ORDERING_SAVED'));
+
+        return null;
     }
 
     public function orderup()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->orderup();
     }
 
     public function orderdown()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->orderdown();
     }
 
     public function accessregistered()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->accessregistered();
     }
 
     public function accessspecial()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->accessspecial();
     }
 
     public function accesspublic()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->accesspublic();
     }
 
     public function trash()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->trash();
     }
 
     public function restore()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->restore();
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->remove();
     }
 
     public function add()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=category');
     }
 
     public function edit()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $cid = JRequest::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=category&cid='.$cid[0]);
     }
@@ -131,7 +135,7 @@ class K2ControllerCategories extends K2Controller
 
     public function saveBatch()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->saveBatch();
     }
@@ -144,7 +148,7 @@ class K2ControllerCategories extends K2Controller
 
     public function copy()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('categories');
         $model->copy();
     }

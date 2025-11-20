@@ -13,15 +13,11 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION != '15') {
-    $user = JFactory::getUser();
-    if ($user->authorise('core.admin', 'com_k2')) {
-        $user->gid = 1000;
-    } else {
-        $user->gid = 1;
-    }
+    $user = Joomla\CMS\Factory::getUser();
+    $user->gid = $user->authorise('core.admin', 'com_k2') ? 1000 : 1;
 }
 
 JLoader::register('K2Controller', JPATH_COMPONENT.'/controllers/controller.php');
@@ -53,16 +49,17 @@ if ($controller == 'users') {
 jimport('joomla.filesystem.file');
 jimport('joomla.html.parameter');
 
-if (JFile::exists(JPATH_COMPONENT.'/controllers/'.$controller.'.php')) {
+if (Joomla\CMS\Filesystem\File::exists(JPATH_COMPONENT.'/controllers/'.$controller.'.php')) {
     $classname = 'K2Controller'.$controller;
     if (!class_exists($classname)) {
         require_once JPATH_COMPONENT.'/controllers/'.$controller.'.php';
     }
+
     $controller = new $classname();
     $controller->execute($task);
     $controller->redirect();
 } else {
-    JError::raiseError(404, JText::_('K2_NOT_FOUND'));
+    JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
 }
 
 if (JRequest::getCmd('format') != 'json') {

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,7 +21,7 @@ class K2ViewSettings extends K2View
 {
     public function display($tpl = null)
     {
-        JHTML::_('behavior.tooltip');
+        Joomla\CMS\HTML\HTMLHelper::_('behavior.tooltip');
 
         jimport('joomla.html.pane');
 

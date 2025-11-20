@@ -13,13 +13,15 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
 if (version_compare(JVERSION, '3.0', 'ge')) {
-    class K2View extends JViewLegacy
+    class K2View extends Joomla\CMS\MVC\View\HtmlView
     {
+        public $_output;
+
         public function display($tpl = null)
         {
             // Allow for YOOtheme PRO Integration
@@ -34,7 +36,7 @@ if (version_compare(JVERSION, '3.0', 'ge')) {
                 if ($this->_output) {
                     echo $this->_output;
 
-                    return;
+                    return null;
                 }
             }
 

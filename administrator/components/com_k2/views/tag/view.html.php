@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -23,31 +23,32 @@ class K2ViewTag extends K2View
     {
         $model = $this->getModel();
         $tag = $model->getData();
-        JFilterOutput::objectHTMLSafe($tag);
+        Joomla\CMS\Filter\OutputFilter::objectHTMLSafe($tag);
         if (!$tag->id) {
             $tag->published = 1;
         }
+
         $this->assignRef('row', $tag);
 
         $lists = [];
-        $lists['published'] = JHTML::_('select.booleanlist', 'published', 'class="inputbox"', $tag->published);
+        $lists['published'] = Joomla\CMS\HTML\HTMLHelper::_('select.booleanlist', 'published', 'class="inputbox"', $tag->published);
         $this->assignRef('lists', $lists);
 
         // Disable Joomla menu
         JRequest::setVar('hidemainmenu', 1);
 
         // Toolbar
-        $title = (JRequest::getInt('cid')) ? JText::_('K2_EDIT_TAG') : JText::_('K2_ADD_TAG');
-        JToolBarHelper::title($title, 'k2.png');
+        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_TAG') : Joomla\CMS\Language\Text::_('K2_ADD_TAG');
+        Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
 
-        JToolBarHelper::apply();
-        JToolBarHelper::save();
+        Joomla\CMS\Toolbar\ToolbarHelper::apply();
+        Joomla\CMS\Toolbar\ToolbarHelper::save();
         $saveNewIcon = version_compare(JVERSION, '2.5.0', 'ge') ? 'save-new.png' : 'save.png';
-        JToolBarHelper::custom('saveAndNew', $saveNewIcon, 'save_f2.png', 'K2_SAVE_AND_NEW', false);
-        JToolBarHelper::cancel();
+        Joomla\CMS\Toolbar\ToolbarHelper::custom('saveAndNew', $saveNewIcon, 'save_f2.png', 'K2_SAVE_AND_NEW', false);
+        Joomla\CMS\Toolbar\ToolbarHelper::cancel();
 
         // JS
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $document->addScriptDeclaration("
             Joomla.submitbutton = function(pressbutton) {
                 if (pressbutton == 'cancel') {
@@ -55,7 +56,7 @@ class K2ViewTag extends K2View
                     return;
                 }
                 if (\$K2.trim(\$K2('#name').val())=='') {
-                    alert('".JText::_('K2_TAG_CANNOT_BE_EMPTY', true)."');
+                    alert('".Joomla\CMS\Language\Text::_('K2_TAG_CANNOT_BE_EMPTY', true)."');
                 } else {
                     submitform(pressbutton);
                 }

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,13 +21,13 @@ class K2ViewComments extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
+        $user = Joomla\CMS\Factory::getUser();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -44,6 +44,7 @@ class K2ViewComments extends K2View
             $filter_author = $user->id;
             JRequest::setVar('filter_author', $user->id);
         }
+
         $this->loadHelper('html');
 
         // Head includes
@@ -52,33 +53,33 @@ class K2ViewComments extends K2View
         // JS
         $document->addScriptDeclaration("
 			var K2Language = [
-				'".JText::_('K2_YOU_CANNOT_EDIT_TWO_COMMENTS_AT_THE_SAME_TIME', true)."',
-				'".JText::_('K2_THIS_WILL_PERMANENTLY_DELETE_ALL_UNPUBLISHED_COMMENTS_ARE_YOU_SURE', true)."',
-				'".JText::_('K2_REPORT_USER_WARNING', true)."'
+				'".Joomla\CMS\Language\Text::_('K2_YOU_CANNOT_EDIT_TWO_COMMENTS_AT_THE_SAME_TIME', true)."',
+				'".Joomla\CMS\Language\Text::_('K2_THIS_WILL_PERMANENTLY_DELETE_ALL_UNPUBLISHED_COMMENTS_ARE_YOU_SURE', true)."',
+				'".Joomla\CMS\Language\Text::_('K2_REPORT_USER_WARNING', true)."'
 			];
 
 			Joomla.submitbutton = function(pressbutton) {
 				if (pressbutton == 'remove') {
 					if (document.adminForm.boxchecked.value==0) {
-						alert('".JText::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_DELETE', true)."');
+						alert('".Joomla\CMS\Language\Text::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_DELETE', true)."');
 						return false;
 					}
-					if (confirm('".JText::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_COMMENTS', true)."')) {
+					if (confirm('".Joomla\CMS\Language\Text::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_COMMENTS', true)."')) {
 						submitform(pressbutton);
 					}
 				} else if (pressbutton == 'deleteUnpublished') {
-					if (confirm('".JText::_('K2_THIS_WILL_PERMANENTLY_DELETE_ALL_UNPUBLISHED_COMMENTS_ARE_YOU_SURE', true)."')) {
+					if (confirm('".Joomla\CMS\Language\Text::_('K2_THIS_WILL_PERMANENTLY_DELETE_ALL_UNPUBLISHED_COMMENTS_ARE_YOU_SURE', true)."')) {
 						submitform(pressbutton);
 					}
 				} else if (pressbutton == 'publish') {
 					if (document.adminForm.boxchecked.value==0) {
-						alert('".JText::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_PUBLISH', true)."');
+						alert('".Joomla\CMS\Language\Text::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_PUBLISH', true)."');
 						return false;
 					}
 					submitform(pressbutton);
 				} else if (pressbutton == 'unpublish') {
 					if (document.adminForm.boxchecked.value==0) {
-						alert('".JText::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_UNPUBLISH', true)."');
+						alert('".Joomla\CMS\Language\Text::_('K2_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST_TO_UNPUBLISH', true)."');
 						return false;
 					}
 					submitform(pressbutton);
@@ -103,46 +104,46 @@ class K2ViewComments extends K2View
             $comment->reportUserLink = false;
             $comment->commenterLastVisitIP = null;
             if ($comment->userID) {
-                $db = JFactory::getDbo();
+                $db = Joomla\CMS\Factory::getDbo();
                 $db->setQuery('SELECT ip FROM #__k2_users WHERE userID = '.$comment->userID);
                 $comment->commenterLastVisitIP = $db->loadResult();
 
-                $commenter = JFactory::getUser($comment->userID);
+                $commenter = Joomla\CMS\Factory::getUser($comment->userID);
                 if ($commenter->name) {
                     $comment->userName = $commenter->name;
                 }
+
                 if ($app->isSite()) {
                     if (K2_JVERSION != '15') {
                         if ($user->authorise('core.admin', 'com_k2')) {
-                            $comment->reportUserLink = JRoute::_($reportLink.$comment->userID);
+                            $comment->reportUserLink = Joomla\CMS\Router\Route::_($reportLink.$comment->userID);
                         }
-                    } else {
-                        if ($user->gid > 24) {
-                            $comment->reportUserLink = JRoute::_($reportLink.$comment->userID);
-                        }
+                    } elseif ($user->gid > 24) {
+                        $comment->reportUserLink = Joomla\CMS\Router\Route::_($reportLink.$comment->userID);
                     }
                 } else {
-                    $comment->reportUserLink = JRoute::_($reportLink.$comment->userID);
+                    $comment->reportUserLink = Joomla\CMS\Router\Route::_($reportLink.$comment->userID);
                 }
             }
 
             if ($app->isSite()) {
                 $comment->status = K2HelperHTML::stateToggler($comment, $key);
             } else {
-                $comment->status = K2_JVERSION == '15' ? JHTML::_('grid.published', $comment, $key) : JHtml::_('jgrid.published', $comment->published, $key);
+                $comment->status = K2_JVERSION == '15' ? Joomla\CMS\HTML\HTMLHelper::_('grid.published', $comment, $key) : Joomla\CMS\HTML\HTMLHelper::_('jgrid.published', $comment->published, $key);
             }
         }
+
         $this->assignRef('rows', $comments);
 
         // Pagination
         jimport('joomla.html.pagination');
-        $pageNav = new JPagination($total, $limitstart, $limit);
-        $this->assignRef('page', $pageNav);
+        $jPagination = new JPagination($total, $limitstart, $limit);
+        $this->assignRef('page', $jPagination);
 
         $lists = [];
 
         // Detect exact search phrase using double quotes in search string
-        if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
+        if (str_starts_with($search, '"') && str_ends_with($search, '"')) {
             $lists['search'] = '"'.trim(str_replace('"', '', $search)).'"';
         } else {
             $lists['search'] = trim(str_replace('"', '', $search));
@@ -151,59 +152,58 @@ class K2ViewComments extends K2View
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;
 
-        $filter_state_options[] = JHTML::_('select.option', -1, JText::_('K2_SELECT_STATE'));
-        $filter_state_options[] = JHTML::_('select.option', 1, JText::_('K2_PUBLISHED'));
-        $filter_state_options[] = JHTML::_('select.option', 0, JText::_('K2_UNPUBLISHED'));
-        $lists['state'] = JHTML::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', -1, Joomla\CMS\Language\Text::_('K2_SELECT_STATE'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_PUBLISHED'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_UNPUBLISHED'));
+        $lists['state'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
 
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/categories.php';
         $categoriesModel = K2Model::getInstance('Categories', 'K2Model');
-        $categories_option[] = JHTML::_('select.option', 0, JText::_('K2_SELECT_CATEGORY'));
+        $categories_option[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_SELECT_CATEGORY'));
         $categories = $categoriesModel->categoriesTree(null, true, false);
         $categories_options = @array_merge($categories_option, $categories);
-        $lists['categories'] = JHTML::_('select.genericlist', $categories_options, 'filter_category', '', 'value', 'text', $filter_category);
+        $lists['categories'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $categories_options, 'filter_category', '', 'value', 'text', $filter_category);
 
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/items.php';
         $itemsModel = K2Model::getInstance('Items', 'K2Model');
         $authors = $itemsModel->getItemsAuthors();
         $options = [];
-        $options[] = JHTML::_('select.option', 0, JText::_('K2_NO_USER'));
+        $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_NO_USER'));
         foreach ($authors as $author) {
             $name = $author->name;
             if ($author->block) {
-                $name .= ' ['.JText::_('K2_USER_DISABLED').']';
+                $name .= ' ['.Joomla\CMS\Language\Text::_('K2_USER_DISABLED').']';
             }
-            $options[] = JHTML::_('select.option', $author->id, $name);
-        }
-        $lists['authors'] = JHTML::_('select.genericlist', $options, 'filter_author', '', 'value', 'text', $filter_author);
-        $this->assignRef('lists', $lists);
 
-        if (K2_JVERSION != '15') {
-            $dateFormat = JText::_('K2_J16_DATE_FORMAT');
-        } else {
-            $dateFormat = JText::_('K2_DATE_FORMAT');
+            $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $author->id, $name);
         }
+
+        $lists['authors'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, 'filter_author', '', 'value', 'text', $filter_author);
+        $this->assignRef('lists', $lists);
+        $dateFormat = K2_JVERSION != '15' ? Joomla\CMS\Language\Text::_('K2_J16_DATE_FORMAT') : Joomla\CMS\Language\Text::_('K2_DATE_FORMAT');
+
         $this->assignRef('dateFormat', $dateFormat);
 
         if ($app->isAdmin()) {
             // Toolbar
-            $toolbar = JToolBar::getInstance('toolbar');
-            JToolBarHelper::title(JText::_('K2_COMMENTS'), 'k2.png');
+            $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
+            Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_COMMENTS'), 'k2.png');
 
-            JToolBarHelper::publishList();
-            JToolBarHelper::unpublishList();
-            JToolBarHelper::deleteList('', 'remove', 'K2_DELETE');
-            JToolBarHelper::custom('deleteUnpublished', 'delete', 'delete', 'K2_DELETE_ALL_UNPUBLISHED', false);
+            Joomla\CMS\Toolbar\ToolbarHelper::publishList();
+            Joomla\CMS\Toolbar\ToolbarHelper::unpublishList();
+            Joomla\CMS\Toolbar\ToolbarHelper::deleteList('', 'remove', 'K2_DELETE');
+            Joomla\CMS\Toolbar\ToolbarHelper::custom('deleteUnpublished', 'delete', 'delete', 'K2_DELETE_ALL_UNPUBLISHED', false);
 
             // Preferences (Parameters/Settings)
             if (K2_JVERSION != '15') {
-                JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+                Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
             } else {
                 $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
             }
+
             K2HelperHTML::subMenu();
 
-            $userEditLink = JURI::base().'index.php?option=com_k2&view=user&cid=';
+            $userEditLink = Joomla\CMS\Uri\Uri::base().'index.php?option=com_k2&view=user&cid=';
             $this->assignRef('userEditLink', $userEditLink);
         }
 
@@ -212,8 +212,8 @@ class K2ViewComments extends K2View
             JRequest::setVar('template', 'system');
 
             // CSS
-            $document->addStyleSheet(JURI::root(true).'/templates/system/css/general.css');
-            $document->addStyleSheet(JURI::root(true).'/templates/system/css/system.css');
+            $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/general.css');
+            $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/system.css');
         }
 
         parent::display($tpl);

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
@@ -42,7 +42,7 @@ class TableK2ExtraField extends K2Table
     {
         $this->name = JString::trim($this->name);
         if ($this->name == '') {
-            $this->setError(JText::_('K2_NAME_CANNOT_BE_EMPTY'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_NAME_CANNOT_BE_EMPTY'));
 
             return false;
         }

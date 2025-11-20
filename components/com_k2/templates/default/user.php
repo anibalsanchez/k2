@@ -7,10 +7,10 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 // Get user stuff (do not change)
-$user = JFactory::getUser();
+$user = Joomla\CMS\Factory::getUser();
 
 ?>
 
@@ -28,8 +28,8 @@ $user = JFactory::getUser();
     <?php if ($this->params->get('userFeedIcon', 1)): ?>
     <!-- RSS feed icon -->
     <div class="k2FeedIcon">
-        <a href="<?php echo $this->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-            <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+        <a href="<?php echo $this->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
         </a>
         <div class="clr"></div>
     </div>
@@ -41,7 +41,7 @@ $user = JFactory::getUser();
         <!-- Item add link -->
         <span class="userItemAddLink">
             <a data-k2-modal="edit" href="<?php echo $this->addLink; ?>">
-                <?php echo JText::_('K2_POST_A_NEW_ITEM'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_POST_A_NEW_ITEM'); ?>
             </a>
         </span>
         <?php endif; ?>
@@ -54,7 +54,7 @@ $user = JFactory::getUser();
         <h2><?php echo $this->user->name; ?></h2>
         <?php endif; ?>
 
-        <?php if ($this->params->get('userDescription') && isset($this->user->profile->description) && trim($this->user->profile->description) != ''): ?>
+        <?php if ($this->params->get('userDescription') && isset($this->user->profile->description) && trim($this->user->profile->description) !== ''): ?>
         <div class="userDescription"><?php echo $this->user->profile->description; ?></div>
         <?php endif; ?>
 
@@ -62,13 +62,13 @@ $user = JFactory::getUser();
         <div class="userAdditionalInfo">
             <?php if ($this->params->get('userURL') && isset($this->user->profile->url) && $this->user->profile->url): ?>
             <span class="userURL">
-                <?php echo JText::_('K2_WEBSITE_URL'); ?>: <a href="<?php echo $this->user->profile->url; ?>" target="_blank" rel="me"><?php echo $this->user->profile->url; ?></a>
+                <?php echo Joomla\CMS\Language\Text::_('K2_WEBSITE_URL'); ?>: <a href="<?php echo $this->user->profile->url; ?>" target="_blank" rel="me"><?php echo $this->user->profile->url; ?></a>
             </span>
             <?php endif; ?>
 
             <?php if ($this->params->get('userEmail')): ?>
             <span class="userEmail">
-                <?php echo JText::_('K2_EMAIL'); ?>: <?php echo JHTML::_('Email.cloak', $this->user->email); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_EMAIL'); ?>: <?php echo Joomla\CMS\HTML\HTMLHelper::_('Email.cloak', $this->user->email); ?>
             </span>
             <?php endif; ?>
         </div>
@@ -100,7 +100,7 @@ $user = JFactory::getUser();
                 <?php if ($this->params->get('userItemDateCreated')): ?>
                 <!-- Date created -->
                 <span class="userItemDateCreated">
-                    <?php echo JHTML::_('date', $item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
+                    <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $item->created, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
                 </span>
                 <?php endif; ?>
 
@@ -111,7 +111,7 @@ $user = JFactory::getUser();
                     <!-- Item edit link -->
                     <span class="userItemEditLink">
                         <a data-k2-modal="edit" href="<?php echo $item->editLink; ?>">
-                            <?php echo JText::_('K2_EDIT_ITEM'); ?>
+                            <?php echo Joomla\CMS\Language\Text::_('K2_EDIT_ITEM'); ?>
                         </a>
                     </span>
                     <?php endif; ?>
@@ -126,7 +126,7 @@ $user = JFactory::getUser();
                     <?php if (!$item->published || ($item->publish_up != $this->nullDate && $item->publish_up > $this->now) || ($item->publish_down != $this->nullDate && $item->publish_down < $this->now)): ?>
                     <span>
                         <sup>
-                            <?php echo JText::_('K2_UNPUBLISHED'); ?>
+                            <?php echo Joomla\CMS\Language\Text::_('K2_UNPUBLISHED'); ?>
                         </sup>
                     </span>
                     <?php endif; ?>
@@ -190,7 +190,7 @@ $user = JFactory::getUser();
                 <?php if ($this->params->get('userItemCategory')): ?>
                 <!-- Item category name -->
                 <div class="userItemCategory">
-                    <span><?php echo JText::_('K2_PUBLISHED_IN'); ?></span>
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_IN'); ?></span>
                     <a href="<?php echo $item->category->link; ?>"><?php echo $item->category->name; ?></a>
                 </div>
                 <?php endif; ?>
@@ -198,7 +198,7 @@ $user = JFactory::getUser();
                 <?php if ($this->params->get('userItemTags') && isset($item->tags)): ?>
                 <!-- Item tags -->
                 <div class="userItemTagsBlock">
-                    <span><?php echo JText::_('K2_TAGGED_UNDER'); ?></span>
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_TAGGED_UNDER'); ?></span>
                     <ul class="userItemTags">
                         <?php foreach ($item->tags as $tag): ?>
                         <li><a href="<?php echo $tag->link; ?>"><?php echo $tag->name; ?></a></li>
@@ -223,11 +223,11 @@ $user = JFactory::getUser();
                 <?php else: ?>
                 <?php if ($item->numOfComments > 0): ?>
                 <a href="<?php echo $item->link; ?>#itemCommentsAnchor">
-                    <?php echo $item->numOfComments; ?> <?php echo ($item->numOfComments > 1) ? JText::_('K2_COMMENTS') : JText::_('K2_COMMENT'); ?>
+                    <?php echo $item->numOfComments; ?> <?php echo ($item->numOfComments > 1) ? Joomla\CMS\Language\Text::_('K2_COMMENTS') : Joomla\CMS\Language\Text::_('K2_COMMENT'); ?>
                 </a>
                 <?php else: ?>
                 <a href="<?php echo $item->link; ?>#itemCommentsAnchor">
-                    <?php echo JText::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
                 </a>
                 <?php endif; ?>
                 <?php endif; ?>
@@ -238,7 +238,7 @@ $user = JFactory::getUser();
             <!-- Item "read more..." link -->
             <div class="userItemReadMore">
                 <a class="k2ReadMore" href="<?php echo $item->link; ?>">
-                    <?php echo JText::_('K2_READ_MORE'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_READ_MORE'); ?>
                 </a>
             </div>
             <?php endif; ?>

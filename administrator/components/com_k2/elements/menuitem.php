@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -21,11 +21,11 @@ class K2ElementMenuItem extends K2Element
 {
     public function fetchElement($name, $value, &$node, $control_name)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         // load the list of menu types
         // TODO: move query to model
-        $query = 'SELECT menutype, title'.' FROM #__menu_types'.' ORDER BY title';
+        $query = 'SELECT menutype, title FROM #__menu_types ORDER BY title';
         $db->setQuery($query);
         $menuTypes = $db->loadObjectList();
 
@@ -37,9 +37,9 @@ class K2ElementMenuItem extends K2Element
         // load the list of menu items
         // TODO: move query to model
         if (K2_JVERSION != '15') {
-            $query = 'SELECT id, parent_id, title, menutype, type, published'.' FROM #__menu'.$where.' ORDER BY menutype, parent_id, ordering';
+            $query = 'SELECT id, parent_id, title, menutype, type, published FROM #__menu'.$where.' ORDER BY menutype, parent_id, ordering';
         } else {
-            $query = 'SELECT id, parent, name, menutype, type, published'.' FROM #__menu'.$where.' ORDER BY menutype, parent, ordering';
+            $query = 'SELECT id, parent, name, menutype, type, published FROM #__menu'.$where.' ORDER BY menutype, parent, ordering';
         }
 
         $db->setQuery($query);
@@ -51,24 +51,25 @@ class K2ElementMenuItem extends K2Element
 
         if ($menuItems) {
             // first pass - collect children
-            foreach ($menuItems as $v) {
+            foreach ($menuItems as $menuItem) {
                 if (K2_JVERSION != '15') {
-                    $v->parent = $v->parent_id;
-                    $v->name = $v->title;
+                    $menuItem->parent = $menuItem->parent_id;
+                    $menuItem->name = $menuItem->title;
                 }
-                $pt = $v->parent;
+
+                $pt = $menuItem->parent;
                 $list = @$children[$pt] ? $children[$pt] : [];
-                array_push($list, $v);
+                $list[] = $menuItem;
                 $children[$pt] = $list;
             }
         }
 
         // second pass - get an indent list of the items
-        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+        $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
 
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', ' -', $item->treename);
-            $mitems[] = JHTML::_('select.option', $item->id, '   '.$item->treename);
+            $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, '   '.$item->treename);
         }
 
         // assemble into menutype groups
@@ -80,17 +81,18 @@ class K2ElementMenuItem extends K2Element
 
         // assemble menu items to the array
         $options = [];
-        $options[] = JHTML::_('select.option', '', '- '.JText::_('K2_SELECT_MENU_ITEM').' -');
+        $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '', '- '.Joomla\CMS\Language\Text::_('K2_SELECT_MENU_ITEM').' -');
 
-        foreach ($menuTypes as $type) {
-            if ($type != '') {
-                $options[] = JHTML::_('select.option', '0', '&nbsp;', 'value', 'text', true);
-                $options[] = JHTML::_('select.option', $type->menutype, $type->title.' - '.JText::_('K2_TOP'), 'value', 'text', true);
+        foreach ($menuTypes as $menuType) {
+            if ($menuType != '') {
+                $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '0', '&nbsp;', 'value', 'text', true);
+                $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $menuType->menutype, $menuType->title.' - '.Joomla\CMS\Language\Text::_('K2_TOP'), 'value', 'text', true);
             }
-            if (isset($groupedList[$type->menutype])) {
-                $n = count($groupedList[$type->menutype]);
+
+            if (isset($groupedList[$menuType->menutype])) {
+                $n = count($groupedList[$menuType->menutype]);
                 for ($i = 0; $i < $n; $i++) {
-                    $item = &$groupedList[$type->menutype][$i];
+                    $item = &$groupedList[$menuType->menutype][$i];
 
                     //If menutype is changed but item is not saved yet, use the new type in the list
                     if (JRequest::getString('option', '', 'get') == 'com_menus') {
@@ -102,27 +104,24 @@ class K2ElementMenuItem extends K2Element
                         }
                     }
 
-                    $disable = @strpos($node->attributes('disable'), $item->type) !== false ? true : false;
+                    $disable = @strpos($node->attributes('disable'), (string) $item->type) !== false;
 
                     if ($item->published == 0) {
-                        $item->treename .= ' [**'.JText::_('K2_UNPUBLISHED').'**]';
-                    }
-                    if ($item->published == -2) {
-                        $item->treename .= ' [**'.JText::_('K2_TRASHED').'**]';
+                        $item->treename .= ' [**'.Joomla\CMS\Language\Text::_('K2_UNPUBLISHED').'**]';
                     }
 
-                    $options[] = JHTML::_('select.option', $item->id, $item->treename, 'value', 'text', $disable);
+                    if ($item->published == -2) {
+                        $item->treename .= ' [**'.Joomla\CMS\Language\Text::_('K2_TRASHED').'**]';
+                    }
+
+                    $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, $item->treename, 'value', 'text', $disable);
                 }
             }
         }
 
-        if (K2_JVERSION != '15') {
-            $fieldName = $name;
-        } else {
-            $fieldName = $control_name.'['.$name.']';
-        }
+        $fieldName = K2_JVERSION != '15' ? $name : $control_name.'['.$name.']';
 
-        return JHTML::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $control_name.$name);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value, $control_name.$name);
     }
 }
 

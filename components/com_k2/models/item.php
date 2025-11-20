@@ -13,27 +13,30 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
 
 class K2ModelItem extends K2Model
 {
+    public $isSigInstalled;
+
     public function getData()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $id = JRequest::getInt('id');
-        $db = JFactory::getDbo();
-        $query = "SELECT * FROM #__k2_items WHERE id={$id}";
+        $db = Joomla\CMS\Factory::getDbo();
+        $query = 'SELECT * FROM #__k2_items WHERE id='.$id;
         if (K2_JVERSION != '15') {
             $languageFilter = $app->getLanguageFilter();
             if ($languageFilter) {
-                $languageTag = JFactory::getLanguage()->getTag();
+                $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
                 $query .= ' AND language IN ('.$db->Quote($languageTag).', '.$db->Quote('*').')';
             }
         }
+
         $db->setQuery($query, 0, 1);
         $row = $db->loadObject();
 
@@ -43,16 +46,16 @@ class K2ModelItem extends K2Model
     public function prepareItem($item, $view, $task)
     {
         jimport('joomla.filesystem.file');
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $limitstart = JRequest::getInt('limitstart');
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
 
         // Initialize params
         if ($view != 'item') {
             if (K2_JVERSION == '30') {
                 $params = $app->getParams('com_k2');
             } else {
-                $component = JComponentHelper::getComponent('com_k2');
+                $component = Joomla\CMS\Component\ComponentHelper::getComponent('com_k2');
                 $params = class_exists('JParameter') ? new JParameter($component->params) : new JRegistry($component->params);
                 $itemid = JRequest::getInt('Itemid');
                 if ($itemid) {
@@ -66,33 +69,34 @@ class K2ModelItem extends K2Model
         }
 
         // Category
-        $db = JFactory::getDbo();
-        $category = JTable::getInstance('K2Category', 'Table');
+        $db = Joomla\CMS\Factory::getDbo();
+        $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $category->load($item->catid);
 
         $item->category = $category;
-        $item->category->link = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($category->id.':'.urlencode($category->alias))));
+        $item->category->link = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($category->id.':'.urlencode($category->alias))));
 
         // Read more link
         $link = K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($item->category->alias));
-        $item->link = urldecode(JRoute::_($link));
+        $item->link = urldecode(Joomla\CMS\Router\Route::_($link));
 
         // Print link
-        $item->printLink = urldecode(JRoute::_($link.'&tmpl=component&print=1'));
+        $item->printLink = urldecode(Joomla\CMS\Router\Route::_($link.'&tmpl=component&print=1'));
 
         // Params
         $cparams = class_exists('JParameter') ? new JParameter($category->params) : new JRegistry($category->params);
         $iparams = class_exists('JParameter') ? new JParameter($item->params) : new JRegistry($item->params);
-        $item->params = version_compare(PHP_VERSION, '5.0.0', '>=') ? clone $params : $params;
+        $item->params = PHP_VERSION_ID >= 50000 ? clone $params : $params;
 
         $categoryTheme = $cparams->get('theme');
 
         if ($cparams->get('inheritFrom')) {
             $masterCategoryID = $cparams->get('inheritFrom');
-            $masterCategory = JTable::getInstance('K2Category', 'Table');
+            $masterCategory = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $masterCategory->load((int) $masterCategoryID);
             $cparams = class_exists('JParameter') ? new JParameter($masterCategory->params) : new JRegistry($masterCategory->params);
         }
+
         $item->params->merge($cparams);
         $item->params->merge($iparams);
 
@@ -103,7 +107,7 @@ class K2ModelItem extends K2Model
 
         // Edit link
         if (K2HelperPermissions::canEditItem($item->created_by, $item->catid)) {
-            $item->editLink = JRoute::_('index.php?option=com_k2&view=item&task=edit&cid='.$item->id.'&tmpl=component&template=system');
+            $item->editLink = Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=item&task=edit&cid='.$item->id.'&tmpl=component&template=system');
         }
 
         // Tags
@@ -115,9 +119,11 @@ class K2ModelItem extends K2Model
             ($view == 'latest' && $params->get('latestItemTags'))
         ) {
             $tags = $this->getItemTags($item->id);
-            for ($i = 0; $i < count($tags); $i++) {
-                $tags[$i]->link = JRoute::_(K2HelperRoute::getTagRoute($tags[$i]->name));
+            $counter = count($tags);
+            for ($i = 0; $i < $counter; $i++) {
+                $tags[$i]->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getTagRoute($tags[$i]->name));
             }
+
             $item->tags = $tags;
         }
 
@@ -130,16 +136,16 @@ class K2ModelItem extends K2Model
         $item->imageXLarge = '';
 
         $imageTimestamp = '';
-        $dateModified = ((int) $item->modified) ? $item->modified : '';
+        $dateModified = ((int) $item->modified !== 0) ? $item->modified : '';
         if ($params->get('imageTimestamp', 1) && $dateModified) {
             $imageTimestamp = '?t='.strftime('%Y%m%d_%H%M%S', strtotime($dateModified));
         }
 
         $imageFilenamePrefix = md5('Image'.$item->id);
-        $imagePathPrefix = JUri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
+        $imagePathPrefix = Joomla\CMS\Uri\Uri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
 
         // Check if the "generic" variant exists
-        if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
+        if (Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
             $item->imageGeneric = $imagePathPrefix.'_Generic.jpg'.$imageTimestamp;
             $item->imageXSmall = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
             $item->imageSmall = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
@@ -210,15 +216,16 @@ class K2ModelItem extends K2Model
         if (!empty($item->created_by_alias)) {
             $item->author = new stdClass();
             $item->author->name = $item->created_by_alias;
-            $item->author->link = JURI::root();
+            $item->author->link = Joomla\CMS\Uri\Uri::root();
             $item->author->avatar = K2HelperUtilities::getAvatar('alias');
         } else {
-            $author = JFactory::getUser($item->created_by);
+            $author = Joomla\CMS\Factory::getUser($item->created_by);
             $item->author = $author;
-            $item->author->link = JRoute::_(K2HelperRoute::getUserRoute($item->created_by));
+            $item->author->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($item->created_by));
             $item->author->avatar = K2HelperUtilities::getAvatar($author->id, $author->email, $params->get('userImageWidth'));
             $item->author->profile = $this->getUserProfile($item->created_by);
         }
+
         if (empty($item->author->profile)) {
             $item->author->profile = new stdClass();
             $item->author->profile->gender = null;
@@ -226,7 +233,7 @@ class K2ModelItem extends K2Model
 
         // Num of comments
         if ($params->get('comments', 0) > 0) {
-            $user = JFactory::getUser();
+            $user = Joomla\CMS\Factory::getUser();
             if (!$user->guest && $user->id == $item->created_by && $params->get('inlineCommentsModeration')) {
                 $item->numOfComments = $this->countItemComments($item->id, false);
             } else {
@@ -239,23 +246,24 @@ class K2ModelItem extends K2Model
 
     public function prepareFeedItem(&$item)
     {
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $params = K2HelperUtilities::getParams('com_k2');
         $limitstart = 0;
         $view = JRequest::getCmd('view');
 
         // Import plugins
-        JPluginHelper::importPlugin('content');
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
         // Category
-        $category = JTable::getInstance('K2Category', 'Table');
+        $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $category->load($item->catid);
+
         $item->category = $category;
 
         // Read more link
-        $item->link = urldecode(JRoute::_(K2HelperRoute::getItemRoute($item->id.':'.$item->alias, $item->catid.':'.urlencode($item->category->alias))));
+        $item->link = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getItemRoute($item->id.':'.$item->alias, $item->catid.':'.urlencode($item->category->alias))));
 
         // Filtering
         if ($params->get('introTextCleanup')) {
@@ -276,13 +284,13 @@ class K2ModelItem extends K2Model
         $item->description = '';
 
         // Item image
-        if ($params->get('feedItemImage') && JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg')) {
-            $altText = ($item->image_caption) ? $item->image_caption : $item->title;
-            $item->description .= '<div class="K2FeedImage"><img src="'.JURI::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg" alt="'.K2HelperUtilities::cleanHtml($altText).'" /></div>';
+        if ($params->get('feedItemImage') && Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg')) {
+            $altText = $item->image_caption ?: $item->title;
+            $item->description .= '<div class="K2FeedImage"><img src="'.Joomla\CMS\Uri\Uri::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg" alt="'.K2HelperUtilities::cleanHtml($altText).'" /></div>';
 
             // Set an image enclosure object
             $item->enclosure = new JFeedEnclosure();
-            $item->enclosure->url = JURI::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg';
+            $item->enclosure->url = Joomla\CMS\Uri\Uri::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg';
             $item->enclosure->length = filesize(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg');
             $item->enclosure->type = 'image/jpeg';
         }
@@ -293,6 +301,7 @@ class K2ModelItem extends K2Model
             if ($params->get('feedTextWordLimit') && $item->introtext) {
                 $item->introtext = K2HelperUtilities::wordLimit($item->introtext, $params->get('feedTextWordLimit'));
             }
+
             $item->description .= '<div class="K2FeedIntroText">'.$item->introtext.'</div>';
         }
 
@@ -309,6 +318,7 @@ class K2ModelItem extends K2Model
                 foreach ($tags as $tag) {
                     $item->tags[] = '#'.str_replace(' ', '_', $tag->name);
                 }
+
                 $item->description .= '<div class="K2FeedTags">'.implode(' ', $item->tags).'</div>';
                 /*
                 $item->description .= '<div class="K2FeedTags"><ul>';
@@ -342,6 +352,7 @@ class K2ModelItem extends K2Model
                     $limitstart,
                 ]);
             }
+
             $dispatcher->trigger('onK2PrepareContent', [
                 &$galleryTempText,
                 &$params,
@@ -375,6 +386,7 @@ class K2ModelItem extends K2Model
                         $limitstart,
                     ]);
                 }
+
                 $dispatcher->trigger('onK2PrepareContent', [
                     &$mediaTempText,
                     &$params,
@@ -392,6 +404,7 @@ class K2ModelItem extends K2Model
                 foreach ($attachments as $attachment) {
                     $item->description .= '<li><a href="'.$attachment->link.'" title="'.K2HelperUtilities::cleanHtml($attachment->titleAttribute).'">'.$attachment->title.'</a></li>';
                 }
+
                 $item->description .= '</ul></div>';
             }
         }
@@ -405,12 +418,13 @@ class K2ModelItem extends K2Model
             if (!isset($item->author)) {
                 $item->author = new stdClass();
             }
+
             $item->author->name = $item->created_by_alias;
             $item->author->email = '';
         } else {
-            $author = JFactory::getUser($item->created_by);
+            $author = Joomla\CMS\Factory::getUser($item->created_by);
             $item->author = $author;
-            $item->author->link = JRoute::_(K2HelperRoute::getUserRoute($item->created_by));
+            $item->author->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($item->created_by));
             $item->author->profile = $this->getUserProfile($item->created_by);
         }
 
@@ -443,8 +457,8 @@ class K2ModelItem extends K2Model
         $row->featured = $item->featured;
         //$row->ordering = $item->ordering;
         //$row->featured_ordering = $item->featured_ordering;
-        $row->image = (!empty($item->image)) ? $item->image : '';
-        $row->imageWidth = (!empty($item->imageWidth)) ? $item->imageWidth : '';
+        $row->image = (empty($item->image)) ? '' : $item->image;
+        $row->imageWidth = (empty($item->imageWidth)) ? '' : $item->imageWidth;
         $row->image_caption = $item->image_caption;
         $row->image_credits = $item->image_credits;
         $row->imageXSmall = $item->imageXSmall;
@@ -474,17 +488,19 @@ class K2ModelItem extends K2Model
         if (isset($item->author)) {
             $row->author = new stdClass();
             $row->author->name = $item->author->name;
-            $row->author->link = (!empty($item->author->link)) ? $item->author->link : '';
-            $row->author->avatar = (!empty($item->author->avatar)) ? $item->author->avatar : '';
+            $row->author->link = (empty($item->author->link)) ? '' : $item->author->link;
+            $row->author->avatar = (empty($item->author->avatar)) ? '' : $item->author->avatar;
             if (isset($item->author->profile)) {
                 unset($item->author->profile->plugins);
             }
-            $row->author->profile = (!empty($item->author->profile)) ? $item->author->profile : '';
+
+            $row->author->profile = (empty($item->author->profile)) ? '' : $item->author->profile;
             if (isset($row->author->profile->url)) {
                 $row->author->profile->url = htmlspecialchars($row->author->profile->url, ENT_QUOTES, 'utf-8');
             }
         }
-        $row->numOfComments = (!empty($item->numOfComments)) ? $item->numOfComments : null;
+
+        $row->numOfComments = (empty($item->numOfComments)) ? null : $item->numOfComments;
         $row->events = $item->event;
         $row->language = $item->language;
 
@@ -499,15 +515,15 @@ class K2ModelItem extends K2Model
         $limitstart = JRequest::getInt('limitstart');
 
         // Import plugins
-        JPluginHelper::importPlugin('content');
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
-        if (!isset($this->isSigInstalled)) {
+        if (!property_exists($this, 'isSigInstalled') || $this->isSigInstalled === null) {
             $this->isSigInstalled = (
-                JFile::exists(JPATH_SITE.'/plugins/content/jw_sigpro.php') ||
-                JFile::exists(JPATH_SITE.'/plugins/content/jw_sigpro/jw_sigpro.php') ||
-                JFile::exists(JPATH_SITE.'/plugins/content/jw_sigpro/jw_sigpro/jw_sigpro.php')
+                Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/plugins/content/jw_sigpro.php') ||
+                Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/plugins/content/jw_sigpro/jw_sigpro.php') ||
+                Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/plugins/content/jw_sigpro/jw_sigpro/jw_sigpro.php')
             );
         }
 
@@ -516,57 +532,56 @@ class K2ModelItem extends K2Model
         }
 
         // Gallery
-        if (($view == 'item' && $item->params->get('itemImageGallery')) || ($view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemImageGallery')) || ($view == 'relatedByTag')) {
-            if ($item->gallery) {
-                if (JString::strpos($item->gallery, 'flickr.com') === false) {
-                    $item->gallery = "{gallery}{$item->id}{/gallery}";
-                    if (!JFolder::exists(JPATH_SITE.'/media/k2/galleries/'.$item->id)) {
-                        $item->gallery = null;
-                    }
+        if (($view == 'item' && $item->params->get('itemImageGallery') || $view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemImageGallery') || $view == 'relatedByTag') && $item->gallery) {
+            if (JString::strpos($item->gallery, 'flickr.com') === false) {
+                $item->gallery = sprintf('{gallery}%s{/gallery}', $item->id);
+                if (!Joomla\CMS\Filesystem\Folder::exists(JPATH_SITE.'/media/k2/galleries/'.$item->id)) {
+                    $item->gallery = null;
                 }
-                $params->set('galleries_rootfolder', 'media/k2/galleries');
+            }
 
-                if ($view == 'item') {
-                    $width = (int) $item->params->get('itemImageGalleryWidth');
-                    $height = (int) $item->params->get('itemImageGalleryHeight');
+            $params->set('galleries_rootfolder', 'media/k2/galleries');
+            if ($view == 'item') {
+                $width = (int) $item->params->get('itemImageGalleryWidth');
+                $height = (int) $item->params->get('itemImageGalleryHeight');
+            } else {
+                $width = (int) $item->params->get('catItemImageGalleryWidth');
+                $height = (int) $item->params->get('catItemImageGalleryHeight');
+            }
+
+            if ($width && $height) {
+                if (JString::strpos($item->gallery, 'flickr.com') !== false) {
+                    $sigParams = Joomla\CMS\Component\ComponentHelper::getParams('com_sigpro');
+                    $item->gallery = str_replace('{/gallery}', ':'.$sigParams->get('flickrImageCount', 20).':'.$width.':'.$height.'{/gallery}', $item->gallery);
                 } else {
-                    $width = (int) $item->params->get('catItemImageGalleryWidth');
-                    $height = (int) $item->params->get('catItemImageGalleryHeight');
+                    $item->gallery = str_replace('{/gallery}', ':'.$width.':'.$height.'{/gallery}', $item->gallery);
                 }
+            }
 
-                if ($width && $height) {
-                    if (JString::strpos($item->gallery, 'flickr.com') !== false) {
-                        $sigParams = JComponentHelper::getParams('com_sigpro');
-                        $item->gallery = str_replace('{/gallery}', ':'.$sigParams->get('flickrImageCount', 20).':'.$width.':'.$height.'{/gallery}', $item->gallery);
-                    } else {
-                        $item->gallery = str_replace('{/gallery}', ':'.$width.':'.$height.'{/gallery}', $item->gallery);
-                    }
-                }
-
-                // Create temp object to parse plugins
-                $galleryTempText = new stdClass();
-                $galleryTempText->text = $item->gallery;
-                if (K2_JVERSION == '15') {
-                    $dispatcher->trigger('onPrepareContent', [
-                        &$galleryTempText,
-                        &$params,
-                        $limitstart,
-                    ]);
-                } else {
-                    $dispatcher->trigger('onContentPrepare', [
-                        'com_k2.'.$view.'-gallery',
-                        &$galleryTempText,
-                        &$params,
-                        $limitstart,
-                    ]);
-                }
-                $dispatcher->trigger('onK2PrepareContent', [
+            // Create temp object to parse plugins
+            $galleryTempText = new stdClass();
+            $galleryTempText->text = $item->gallery;
+            if (K2_JVERSION == '15') {
+                $dispatcher->trigger('onPrepareContent', [
                     &$galleryTempText,
                     &$params,
                     $limitstart,
                 ]);
-                $item->gallery = $galleryTempText->text;
+            } else {
+                $dispatcher->trigger('onContentPrepare', [
+                    'com_k2.'.$view.'-gallery',
+                    &$galleryTempText,
+                    &$params,
+                    $limitstart,
+                ]);
             }
+
+            $dispatcher->trigger('onK2PrepareContent', [
+                &$galleryTempText,
+                &$params,
+                $limitstart,
+            ]);
+            $item->gallery = $galleryTempText->text;
         }
 
         // Media (also referred to as "Video" in variables)
@@ -610,6 +625,7 @@ class K2ModelItem extends K2Model
                         $limitstart,
                     ]);
                 }
+
                 $dispatcher->trigger('onK2PrepareContent', [
                     &$mediaTempText,
                     &$params,
@@ -633,6 +649,7 @@ class K2ModelItem extends K2Model
             if ($item->params->get('itemIntroText')) {
                 $item->text .= $item->introtext;
             }
+
             if ($item->params->get('itemFullText')) {
                 $item->text .= '{K2Splitter}'.$item->fulltext;
             }
@@ -647,24 +664,28 @@ class K2ModelItem extends K2Model
                     if ($item->params->get('catItemIntroText')) {
                         $item->text .= $item->introtext;
                     }
+
                     break;
 
                 case 'user':
                     if ($item->params->get('userItemIntroText')) {
                         $item->text .= $item->introtext;
                     }
+
                     break;
 
                 case 'tag':
                     if ($item->params->get('tagItemIntroText')) {
                         $item->text .= $item->introtext;
                     }
+
                     break;
 
                 default:
                     if ($item->params->get('genericItemIntroText')) {
                         $item->text .= $item->introtext;
                     }
+
                     break;
             }
         }
@@ -814,34 +835,33 @@ class K2ModelItem extends K2Model
         }
 
         // Extra fields plugins
-        if (($view == 'item' && $item->params->get('itemExtraFields')) || ($view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemExtraFields')) || ($view == 'itemlist' && $task == 'tag' && $item->params->get('tagItemExtraFields')) || ($view == 'itemlist' && ($task == 'search' || $task == 'date') && $item->params->get('genericItemExtraFields'))) {
-            if (isset($item->extra_fields) && count($item->extra_fields)) {
-                foreach ($item->extra_fields as $key => $extraField) {
-                    if ($extraField->type == 'textarea' || $extraField->type == 'textfield') {
-                        // Create temp object to parse plugins
-                        $extraFieldTempText = new stdClass();
-                        $extraFieldTempText->text = $extraField->value;
-                        if (K2_JVERSION == '15') {
-                            $dispatcher->trigger('onPrepareContent', [
-                                &$extraFieldTempText,
-                                &$params,
-                                $limitstart,
-                            ]);
-                        } else {
-                            $dispatcher->trigger('onContentPrepare', [
-                                'com_k2.'.$view.'-extrafields',
-                                &$extraFieldTempText,
-                                &$params,
-                                $limitstart,
-                            ]);
-                        }
-                        $dispatcher->trigger('onK2PrepareContent', [
+        if (($view == 'item' && $item->params->get('itemExtraFields') || $view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemExtraFields') || $view == 'itemlist' && $task == 'tag' && $item->params->get('tagItemExtraFields') || $view == 'itemlist' && ($task == 'search' || $task == 'date') && $item->params->get('genericItemExtraFields')) && (isset($item->extra_fields) && count($item->extra_fields))) {
+            foreach ($item->extra_fields as $key => $extraField) {
+                if ($extraField->type == 'textarea' || $extraField->type == 'textfield') {
+                    // Create temp object to parse plugins
+                    $extraFieldTempText = new stdClass();
+                    $extraFieldTempText->text = $extraField->value;
+                    if (K2_JVERSION == '15') {
+                        $dispatcher->trigger('onPrepareContent', [
                             &$extraFieldTempText,
                             &$params,
                             $limitstart,
                         ]);
-                        $extraField->value = $extraFieldTempText->text;
+                    } else {
+                        $dispatcher->trigger('onContentPrepare', [
+                            'com_k2.'.$view.'-extrafields',
+                            &$extraFieldTempText,
+                            &$params,
+                            $limitstart,
+                        ]);
                     }
+
+                    $dispatcher->trigger('onK2PrepareContent', [
+                        &$extraFieldTempText,
+                        &$params,
+                        $limitstart,
+                    ]);
+                    $extraField->value = $extraFieldTempText->text;
                 }
             }
         }
@@ -858,68 +878,66 @@ class K2ModelItem extends K2Model
 
     public function hit($id)
     {
-        $row = JTable::getInstance('K2Item', 'Table');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $row->hit($id);
     }
 
     public function vote()
     {
-        $app = JFactory::getApplication();
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        $app = Joomla\CMS\Factory::getApplication();
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 
         // Get item
-        $item = JTable::getInstance('K2Item', 'Table');
+        $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $item->load(JRequest::getInt('itemID'));
 
         // Get category
-        $category = JTable::getInstance('K2Category', 'Table');
+        $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $category->load($item->catid);
 
         // Access check
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (K2_JVERSION != '15') {
             if (!in_array($item->access, $user->getAuthorisedViewLevels()) || !in_array($category->access, $user->getAuthorisedViewLevels())) {
-                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
             }
-        } else {
-            if ($item->access > $user->get('aid', 0) || $category->access > $user->get('aid', 0)) {
-                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
-            }
+        } elseif ($item->access > $user->get('aid', 0) || $category->access > $user->get('aid', 0)) {
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
         // Published check
         if (!$item->published || $item->trash) {
-            JError::raiseError(404, JText::_('K2_ITEM_NOT_FOUND'));
+            JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_ITEM_NOT_FOUND'));
         }
+
         if (!$category->published || $category->trash) {
-            JError::raiseError(404, JText::_('K2_ITEM_NOT_FOUND'));
+            JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_ITEM_NOT_FOUND'));
         }
 
         $rate = JRequest::getVar('user_rating', 0, '', 'int');
 
         if ($rate >= 1 && $rate <= 5) {
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             $userIP = $_SERVER['REMOTE_ADDR'];
             $query = 'SELECT * FROM #__k2_rating WHERE itemID ='.(int) $item->id;
             $db->setQuery($query);
             $rating = $db->loadObject();
 
             if (!$rating) {
-                $query = 'INSERT INTO #__k2_rating ( itemID, lastip, rating_sum, rating_count ) VALUES ( '.(int) $item->id.', '.$db->Quote($userIP).", {$rate}, 1 )";
+                $query = 'INSERT INTO #__k2_rating ( itemID, lastip, rating_sum, rating_count ) VALUES ( '.(int) $item->id.', '.$db->Quote($userIP).sprintf(', %s, 1 )', $rate);
                 $db->setQuery($query);
                 $db->query();
-                echo JText::_('K2_THANKS_FOR_RATING');
+                echo Joomla\CMS\Language\Text::_('K2_THANKS_FOR_RATING');
+            } elseif ($userIP != ($rating->lastip)) {
+                $query = sprintf('UPDATE #__k2_rating SET rating_count = rating_count + 1, rating_sum = rating_sum + %s, lastip = ', $rate).$db->Quote($userIP).(' WHERE itemID = '.$item->id);
+                $db->setQuery($query);
+                $db->query();
+                echo Joomla\CMS\Language\Text::_('K2_THANKS_FOR_RATING');
             } else {
-                if ($userIP != ($rating->lastip)) {
-                    $query = "UPDATE #__k2_rating SET rating_count = rating_count + 1, rating_sum = rating_sum + {$rate}, lastip = ".$db->Quote($userIP)." WHERE itemID = {$item->id}";
-                    $db->setQuery($query);
-                    $db->query();
-                    echo JText::_('K2_THANKS_FOR_RATING');
-                } else {
-                    echo JText::_('K2_YOU_HAVE_ALREADY_RATED_THIS_ITEM');
-                }
+                echo Joomla\CMS\Language\Text::_('K2_YOU_HAVE_ALREADY_RATED_THIS_ITEM');
             }
         }
+
         $app->close();
     }
 
@@ -930,7 +948,8 @@ class K2ModelItem extends K2Model
         if (array_key_exists($id, $K2RatingsInstances)) {
             return $K2RatingsInstances[$id];
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_rating WHERE itemID = '.$id;
         $db->setQuery($query);
         $vote = $db->loadObject();
@@ -941,90 +960,94 @@ class K2ModelItem extends K2Model
 
     public function getVotesNum($itemID = null)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $xhr = false;
         if (is_null($itemID)) {
             $itemID = JRequest::getInt('itemID');
             $xhr = true;
         }
-        $vote = $this->getRating($itemID);
-        if (!is_null($vote)) {
-            $rating_count = intval($vote->rating_count);
-        } else {
-            $rating_count = 0;
-        }
+
+        $vote = $this->getRating();
+        $rating_count = is_null($vote) ? 0 : intval($vote->rating_count);
+
         if ($rating_count != 1) {
-            $result = '('.$rating_count.' '.JText::_('K2_VOTES').')';
+            $result = '('.$rating_count.' '.Joomla\CMS\Language\Text::_('K2_VOTES').')';
         } else {
-            $result = '('.$rating_count.' '.JText::_('K2_VOTE').')';
+            $result = '('.$rating_count.' '.Joomla\CMS\Language\Text::_('K2_VOTE').')';
         }
+
         if ($xhr) {
             echo $result;
             $app->close();
         } else {
             return $result;
         }
+
+        return null;
     }
 
     public function getVotesPercentage($itemID = null)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
+        $db = Joomla\CMS\Factory::getDbo();
         $xhr = false;
         $result = 0;
         if (is_null($itemID)) {
             $itemID = JRequest::getInt('itemID');
             $xhr = true;
         }
-        $vote = $this->getRating($itemID);
+
+        $vote = $this->getRating();
         if (!is_null($vote) && $vote->rating_count != 0) {
             $result = number_format(intval($vote->rating_sum) / intval($vote->rating_count), 2) * 20;
         }
+
         if ($xhr) {
             echo $result;
             $app->close();
         } else {
             return $result;
         }
+
+        return null;
     }
 
     public function comment()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         jimport('joomla.mail.helper');
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
         $params = K2HelperUtilities::getParams('com_k2');
-        $user = JFactory::getUser();
-        $config = JFactory::getConfig();
+        $user = Joomla\CMS\Factory::getUser();
+        $config = Joomla\CMS\Factory::getConfig();
         $response = new stdClass();
 
         // Get item
-        $item = JTable::getInstance('K2Item', 'Table');
+        $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $item->load(JRequest::getInt('itemID'));
 
         // Get category
-        $category = JTable::getInstance('K2Category', 'Table');
+        $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $category->load($item->catid);
 
         // Access check
         if (K2_JVERSION != '15') {
             if (!in_array($item->access, $user->getAuthorisedViewLevels()) || !in_array($category->access, $user->getAuthorisedViewLevels())) {
-                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
             }
-        } else {
-            if ($item->access > $user->get('aid', 0) || $category->access > $user->get('aid', 0)) {
-                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
-            }
+        } elseif ($item->access > $user->get('aid', 0) || $category->access > $user->get('aid', 0)) {
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
         // Published check
         if (!$item->published || $item->trash) {
-            JError::raiseError(404, JText::_('K2_ITEM_NOT_FOUND'));
+            JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_ITEM_NOT_FOUND'));
         }
+
         if (!$category->published || $category->trash) {
-            JError::raiseError(404, JText::_('K2_ITEM_NOT_FOUND'));
+            JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_ITEM_NOT_FOUND'));
         }
 
         // Check permissions
@@ -1036,13 +1059,13 @@ class K2ModelItem extends K2Model
                 (($antispamProtection == 'recaptcha' || $antispamProtection == 'both') && !$params->get('recaptcha_private_key')) ||
                 (($antispamProtection == 'akismet' || $antispamProtection == 'both') && !$params->get('akismetApiKey'))
             ) {
-                $response->message = JText::_('K2_ANTISPAM_SETTINGS_ERROR');
+                $response->message = Joomla\CMS\Language\Text::_('K2_ANTISPAM_SETTINGS_ERROR');
                 $response->cssClass = 'k2FormLogError';
                 echo json_encode($response);
                 $app->close();
             }
 
-            $row = JTable::getInstance('K2Comment', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
 
             if (!$row->bind(JRequest::get('post'))) {
                 $response->message = $row->getError();
@@ -1055,13 +1078,13 @@ class K2ModelItem extends K2Model
             $row->commentText = strip_tags($row->commentText);
 
             // Clean vars
-            $filter = JFilterInput::getInstance();
+            $filter = Joomla\CMS\Filter\InputFilter::getInstance();
             $row->userName = $filter->clean($row->userName, 'username');
             if ($row->commentURL && preg_match('/^((http|https|ftp):\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}((:[0-9]{1,5})?\/.*)?$/i', $row->commentURL)) {
                 $url = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $row->commentURL);
                 $url = str_replace(';//', '://', $url);
                 if ($url != '') {
-                    $url = (!strstr($url, '://')) ? 'http://'.$url : $url;
+                    $url = (strstr($url, '://')) ? $url : 'http://'.$url;
                     $url = preg_replace('/&([^#])(?![a-z]{2,8};)/', '&#038;$1', $url);
                     $row->commentURL = $url;
                 }
@@ -1069,7 +1092,7 @@ class K2ModelItem extends K2Model
                 $row->commentURL = '';
             }
 
-            $datenow = JFactory::getDate();
+            $datenow = Joomla\CMS\Factory::getDate();
             $row->commentDate = K2_JVERSION == '15' ? $datenow->toMySQL() : $datenow->toSql();
 
             if (!$user->guest) {
@@ -1083,27 +1106,27 @@ class K2ModelItem extends K2Model
             $commentText = trim($row->commentText);
             $commentURL = trim($row->commentURL);
 
-            if (empty($userName) || $userName == JText::_('K2_ENTER_YOUR_NAME') || empty($commentText) || $commentText == JText::_('K2_ENTER_YOUR_MESSAGE_HERE') || empty($commentEmail) || $commentEmail == JText::_('K2_ENTER_YOUR_EMAIL_ADDRESS')) {
-                $response->message = JText::_('K2_YOU_NEED_TO_FILL_IN_ALL_REQUIRED_FIELDS');
+            if ($userName === '' || $userName === '0' || $userName == Joomla\CMS\Language\Text::_('K2_ENTER_YOUR_NAME') || ($commentText === '' || $commentText === '0') || $commentText == Joomla\CMS\Language\Text::_('K2_ENTER_YOUR_MESSAGE_HERE') || ($commentEmail === '' || $commentEmail === '0') || $commentEmail == Joomla\CMS\Language\Text::_('K2_ENTER_YOUR_EMAIL_ADDRESS')) {
+                $response->message = Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_FILL_IN_ALL_REQUIRED_FIELDS');
                 $response->cssClass = 'k2FormLogError';
                 echo json_encode($response);
                 $app->close();
             }
 
-            if (!JMailHelper::isEmailAddress($commentEmail)) {
-                $response->message = JText::_('K2_INVALID_EMAIL_ADDRESS');
+            if (!Joomla\CMS\Mail\MailHelper::isEmailAddress($commentEmail)) {
+                $response->message = Joomla\CMS\Language\Text::_('K2_INVALID_EMAIL_ADDRESS');
                 $response->cssClass = 'k2FormLogError';
                 echo json_encode($response);
                 $app->close();
             }
 
             if ($user->guest) {
-                $db = JFactory::getDbo();
+                $db = Joomla\CMS\Factory::getDbo();
                 $query = 'SELECT COUNT(*) FROM #__users WHERE name='.$db->Quote($userName).' OR email='.$db->Quote($commentEmail);
                 $db->setQuery($query);
                 $result = $db->loadresult();
                 if ($result > 0) {
-                    $response->message = JText::_('K2_THE_NAME_OR_EMAIL_ADDRESS_YOU_TYPED_IS_ALREADY_IN_USE');
+                    $response->message = Joomla\CMS\Language\Text::_('K2_THE_NAME_OR_EMAIL_ADDRESS_YOU_TYPED_IS_ALREADY_IN_USE');
                     $response->cssClass = 'k2FormLogError';
                     echo json_encode($response);
                     $app->close();
@@ -1111,53 +1134,45 @@ class K2ModelItem extends K2Model
             }
 
             // Google reCAPTCHA
-            if ($params->get('antispam') == 'recaptcha' || $params->get('antispam') == 'both') {
-                if ($user->guest || $params->get('recaptchaForRegistered', 1)) {
-                    require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
-                    if (!K2HelperUtilities::verifyRecaptcha()) {
-                        $response->message = JText::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT');
-                        $response->cssClass = 'k2FormLogError';
-                        echo json_encode($response);
-                        $app->close();
-                    }
+            if (($params->get('antispam') == 'recaptcha' || $params->get('antispam') == 'both') && ($user->guest || $params->get('recaptchaForRegistered', 1))) {
+                require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
+                if (!K2HelperUtilities::verifyRecaptcha()) {
+                    $response->message = Joomla\CMS\Language\Text::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT');
+                    $response->cssClass = 'k2FormLogError';
+                    echo json_encode($response);
+                    $app->close();
                 }
             }
 
             // Akismet
-            if ($params->get('antispam') == 'akismet' || $params->get('antispam') == 'both') {
-                if ($user->guest || $params->get('akismetForRegistered', 1)) {
-                    if ($params->get('akismetApiKey')) {
-                        require_once JPATH_SITE.'/media/k2/assets/vendors/achingbrain/php5-akismet/akismet.class.php';
-                        $akismetApiKey = trim($params->get('akismetApiKey'));
-                        $akismet = new Akismet(JURI::root(false), $akismetApiKey);
-                        $akismet->setCommentAuthor($userName);
-                        $akismet->setCommentAuthorEmail($commentEmail);
-                        $akismet->setCommentAuthorURL($commentURL);
-                        $akismet->setCommentContent($commentText);
-                        $akismet->setPermalink(JURI::root(false).'index.php?option=com_k2&view=item&id='.JRequest::getInt('itemID'));
-                        try {
-                            if ($akismet->isCommentSpam()) {
-                                $response->message = JText::_('K2_SPAM_ATTEMPT_HAS_BEEN_DETECTED_THE_COMMENT_HAS_BEEN_REJECTED');
-                                $response->cssClass = 'k2FormLogError';
-                                echo json_encode($response);
-                                $app->close();
-                            }
-                        } catch (Exception $e) {
-                            $response->message = $e->getMessage();
-                            $response->cssClass = 'k2FormLogSuccess';
-                            echo json_encode($response);
-                            $app->close();
-                        }
+            if (($params->get('antispam') == 'akismet' || $params->get('antispam') == 'both') && ($user->guest || $params->get('akismetForRegistered', 1)) && $params->get('akismetApiKey')) {
+                require_once JPATH_SITE.'/media/k2/assets/vendors/achingbrain/php5-akismet/akismet.class.php';
+                $akismetApiKey = trim($params->get('akismetApiKey'));
+                $akismet = new Akismet(Joomla\CMS\Uri\Uri::root(false), $akismetApiKey);
+                $akismet->setCommentAuthor($userName);
+                $akismet->setCommentAuthorEmail($commentEmail);
+                $akismet->setCommentAuthorURL($commentURL);
+                $akismet->setCommentContent($commentText);
+                $akismet->setPermalink(Joomla\CMS\Uri\Uri::root(false).'index.php?option=com_k2&view=item&id='.JRequest::getInt('itemID'));
+                try {
+                    if ($akismet->isCommentSpam()) {
+                        $response->message = Joomla\CMS\Language\Text::_('K2_SPAM_ATTEMPT_HAS_BEEN_DETECTED_THE_COMMENT_HAS_BEEN_REJECTED');
+                        $response->cssClass = 'k2FormLogError';
+                        echo json_encode($response);
+                        $app->close();
                     }
+                } catch (Exception $e) {
+                    $response->message = $e->getMessage();
+                    $response->cssClass = 'k2FormLogSuccess';
+                    echo json_encode($response);
+                    $app->close();
                 }
             }
 
-            if ($commentURL == JText::_('K2_ENTER_YOUR_SITE_URL') || $commentURL == '') {
+            if ($commentURL == Joomla\CMS\Language\Text::_('K2_ENTER_YOUR_SITE_URL') || $commentURL === '') {
                 $row->commentURL = null;
-            } else {
-                if (substr(trim($commentURL), 0, 4) != 'http') {
-                    $row->commentURL = 'http://'.$commentURL;
-                }
+            } elseif (!str_starts_with(trim($commentURL), 'http')) {
+                $row->commentURL = 'http://'.$commentURL;
             }
 
             if ($params->get('commentsPublishing', false)) {
@@ -1169,10 +1184,8 @@ class K2ModelItem extends K2Model
                     if ($user->authorise('core.admin')) {
                         $row->published = 1;
                     }
-                } else {
-                    if ($user->gid > 23) {
-                        $row->published = 1;
-                    }
+                } elseif ($user->gid > 23) {
+                    $row->published = 1;
                 }
             }
 
@@ -1183,24 +1196,25 @@ class K2ModelItem extends K2Model
                 $app->close();
             }
 
-            if ($row->published) {
+            if ($row->published !== 0) {
                 $caching = K2_JVERSION == '30' ? $config->get('caching') : $config->getValue('config.caching');
                 if ($caching && $user->guest) {
-                    $response->message = JText::_('K2_THANK_YOU_YOUR_COMMENT_WILL_BE_PUBLISHED_SHORTLY');
+                    $response->message = Joomla\CMS\Language\Text::_('K2_THANK_YOU_YOUR_COMMENT_WILL_BE_PUBLISHED_SHORTLY');
                     $response->cssClass = 'k2FormLogSuccess';
                     echo json_encode($response);
                 } else {
-                    $response->message = JText::_('K2_COMMENT_ADDED_REFRESHING_PAGE');
+                    $response->message = Joomla\CMS\Language\Text::_('K2_COMMENT_ADDED_REFRESHING_PAGE');
                     $response->cssClass = 'k2FormLogSuccess';
                     $response->refresh = 1;
                     echo json_encode($response);
                 }
             } else {
-                $response->message = JText::_('K2_COMMENT_ADDED_AND_WAITING_FOR_APPROVAL');
+                $response->message = Joomla\CMS\Language\Text::_('K2_COMMENT_ADDED_AND_WAITING_FOR_APPROVAL');
                 $response->cssClass = 'k2FormLogSuccess';
                 echo json_encode($response);
             }
         }
+
         $app->close();
     }
 
@@ -1211,7 +1225,8 @@ class K2ModelItem extends K2Model
         if (isset($K2ItemTagsInstances[$itemID])) {
             return $K2ItemTagsInstances[$itemID];
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT tag.*
             FROM #__k2_tags AS tag
             JOIN #__k2_tags_xref AS xref ON tag.id = xref.tagID
@@ -1236,7 +1251,7 @@ class K2ModelItem extends K2Model
         }
 
         jimport('joomla.filesystem.file');
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $jsonObjects = json_decode($itemExtraFields);
         $imgExtensions = [
             'jpg',
@@ -1253,6 +1268,7 @@ class K2ModelItem extends K2Model
         foreach ($jsonObjects as $object) {
             $extraFieldsIDs[] = $object->id;
         }
+
         JArrayHelper::toInteger($extraFieldsIDs);
         $condition = @implode(',', $extraFieldsIDs);
 
@@ -1260,7 +1276,7 @@ class K2ModelItem extends K2Model
         $db->setQuery($query);
         $group = $db->loadResult();
 
-        $query = 'SELECT * FROM #__k2_extra_fields WHERE `group` = '.(int) $group." AND published=1 AND (id IN ({$condition}) OR `type` = 'header') ORDER BY ordering ASC";
+        $query = 'SELECT * FROM #__k2_extra_fields WHERE `group` = '.(int) $group.sprintf(" AND published=1 AND (id IN (%s) OR `type` = 'header') ORDER BY ordering ASC", $condition);
         $db->setQuery($query);
         $rows = $db->loadObjectList();
         $size = count($rows);
@@ -1269,57 +1285,60 @@ class K2ModelItem extends K2Model
             $value = '';
             $rawValue = '';
             $values = [];
-            foreach ($jsonObjects as $object) {
-                if ($rows[$i]->id == $object->id) {
+            foreach ($jsonObjects as $jsonObject) {
+                if ($rows[$i]->id == $jsonObject->id) {
                     if ($rows[$i]->type == 'textfield' || $rows[$i]->type == 'textarea' || $rows[$i]->type == 'date') {
-                        $value = $object->value;
+                        $value = $jsonObject->value;
                         if ($rows[$i]->type == 'date' && $value) {
                             $rawValue = $value;
                             $offset = (K2_JVERSION != '15') ? null : 0;
-                            $value = JHTML::_('date', $value, JText::_('K2_DATE_FORMAT_LC'), $offset);
+                            $value = Joomla\CMS\HTML\HTMLHelper::_('date', $value, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC'), $offset);
                         }
                     } elseif ($rows[$i]->type == 'image') {
-                        if ($object->value) {
+                        if ($jsonObject->value) {
                             $src = '';
-                            if (strpos($object->value, '://') === false) {
-                                $src .= JURI::root(true).'/'.$object->value;
+                            if (!str_contains($jsonObject->value, '://')) {
+                                $src .= Joomla\CMS\Uri\Uri::root(true).'/'.$jsonObject->value;
                                 $src = str_replace('//', '/', $src); // Merge duplicate forward slashes
                             } else {
-                                $src .= $object->value;
+                                $src .= $jsonObject->value;
                             }
+
                             $src = str_replace('\\', '/', $src); // Normalize paths on Windows
                             $value = '<img src="'.$src.'" alt="'.$rows[$i]->name.'" />';
                         } else {
                             $value = false;
                         }
                     } elseif ($rows[$i]->type == 'labels') {
-                        $labels = explode(',', $object->value);
+                        $labels = explode(',', $jsonObject->value);
                         if (!is_array($labels)) {
                             $labels = (array) $labels;
                         }
+
                         $value = '';
                         foreach ($labels as $label) {
                             $label = trim($label);
-                            if ($label != '') {
+                            if ($label !== '') {
                                 $label = str_replace('-', ' ', $label);
-                                $value .= '<a href="'.JRoute::_('index.php?option=com_k2&view=itemlist&task=search&searchword='.urlencode($label)).'">'.$label.'</a>';
+                                $value .= '<a href="'.Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=itemlist&task=search&searchword='.urlencode($label)).'">'.$label.'</a>';
                             }
                         }
                     } elseif ($rows[$i]->type == 'select' || $rows[$i]->type == 'radio') {
                         foreach (json_decode($rows[$i]->value) as $option) {
-                            if ($option->value == $object->value) {
+                            if ($option->value == $jsonObject->value) {
                                 $value .= $option->name;
                             }
                         }
                     } elseif ($rows[$i]->type == 'multipleSelect') {
                         foreach (json_decode($rows[$i]->value) as $option) {
-                            if (in_array($option->value, (array) $object->value)) {
+                            if (in_array($option->value, (array) $jsonObject->value)) {
                                 $values[] = $option->name;
                             }
                         }
+
                         $value = @implode(', ', $values);
                     } elseif ($rows[$i]->type == 'csv') {
-                        $array = $object->value;
+                        $array = $jsonObject->value;
                         if (isset($array) && count($array)) {
                             $value .= '<table cellspacing="0" cellpadding="0" class="csvTable">';
                             foreach ($array as $key => $row) {
@@ -1327,12 +1346,14 @@ class K2ModelItem extends K2Model
                                 foreach ($row as $cell) {
                                     $value .= ($key > 0) ? '<td>'.$cell.'</td>' : '<th>'.$cell.'</th>';
                                 }
+
                                 $value .= '</tr>';
                             }
+
                             $value .= '</table>';
                         }
                     } else {
-                        switch ($object->value[2]) {
+                        switch ($jsonObject->value[2]) {
                             case 'same':
                             default:
                                 $attributes = '';
@@ -1343,7 +1364,7 @@ class K2ModelItem extends K2Model
                                 break;
 
                             case 'popup':
-                                $attributes = 'class="classicPopup" rel="{\'x\':'.$params->get('linkPopupWidth').',\'y\':'.$params->get('linkPopupHeight').'}"';
+                                $attributes = 'class="classicPopup" rel="{\'x\':'.$params->get('linkPopupWidth').",'y':".$params->get('linkPopupHeight').'}"';
                                 break;
 
                             case 'lightbox':
@@ -1353,27 +1374,30 @@ class K2ModelItem extends K2Model
                                     define('K2_JOOMLA_MODAL_REQUIRED', true);
                                 }
 
-                                $filename = @basename($object->value[1]);
-                                $extension = JFile::getExt($filename);
+                                $filename = @basename($jsonObject->value[1]);
+                                $extension = Joomla\CMS\Filesystem\File::getExt($filename);
                                 if (!empty($extension) && in_array($extension, $imgExtensions)) {
                                     $attributes = 'data-k2-modal="image"';
                                 } else {
                                     $attributes = 'data-k2-modal="iframe"';
                                 }
+
                                 break;
                         }
-                        $object->value[0] = trim($object->value[0]);
-                        $object->value[1] = trim($object->value[1]);
 
-                        if ($object->value[1] && $object->value[1] != 'http://' && $object->value[1] != 'https://') {
-                            if ($object->value[0] == '') {
-                                $object->value[0] = $object->value[1];
+                        $jsonObject->value[0] = trim($jsonObject->value[0]);
+                        $jsonObject->value[1] = trim($jsonObject->value[1]);
+
+                        if ($jsonObject->value[1] && $jsonObject->value[1] != 'http://' && $jsonObject->value[1] != 'https://') {
+                            if ($jsonObject->value[0] == '') {
+                                $jsonObject->value[0] = $jsonObject->value[1];
                             }
-                            $rows[$i]->url = $object->value[1];
-                            $rows[$i]->text = $object->value[0];
+
+                            $rows[$i]->url = $jsonObject->value[1];
+                            $rows[$i]->text = $jsonObject->value[0];
                             $rows[$i]->attributes = $attributes;
-                            $value = '<a href="'.$object->value[1].'" '.$attributes.'>'.$object->value[0].'</a>';
-                            $rawValue = $object->value[1];
+                            $value = '<a href="'.$jsonObject->value[1].'" '.$attributes.'>'.$jsonObject->value[0].'</a>';
+                            $rawValue = $jsonObject->value[1];
                         } else {
                             $value = false;
                         }
@@ -1383,11 +1407,7 @@ class K2ModelItem extends K2Model
 
             if ($rows[$i]->type == 'header') {
                 $tmp = json_decode($rows[$i]->value);
-                if (!$tmp[0]->displayInFrontEnd) {
-                    $value = null;
-                } else {
-                    $value = $tmp[0]->value;
-                }
+                $value = $tmp[0]->displayInFrontEnd ? $tmp[0]->value : null;
             }
 
             // Detect alias
@@ -1395,22 +1415,24 @@ class K2ModelItem extends K2Model
             if (isset($tmpValues[0]) && isset($tmpValues[0]->alias) && !empty($tmpValues[0]->alias)) {
                 $rows[$i]->alias = $tmpValues[0]->alias;
             } else {
-                $filter = JFilterInput::getInstance();
+                $filter = Joomla\CMS\Filter\InputFilter::getInstance();
                 $rows[$i]->alias = $filter->clean($rows[$i]->name, 'WORD');
                 if (!$rows[$i]->alias) {
                     $rows[$i]->alias = 'extraField'.$rows[$i]->id;
                 }
             }
 
-            if (trim($value) != '') {
-                if (trim($rawValue) != '') {
+            if (trim($value) !== '') {
+                if (trim($rawValue) !== '') {
                     $rows[$i]->rawValue = $rawValue;
                 }
+
                 $rows[$i]->value = $value;
                 if (!is_null($item)) {
                     if (!isset($item->extraFields)) {
                         $item->extraFields = new stdClass();
                     }
+
                     $tmpAlias = $rows[$i]->alias;
                     $item->extraFields->$tmpAlias = $rows[$i];
                 }
@@ -1422,6 +1444,7 @@ class K2ModelItem extends K2Model
         if ($item) {
             $K2ItemExtraFieldsInstances[$item->id] = $rows;
         }
+
         $this->buildAliasBasedExtraFields($K2ItemExtraFieldsInstances[$item->id], $item);
 
         return $K2ItemExtraFieldsInstances[$item->id];
@@ -1432,13 +1455,17 @@ class K2ModelItem extends K2Model
         if (is_null($item)) {
             return false;
         }
+
         if (!isset($item->extraFields)) {
             $item->extraFields = new stdClass();
         }
+
         foreach ($extraFields as $extraField) {
             $tmpAlias = $extraField->alias;
             $item->extraFields->$tmpAlias = $extraField;
         }
+
+        return null;
     }
 
     public function getItemAttachments($itemID)
@@ -1448,14 +1475,16 @@ class K2ModelItem extends K2Model
         if (isset($K2ItemAttachmentsInstances[$itemID])) {
             return $K2ItemAttachmentsInstances[$itemID];
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_attachments WHERE itemID='.$itemID;
         $db->setQuery($query);
         $rows = $db->loadObjectList();
         foreach ($rows as $row) {
-            $hash = version_compare(JVERSION, '3.0', 'ge') ? JApplication::getHash($row->id) : JUtility::getHash($row->id);
-            $row->link = JRoute::_('index.php?option=com_k2&view=item&task=download&id='.$row->id.'_'.$hash);
+            $hash = version_compare(JVERSION, '3.0', 'ge') ? JApplication::getHash($row->id) : Joomla\CMS\Utility\Utility::getHash($row->id);
+            $row->link = Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=item&task=download&id='.$row->id.'_'.$hash);
         }
+
         $K2ItemAttachmentsInstances[$itemID] = $rows;
 
         return $K2ItemAttachmentsInstances[$itemID];
@@ -1466,12 +1495,13 @@ class K2ModelItem extends K2Model
         $params = K2HelperUtilities::getParams('com_k2');
         $order = $params->get('commentsOrdering', 'DESC');
         $ordering = ($order == 'DESC') ? 'DESC' : 'ASC';
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_comments WHERE itemID='.(int) $itemID;
         if ($published) {
             $query .= ' AND published=1 ';
         }
-        $query .= " ORDER BY commentDate {$ordering}";
+
+        $query .= ' ORDER BY commentDate '.$ordering;
         $db->setQuery($query, $limitstart, $limit);
         $rows = $db->loadObjectList();
 
@@ -1486,11 +1516,13 @@ class K2ModelItem extends K2Model
         if (isset($K2ItemCommentsCountInstances[$index])) {
             return $K2ItemCommentsCountInstances[$index];
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_comments WHERE itemID='.$itemID;
         if ($published) {
             $query .= ' AND published=1 ';
         }
+
         $db->setQuery($query);
         $result = $db->loadResult();
         $K2ItemCommentsCountInstances[$index] = $result;
@@ -1500,33 +1532,34 @@ class K2ModelItem extends K2Model
 
     public function checkin()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $id = JRequest::getInt('cid');
         if ($id) {
-            $row = JTable::getInstance('K2Item', 'Table');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $row->load($id);
             $row->checkin();
         } else {
             // Clean up SIGPro
             $sigProFolder = JRequest::getCmd('sigProFolder');
-            if ($sigProFolder && !is_numeric($sigProFolder) && JFolder::exists(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder)) {
-                JFolder::delete(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder);
+            if ($sigProFolder && !is_numeric($sigProFolder) && Joomla\CMS\Filesystem\Folder::exists(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder)) {
+                Joomla\CMS\Filesystem\Folder::delete(JPATH_SITE.'/media/k2/galleries/'.$sigProFolder);
             }
         }
+
         $app->close();
     }
 
     public function getAdjacentItem($id, $catid, $ordering, $direction)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
 
         $id = (int) $id;
         $catid = (int) $catid;
         $ordering = (int) $ordering;
 
-        $db = JFactory::getDbo();
-        $jnow = JFactory::getDate();
+        $db = Joomla\CMS\Factory::getDbo();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = K2_JVERSION == '15' ? $jnow->toMySQL() : $jnow->toSql();
         $nullDate = $db->getNullDate();
 
@@ -1537,10 +1570,8 @@ class K2ModelItem extends K2Model
         }
 
         $languageCondition = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageCondition = 'AND language IN ('.$db->quote(JFactory::getLanguage()->getTag()).', '.$db->quote('*').')';
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageCondition = 'AND language IN ('.$db->quote(Joomla\CMS\Factory::getLanguage()->getTag()).', '.$db->quote('*').')';
         }
 
         if ($direction == 'prev') {
@@ -1552,9 +1583,9 @@ class K2ModelItem extends K2Model
         }
 
         if ($ordering == '0') {
-            $orderCondition = "AND id {$dirOperand} {$id}";
+            $orderCondition = sprintf('AND id %s %d', $dirOperand, $id);
         } else {
-            $orderCondition = "AND id != {$id} AND ordering {$dirOperand} {$ordering}";
+            $orderCondition = sprintf('AND id != %d AND ordering %s %d', $id, $dirOperand, $ordering);
         }
 
         $query = "SELECT *
@@ -1577,15 +1608,15 @@ class K2ModelItem extends K2Model
 
     public function getPreviousItem($id, $catid, $ordering, $catOrdering)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
 
         $id = (int) $id;
         $catid = (int) $catid;
         $ordering = (int) $ordering;
 
-        $db = JFactory::getDbo();
-        $jnow = JFactory::getDate();
+        $db = Joomla\CMS\Factory::getDbo();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = K2_JVERSION == '15' ? $jnow->toMySQL() : $jnow->toSql();
         $nullDate = $db->getNullDate();
 
@@ -1596,10 +1627,8 @@ class K2ModelItem extends K2Model
         }
 
         $languageCondition = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageCondition = 'AND language IN ('.$db->quote(JFactory::getLanguage()->getTag()).', '.$db->quote('*').')';
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageCondition = 'AND language IN ('.$db->quote(Joomla\CMS\Factory::getLanguage()->getTag()).', '.$db->quote('*').')';
         }
 
         $query = "SELECT *
@@ -1637,15 +1666,15 @@ class K2ModelItem extends K2Model
 
     public function getNextItem($id, $catid, $ordering, $catOrdering)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
 
         $id = (int) $id;
         $catid = (int) $catid;
         $ordering = (int) $ordering;
 
-        $db = JFactory::getDbo();
-        $jnow = JFactory::getDate();
+        $db = Joomla\CMS\Factory::getDbo();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = K2_JVERSION == '15' ? $jnow->toMySQL() : $jnow->toSql();
         $nullDate = $db->getNullDate();
 
@@ -1656,10 +1685,8 @@ class K2ModelItem extends K2Model
         }
 
         $languageCondition = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageCondition = 'AND language IN ('.$db->quote(JFactory::getLanguage()->getTag()).', '.$db->quote('*').')';
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageCondition = 'AND language IN ('.$db->quote(Joomla\CMS\Factory::getLanguage()->getTag()).', '.$db->quote('*').')';
         }
 
         $query = "SELECT *
@@ -1697,7 +1724,7 @@ class K2ModelItem extends K2Model
 
     public function getUserProfile($id = null)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         if (is_null($id)) {
             $id = JRequest::getInt('id');
         }
@@ -1707,7 +1734,7 @@ class K2ModelItem extends K2Model
             return $K2UsersInstances[$id];
         }
 
-        $query = "SELECT id, gender, description, image, url, `group`, plugins FROM #__k2_users WHERE userID={$id}";
+        $query = 'SELECT id, gender, description, image, url, `group`, plugins FROM #__k2_users WHERE userID='.$id;
         $db->setQuery($query);
         $row = $db->loadObject();
         $K2UsersInstances[$id] = $row;

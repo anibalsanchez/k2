@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 K2HelperHTML::loadHeadIncludes(true, true, false, true);
 
@@ -25,8 +25,18 @@ if (K2_JVERSION == '15') {
 } else {
     jimport('joomla.form.formfield');
     if (version_compare(JVERSION, '3.5.0', 'ge')) {
-        class K2Element extends JFormField
+        class K2Element extends Joomla\CMS\Form\FormField
         {
+            public $options;
+
+            public $name;
+
+            public $value;
+
+            public $element;
+
+            public $description;
+
             public function getInput()
             {
                 /*
@@ -35,7 +45,7 @@ if (K2_JVERSION == '15') {
                 }
                 return $this->fetchElementValue($this->name, $this->value, $this->element, $this->options['control']);
                 */
-                $controls = (!empty($this->options['control'])) ? $this->options['control'] : [];
+                $controls = (empty($this->options['control'])) ? [] : $this->options['control'];
 
                 return $this->fetchElement($this->name, $this->value, $this->element, $controls);
             }
@@ -48,7 +58,7 @@ if (K2_JVERSION == '15') {
                 }
                 */
                 if (method_exists($this, 'fetchTooltip')) { // BC
-                    $controls = (!empty($this->options['control'])) ? $this->options['control'] : [];
+                    $controls = (empty($this->options['control'])) ? [] : $this->options['control'];
 
                     return $this->fetchTooltip($this->element['label'], $this->description, $this->element, $controls, $this->element['name'] = '');
                 }
@@ -62,8 +72,18 @@ if (K2_JVERSION == '15') {
             }
         }
     } else {
-        class K2Element extends JFormField
+        class K2Element extends Joomla\CMS\Form\FormField
         {
+            public $name;
+
+            public $value;
+
+            public $element;
+
+            public $options;
+
+            public $description;
+
             public function getInput()
             {
                 /*

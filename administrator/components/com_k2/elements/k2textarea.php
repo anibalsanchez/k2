@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -27,9 +27,11 @@ class K2ElementK2textarea extends K2Element
             if ($node->attributes()->chars) {
                 $chars = $node->attributes()->chars;
             }
+
             if ($node->attributes()->cols) {
                 $cols = $node->attributes()->cols;
             }
+
             if ($node->attributes()->rows) {
                 $rows = $node->attributes()->rows;
             }
@@ -38,13 +40,16 @@ class K2ElementK2textarea extends K2Element
             if ($node->attributes('chars')) {
                 $chars = $node->attributes('chars');
             }
+
             if ($node->attributes('cols')) {
                 $cols = $node->attributes('cols');
             }
+
             if ($node->attributes('rows')) {
                 $rows = $node->attributes('rows');
             }
         }
+
         if (!$value) {
             $value = '';
         }

@@ -7,31 +7,31 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
 <div class="k2ReportCommentFormContainer">
     <h2 class="componentheading">
-        <?php echo JText::_('K2_REPORT_COMMENT'); ?>
+        <?php echo Joomla\CMS\Language\Text::_('K2_REPORT_COMMENT'); ?>
     </h2>
     <blockquote class="commentPreview">
         <span class="quoteIconLeft">&ldquo;</span>
         <span class="theComment"><?php echo nl2br($this->row->commentText); ?></span>
         <span class="quoteIconRight">&rdquo;</span>
     </blockquote>
-    <form action="<?php echo JURI::root(true); ?>/index.php" name="k2ReportCommentForm" id="k2ReportCommentForm" method="post">
-        <label for="name"><?php echo JText::_('K2_YOUR_NAME'); ?></label>
+    <form action="<?php echo Joomla\CMS\Uri\Uri::root(true); ?>/index.php" name="k2ReportCommentForm" id="k2ReportCommentForm" method="post">
+        <label for="name"><?php echo Joomla\CMS\Language\Text::_('K2_YOUR_NAME'); ?></label>
         <input type="text" id="name" name="name" value="" />
 
-        <label for="reportReason"><?php echo JText::_('K2_REPORT_REASON'); ?></label>
+        <label for="reportReason"><?php echo Joomla\CMS\Language\Text::_('K2_REPORT_REASON'); ?></label>
         <textarea name="reportReason" id="reportReason" cols="60" rows="10"></textarea>
 
         <?php if ($this->params->get('recaptcha') && $this->user->guest): ?>
         <div id="recaptcha" class="<?php echo $this->recaptchaClass; ?>"></div>
         <?php endif; ?>
 
-        <button class="button"><?php echo JText::_('K2_SEND_REPORT'); ?></button>
+        <button class="button"><?php echo Joomla\CMS\Language\Text::_('K2_SEND_REPORT'); ?></button>
 
         <span id="formLog"></span>
 
@@ -40,6 +40,6 @@ defined('_JEXEC') or die;
         <input type="hidden" name="task" value="sendReport" />
         <input type="hidden" name="id" value="<?php echo $this->row->id; ?>" />
         <input type="hidden" name="format" value="raw" />
-        <?php echo JHTML::_('form.token'); ?>
+        <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
     </form>
 </div>

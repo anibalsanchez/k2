@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -22,7 +22,7 @@ class K2ControllerSettings extends K2Controller
     public function display($cachable = false, $urlparams = [])
     {
         if (K2_JVERSION != '15') {
-            $app = JFactory::getApplication();
+            $app = Joomla\CMS\Factory::getApplication();
             $app->redirect('index.php?option=com_config&view=component&component=com_k2&path=&tmpl=component');
         } else {
             JRequest::setVar('tmpl', 'component');
@@ -32,10 +32,11 @@ class K2ControllerSettings extends K2Controller
 
     public function save()
     {
-        $app = JFactory::getApplication();
-        JRequest::checkToken() or jexit('Invalid Token');
+        $app = Joomla\CMS\Factory::getApplication();
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('settings');
         $model->save();
+
         $app->redirect('index.php?option=com_k2&view=settings');
     }
 }

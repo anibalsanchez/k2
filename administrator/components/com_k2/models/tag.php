@@ -13,18 +13,18 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
 class K2ModelTag extends K2Model
 {
     public function getData()
     {
         $cid = JRequest::getVar('cid');
-        $row = JTable::getInstance('K2Tag', 'Table');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
         $row->load($cid);
 
         return $row;
@@ -32,11 +32,11 @@ class K2ModelTag extends K2Model
 
     public function save()
     {
-        $app = JFactory::getApplication();
-        $row = JTable::getInstance('K2Tag', 'Table');
+        $app = Joomla\CMS\Factory::getApplication();
+        $row = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
 
         // Plugin Events
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
         if (!$row->bind(JRequest::get('post'))) {
@@ -44,7 +44,7 @@ class K2ModelTag extends K2Model
             $app->redirect('index.php?option=com_k2&view=tags');
         }
 
-        $isNew = ($row->id) ? false : true;
+        $isNew = !(bool) $row->id;
 
         // Trigger K2 plugins
         $dispatcher->trigger('onBeforeK2Save', [&$row, $isNew]);
@@ -59,7 +59,7 @@ class K2ModelTag extends K2Model
             $app->redirect('index.php?option=com_k2&view=tags');
         }
 
-        $cache = JFactory::getCache('com_k2');
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
         // Trigger K2 plugins
@@ -67,31 +67,32 @@ class K2ModelTag extends K2Model
 
         switch (JRequest::getCmd('task')) {
             case 'apply':
-                $msg = JText::_('K2_CHANGES_TO_TAG_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_TAG_SAVED');
                 $link = 'index.php?option=com_k2&view=tag&cid='.$row->id;
                 break;
             case 'saveAndNew':
-                $msg = JText::_('K2_TAG_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_TAG_SAVED');
                 $link = 'index.php?option=com_k2&view=tag';
                 break;
             case 'save':
             default:
-                $msg = JText::_('K2_TAG_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_TAG_SAVED');
                 $link = 'index.php?option=com_k2&view=tags';
                 break;
         }
+
         $app->enqueueMessage($msg);
         $app->redirect($link);
     }
 
     public function addTag()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
 
-        $user = JFactory::getUser();
-        $params = JComponentHelper::getParams('com_k2');
+        $user = Joomla\CMS\Factory::getUser();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         if ($user->gid < 24 && $params->get('lockTags')) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
         $tag = JRequest::getString('tag');
@@ -102,33 +103,33 @@ class K2ModelTag extends K2Model
         $response->name = $tag;
 
         if (empty($tag)) {
-            $response->msg = JText::_('K2_YOU_NEED_TO_ENTER_A_TAG', true);
+            $response->msg = Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_ENTER_A_TAG', true);
             echo json_encode($response);
             $app->close();
         }
 
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_tags WHERE name='.$db->Quote($tag);
         $db->setQuery($query);
         $result = $db->loadResult();
 
         if ($result > 0) {
-            $response->msg = JText::_('K2_TAG_ALREADY_EXISTS', true);
+            $response->msg = Joomla\CMS\Language\Text::_('K2_TAG_ALREADY_EXISTS', true);
             echo json_encode($response);
             $app->close();
         }
 
-        $row = JTable::getInstance('K2Tag', 'Table');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
         $row->name = $tag;
         $row->published = 1;
         $row->store();
 
-        $cache = JFactory::getCache('com_k2');
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
         $response->id = $row->id;
         $response->status = 'success';
-        $response->msg = JText::_('K2_TAG_ADDED_TO_AVAILABLE_TAGS_LIST', true);
+        $response->msg = Joomla\CMS\Language\Text::_('K2_TAG_ADDED_TO_AVAILABLE_TAGS_LIST', true);
         echo json_encode($response);
 
         $app->close();
@@ -136,8 +137,8 @@ class K2ModelTag extends K2Model
 
     public function tags()
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
         $word = JRequest::getString('q', null);
         $id = JRequest::getInt('id');
         if (K2_JVERSION == '15') {

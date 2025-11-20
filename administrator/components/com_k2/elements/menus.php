@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -22,17 +22,17 @@ class K2ElementMenus extends K2Element
     public function fetchElement($name, $value, &$node, $control_name)
     {
         $fieldName = (K2_JVERSION != '15') ? $name : $control_name.'['.$name.']';
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT menutype, title FROM #__menu_types';
         $db->setQuery($query);
         $menus = $db->loadObjectList();
         $options = [];
-        $options[] = JHTML::_('select.option', '', JText::_('K2_NONE_ONSELECTLISTS'));
+        $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '', Joomla\CMS\Language\Text::_('K2_NONE_ONSELECTLISTS'));
         foreach ($menus as $menu) {
-            $options[] = JHTML::_('select.option', $menu->menutype, $menu->title);
+            $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $menu->menutype, $menu->title);
         }
 
-        return JHTML::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value);
     }
 }
 

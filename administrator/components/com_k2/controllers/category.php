@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,14 +27,14 @@ class K2ControllerCategory extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('category');
         $model->save();
     }
 
     public function saveAndNew()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('category');
         $model->save();
     }
@@ -46,7 +46,7 @@ class K2ControllerCategory extends K2Controller
 
     public function cancel()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=categories');
     }
 }

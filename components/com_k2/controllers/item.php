@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -22,34 +22,38 @@ class K2ControllerItem extends K2Controller
     public function display($cachable = false, $urlparams = [])
     {
         $model = $this->getModel('itemlist');
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $viewType = $document->getType();
         $view = $this->getView('item', $viewType);
         $view->setModel($model);
         JRequest::setVar('view', 'item');
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
             $cache = true;
         } else {
             $cache = true;
-            JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-            $row = JTable::getInstance('K2Item', 'Table');
+            Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+            $row = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
             $row->load(JRequest::getInt('id'));
             if (K2HelperPermissions::canEditItem($row->created_by, $row->catid)) {
                 $cache = false;
             }
+
             $params = K2HelperUtilities::getParams('com_k2');
             if ($row->created_by == $user->id && $params->get('inlineCommentsModeration')) {
                 $cache = false;
             }
+
             if ($row->access > 0) {
                 $cache = false;
             }
-            $category = JTable::getInstance('K2Category', 'Table');
+
+            $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $category->load($row->catid);
             if ($category->access > 0) {
                 $cache = false;
             }
+
             if ($params->get('comments') && $document->getType() == 'html') {
                 $itemListModel = K2Model::getInstance('Itemlist', 'K2Model');
                 $profile = $itemListModel->getUserProfile($user->id);
@@ -63,6 +67,7 @@ class K2ControllerItem extends K2Controller
                         \$K2('#commentURL').val('".htmlspecialchars($profile->url, ENT_QUOTES, 'UTF-8')."').attr('disabled', 'disabled');
                     ";
                 }
+
                 $script .= '
                     });
                 ';
@@ -80,23 +85,24 @@ class K2ControllerItem extends K2Controller
             $urlparams['tmpl'] = 'CMD';
             $urlparams['template'] = 'CMD';
         }
+
         parent::display($cache, $urlparams);
     }
 
     public function edit()
     {
         JRequest::setVar('tmpl', 'component');
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
         $params = K2HelperUtilities::getParams('com_k2');
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
         K2HelperHTML::loadHeadIncludes(true, true, true);
 
         // CSS
-        $document->addStyleSheet(JURI::root(true).'/templates/system/css/general.css');
-        $document->addStyleSheet(JURI::root(true).'/templates/system/css/system.css');
+        $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/general.css');
+        $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/templates/system/css/system.css');
 
         $this->addModelPath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $this->addViewPath(JPATH_COMPONENT_ADMINISTRATOR.'/views');
@@ -118,21 +124,22 @@ class K2ControllerItem extends K2Controller
 
     public function cancel()
     {
-        $this->setRedirect(JURI::root(true));
+        $this->setRedirect(Joomla\CMS\Uri\Uri::root(true));
 
         return false;
     }
 
     public function save()
     {
-        $app = JFactory::getApplication();
-        JRequest::checkToken() or jexit('Invalid Token');
+        $app = Joomla\CMS\Factory::getApplication();
+        JRequest::checkToken() || jexit('Invalid Token');
         JRequest::setVar('tmpl', 'component');
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
         $model = new K2ModelItem();
         $model->save(true);
+
         $app->close();
     }
 
@@ -152,10 +159,11 @@ class K2ControllerItem extends K2Controller
 
     public function tags()
     {
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/tag.php';
         $model = new K2ModelTag();
         $model->tags();
@@ -170,10 +178,10 @@ class K2ControllerItem extends K2Controller
 
     public function extraFields()
     {
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $id = JRequest::getInt('id', null);
 
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/category.php';
@@ -206,12 +214,13 @@ class K2ControllerItem extends K2Controller
                     ';
                 }
             }
+
             $output .= '</div>';
         } else {
             $output = '
                 <div class="k2-generic-message">
-                    <h3>'.JText::_('K2_NOTICE').'</h3>
-                    <p>'.JText::_('K2_THIS_CATEGORY_DOESNT_HAVE_ASSIGNED_EXTRA_FIELDS').'</p>
+                    <h3>'.Joomla\CMS\Language\Text::_('K2_NOTICE').'</h3>
+                    <p>'.Joomla\CMS\Language\Text::_('K2_THIS_CATEGORY_DOESNT_HAVE_ASSIGNED_EXTRA_FIELDS').'</p>
                 </div>
             ';
         }
@@ -253,22 +262,24 @@ class K2ControllerItem extends K2Controller
 
     public function resetHits()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         JRequest::setVar('tmpl', 'component');
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
+
         $model = new K2ModelItem();
         $model->resetHits();
     }
 
     public function resetRating()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         JRequest::setVar('tmpl', 'component');
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
+
         $model = new K2ModelItem();
         $model->resetRating();
     }
@@ -277,20 +288,22 @@ class K2ControllerItem extends K2Controller
     {
         JRequest::setVar('tmpl', 'component');
         $params = K2HelperUtilities::getParams('com_k2');
-        $document = JFactory::getDocument();
-        $language = JFactory::getLanguage();
+        $document = Joomla\CMS\Factory::getDocument();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            $uri = JFactory::getURI();
+            $uri = Joomla\CMS\Factory::getURI();
             if (K2_JVERSION != '15') {
                 $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
             } else {
                 $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
             }
-            $app = JFactory::getApplication();
-            $app->enqueueMessage(JText::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
-            $app->redirect(JRoute::_($url, false));
+
+            $app = Joomla\CMS\Factory::getApplication();
+            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
+            $app->redirect(Joomla\CMS\Router\Route::_($url, false));
         }
 
         K2HelperHTML::loadHeadIncludes(false, true, true);
@@ -305,10 +318,11 @@ class K2ControllerItem extends K2Controller
     public function connector()
     {
         JRequest::setVar('tmpl', 'component');
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         require_once JPATH_COMPONENT_ADMINISTRATOR.'/controllers/media.php';
         $controller = new K2ControllerMedia();
         $controller->connector();
@@ -317,23 +331,25 @@ class K2ControllerItem extends K2Controller
     public function users()
     {
         $itemID = JRequest::getInt('itemID');
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-        $item = JTable::getInstance('K2Item', 'Table');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        $item = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $item->load($itemID);
         if (!K2HelperPermissions::canAddItem() && !K2HelperPermissions::canEditItem($item->created_by, $item->catid)) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         $K2Permissions = K2Permissions::getInstance();
         if (!$K2Permissions->permissions->get('editAll')) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         JRequest::setVar('tmpl', 'component');
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
-        $language = JFactory::getLanguage();
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
 
         K2HelperHTML::loadHeadIncludes(true, true, true);
 

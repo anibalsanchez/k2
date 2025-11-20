@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -22,8 +22,8 @@ class K2ViewInfo extends K2View
     public function display($tpl = null)
     {
         jimport('joomla.filesystem.file');
-        $user = JFactory::getUser();
-        $db = JFactory::getDbo();
+        $user = Joomla\CMS\Factory::getUser();
+        $db = Joomla\CMS\Factory::getDbo();
         $db_version = $db->getVersion();
         $php_version = phpversion();
         $server = $this->get_server_software();
@@ -54,12 +54,12 @@ class K2ViewInfo extends K2View
         $this->assignRef('videos_folder_check', $videos_folder_check);
         $this->assignRef('cache_folder_check', $cache_folder_check);
 
-        JToolBarHelper::title(JText::_('K2_INFORMATION'), 'k2.png');
+        Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_INFORMATION'), 'k2.png');
 
         if (K2_JVERSION != '15') {
-            JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+            Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
         } else {
-            $toolbar = JToolBar::getInstance('toolbar');
+            $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
             $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
         }
 
@@ -73,10 +73,12 @@ class K2ViewInfo extends K2View
     {
         if (isset($_SERVER['SERVER_SOFTWARE'])) {
             return $_SERVER['SERVER_SOFTWARE'];
-        } elseif (($sf = getenv('SERVER_SOFTWARE'))) {
+        }
+
+        if ($sf = getenv('SERVER_SOFTWARE')) {
             return $sf;
         }
 
-        return JText::_('K2_NA');
+        return Joomla\CMS\Language\Text::_('K2_NA');
     }
 }

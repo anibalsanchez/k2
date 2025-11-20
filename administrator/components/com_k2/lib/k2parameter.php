@@ -13,11 +13,13 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION == '30') {
     class K2Parameter
     {
+        public $values;
+
         public $namespace = null;
 
         public function __construct($data, $path, $namespace)
@@ -25,6 +27,7 @@ if (K2_JVERSION == '30') {
             if ($namespace) {
                 $this->namespace = $namespace;
             }
+
             $this->values = new JRegistry($data);
         }
 
@@ -66,7 +69,7 @@ if (K2_JVERSION == '30') {
             // Set base path
             $this->_elementPath[] = JPATH_COMPONENT_ADMINISTRATOR.'/elements';
 
-            if (trim($data)) {
+            if (trim($data) !== '' && trim($data) !== '0') {
                 $this->loadINI($data);
             }
 
@@ -98,6 +101,7 @@ if (K2_JVERSION == '30') {
             if (K2_JVERSION != '15') {
                 return parent::get($this->namespace.$key, $default);
             }
+
             $value = $this->getValue($group.'.'.$this->namespace.$key);
             $result = (empty($value) && $value !== 0 && $value !== '0') ? $default : $value; // double-check and cleanup
 
@@ -126,14 +130,14 @@ if (K2_JVERSION == '30') {
             if ($element === false) {
                 $result = [];
                 $result[0] = $node->attributes('name');
-                $result[1] = JText::_('K2_ELEMENT_NOT_DEFINED_FOR_TYPE').' = '.$type;
+                $result[1] = Joomla\CMS\Language\Text::_('K2_ELEMENT_NOT_DEFINED_FOR_TYPE').' = '.$type;
                 $result[5] = $result[0];
 
                 return $result;
             }
 
             // get value
-            $value = $this->get($node->attributes('name'), $node->attributes('default'), $group);
+            $value = $this->get($node->attributes('name'), $node->attributes('default'));
 
             // set name
             $node->_attributes['name'] = $this->namespace.$node->_attributes['name'];
@@ -201,7 +205,7 @@ if (K2_JVERSION == '30') {
 
             if ($description = $this->_xml[$group]->attributes('description')) {
                 // add the params description to the display
-                $desc = JText::_($description);
+                $desc = Joomla\CMS\Language\Text::_($description);
                 $html[] = '<tr><td class="paramlist_description" colspan="2">'.$desc.'</td></tr>';
             }
 
@@ -219,7 +223,7 @@ if (K2_JVERSION == '30') {
             }
 
             if (count($params) < 1) {
-                $html[] = '<tr><td colspan="2"><i>'.(K2_JVERSION != '15') ? JText::_('JLIB_HTML_NO_PARAMETERS_FOR_THIS_ITEM') : JText::_('There are no Parameters for this item').'</i></td></tr>';
+                $html[] = '<tr><td colspan="2"><i>'.(K2_JVERSION != '15') !== '' ? Joomla\CMS\Language\Text::_('JLIB_HTML_NO_PARAMETERS_FOR_THIS_ITEM') : Joomla\CMS\Language\Text::_('There are no Parameters for this item').'</i></td></tr>';
             }
 
             $html[] = '</table>';

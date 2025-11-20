@@ -13,12 +13,16 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
 class TableK2Category extends K2Table
 {
+    public $_tbl_key;
+
+    public $_tbl;
+
     public $id = null;
 
     public $name = null;
@@ -70,11 +74,12 @@ class TableK2Category extends K2Table
         if ($oid === null) {
             return false;
         }
+
         $this->reset();
 
         $db = $this->getDBO();
 
-        $query = 'SELECT *'.' FROM '.$this->_tbl.' WHERE '.$this->_tbl_key.' = '.$db->Quote($oid);
+        $query = 'SELECT * FROM '.$this->_tbl.' WHERE '.$this->_tbl_key.' = '.$db->Quote($oid);
         $db->setQuery($query);
         $result = $db->loadAssoc();
         if ($result) {
@@ -82,6 +87,7 @@ class TableK2Category extends K2Table
 
             return $this->bind($K2CategoriesInstances[$oid]);
         }
+
         $this->setError($db->getErrorMsg());
 
         return false;
@@ -90,21 +96,22 @@ class TableK2Category extends K2Table
     public function check()
     {
         jimport('joomla.filter.output');
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->name = JString::trim($this->name);
         if ($this->name == '') {
-            $this->setError(JText::_('K2_CATEGORY_MUST_HAVE_A_NAME'));
+            $this->setError(Joomla\CMS\Language\Text::_('K2_CATEGORY_MUST_HAVE_A_NAME'));
 
             return false;
         }
+
         if (empty($this->alias)) {
             $this->alias = $this->name;
         }
 
         /* Offload the alias processing block to a simplified external function/method call */
         if (K2_JVERSION == '15') {
-            if (JPluginHelper::isEnabled('system', 'unicodeslug') || JPluginHelper::isEnabled('system', 'jw_unicodeSlugsExtended')) {
-                $this->alias = JFilterOutput::stringURLSafe($this->alias);
+            if (Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'unicodeslug') || Joomla\CMS\Plugin\PluginHelper::isEnabled('system', 'jw_unicodeSlugsExtended')) {
+                $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLSafe($this->alias);
             } else {
                 mb_internal_encoding('UTF-8');
                 mb_regex_encoding('UTF-8');
@@ -121,31 +128,30 @@ class TableK2Category extends K2Table
                 foreach ($strips as $strip) {
                     $this->alias = str_replace($strip, '', $this->alias);
                 }
-                if (trim(str_replace('-', '', $this->alias)) == '') {
-                    $datenow = JFactory::getDate();
+
+                if (trim(str_replace('-', '', $this->alias)) === '') {
+                    $datenow = Joomla\CMS\Factory::getDate();
                     $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
                 }
+
                 $this->alias = trim($this->alias, '-.');
             }
+        } elseif (Joomla\CMS\Factory::getConfig()->get('unicodeslugs') == 1) {
+            $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLUnicodeSlug($this->alias);
         } else {
-            if (JFactory::getConfig()->get('unicodeslugs') == 1) {
-                $this->alias = JFilterOutput::stringURLUnicodeSlug($this->alias);
+            // Detect the site language we will transliterate
+            if ($this->language == '*') {
+                $langParams = Joomla\CMS\Component\ComponentHelper::getParams('com_languages');
+                $languageTag = $langParams->get('site');
+            } else {
+                $languageTag = $this->language;
             }
-            // Transliterate properly...
-            else {
-                // Detect the site language we will transliterate
-                if ($this->language == '*') {
-                    $langParams = JComponentHelper::getParams('com_languages');
-                    $languageTag = $langParams->get('site');
-                } else {
-                    $languageTag = $this->language;
-                }
-                $language = JLanguage::getInstance($languageTag);
-                $this->alias = $language->transliterate($this->alias);
-                $this->alias = JFilterOutput::stringURLSafe($this->alias);
-                if (trim(str_replace('-', '', $this->alias)) == '') {
-                    $this->alias = JFactory::getDate()->format('Y-m-d-H-i-s');
-                }
+
+            $language = Joomla\CMS\Language\Language::getInstance($languageTag);
+            $this->alias = $language->transliterate($this->alias);
+            $this->alias = Joomla\CMS\Filter\OutputFilter::stringURLSafe($this->alias);
+            if (trim(str_replace('-', '', $this->alias)) === '') {
+                $this->alias = Joomla\CMS\Factory::getDate()->format('Y-m-d-H-i-s');
             }
         }
 
@@ -153,7 +159,7 @@ class TableK2Category extends K2Table
             $SEFReplacements = [];
             $items = explode(',', $params->get('SEFReplacements'));
             foreach ($items as $item) {
-                if (!empty($item)) {
+                if ($item !== '' && $item !== '0') {
                     @[$src, $dst] = explode('|', trim($item));
                     $SEFReplacements[trim($src)] = trim($dst);
                 }
@@ -166,23 +172,21 @@ class TableK2Category extends K2Table
             $this->alias = trim($this->alias, '-.');
         }
 
-        if (K2_JVERSION == '15') {
-            if (trim(str_replace('-', '', $this->alias)) == '') {
-                $datenow = JFactory::getDate();
-                $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
-            }
+        if (K2_JVERSION == '15' && trim(str_replace('-', '', $this->alias)) === '') {
+            $datenow = Joomla\CMS\Factory::getDate();
+            $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
         }
 
         // Check if alias already exists. If so warn the user
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         if ($params->get('k2Sef') && !$params->get('k2SefInsertCatId')) {
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             $db->setQuery('SELECT id FROM #__k2_categories WHERE alias = '.$db->quote($this->alias).' AND id != '.(int) $this->id);
             $result = count($db->loadObjectList());
             if ($result > 0) {
                 $this->alias .= '-'.((int) $result + 1);
-                $app = JFactory::getApplication();
-                $app->enqueueMessage(JText::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
+                $app = Joomla\CMS\Factory::getApplication();
+                $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
             }
         }
 
@@ -191,13 +195,13 @@ class TableK2Category extends K2Table
 
     public function bind($array, $ignore = '')
     {
-        if (key_exists('params', $array) && is_array($array['params'])) {
+        if (array_key_exists('params', $array) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);
             $array['params'] = $registry->toString();
         }
 
-        if (key_exists('plugins', $array) && is_array($array['plugins'])) {
+        if (array_key_exists('plugins', $array) && is_array($array['plugins'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['plugins']);
             $array['plugins'] = $registry->toString();

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,41 +27,41 @@ class K2ControllerTags extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->unpublish();
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->remove();
     }
 
     public function add()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=tag');
     }
 
     public function edit()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $cid = JRequest::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=tag&cid='.$cid[0]);
     }
 
     public function removeOrphans()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('tags');
         $model->removeOrphans();
     }

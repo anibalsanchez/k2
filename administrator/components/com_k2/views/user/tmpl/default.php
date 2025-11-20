@@ -7,17 +7,17 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
 <form action="index.php" enctype="multipart/form-data" method="post" name="adminForm" id="adminForm">
     <div class="xmlParamsFields k2GenericForm">
-        <h3><?php echo JText::_('K2_EDIT_USER'); ?></h3>
+        <h3><?php echo Joomla\CMS\Language\Text::_('K2_EDIT_USER'); ?></h3>
         <ul class="adminformlist">
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_NAME'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_NAME'); ?></label>
                 </div>
                 <div class="paramValue">
                     <?php echo $this->row->name; ?>
@@ -25,7 +25,7 @@ defined('_JEXEC') or die;
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_GENDER'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_GENDER'); ?></label>
                 </div>
                 <div class="paramValue">
                     <?php echo $this->lists['gender']; ?>
@@ -33,7 +33,7 @@ defined('_JEXEC') or die;
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_USER_GROUP'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_USER_GROUP'); ?></label>
                 </div>
                 <div class="paramValue">
                     <?php echo $this->lists['userGroup']; ?>
@@ -41,7 +41,7 @@ defined('_JEXEC') or die;
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_DESCRIPTION'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_DESCRIPTION'); ?></label>
                 </div>
                 <div class="paramValue">
                     <?php echo $this->editor; ?>
@@ -49,7 +49,7 @@ defined('_JEXEC') or die;
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_USER_IMAGE_AVATAR'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_USER_IMAGE_AVATAR'); ?></label>
                 </div>
                 <div class="paramValue">
                     <input type="file" name="image" accept="image/*" />
@@ -59,22 +59,22 @@ defined('_JEXEC') or die;
                         if (file_exists($avatarFile) && filemtime($avatarFile)) {
                             $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                         }
-                        $avatar = JURI::root(true).'/media/k2/users/'.$this->row->image.$avatarTimestamp;
+                        $avatar = Joomla\CMS\Uri\Uri::root(true).'/media/k2/users/'.$this->row->image.$avatarTimestamp;
                         ?>
                     <div class="k2ImagePreview">
-                        <a href="<?php echo $avatar; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $this->row->name; ?>">
+                        <a href="<?php echo $avatar; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $this->row->name; ?>">
                             <img class="k2AdminImage" src="<?php echo $avatar; ?>" alt="<?php echo $this->row->name; ?>" />
                         </a>
                         <br />
                         <input type="checkbox" name="del_image" id="del_image" />
-                        <label for="del_image"><?php echo JText::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_OR_JUST_UPLOAD_A_NEW_IMAGE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
+                        <label for="del_image"><?php echo Joomla\CMS\Language\Text::_('K2_CHECK_THIS_BOX_TO_DELETE_CURRENT_IMAGE_OR_JUST_UPLOAD_A_NEW_IMAGE_TO_REPLACE_THE_EXISTING_ONE'); ?></label>
                     </div>
                     <?php endif; ?>
                 </div>
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_URL'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_URL'); ?></label>
                 </div>
                 <div class="paramValue">
                     <input type="text" size="50" value="<?php echo $this->row->url; ?>" name="url" />
@@ -82,13 +82,13 @@ defined('_JEXEC') or die;
             </li>
             <li>
                 <div class="paramLabel">
-                    <label><?php echo JText::_('K2_NOTES'); ?></label>
+                    <label><?php echo Joomla\CMS\Language\Text::_('K2_NOTES'); ?></label>
                 </div>
                 <div class="paramValue">
                     <textarea name="notes" cols="60" rows="5"><?php echo $this->row->notes; ?></textarea>
                 </div>
             </li>
-            <?php if (count(array_filter($this->K2Plugins))): ?>
+            <?php if (array_filter($this->K2Plugins) !== []): ?>
             <?php foreach ($this->K2Plugins as $K2Plugin): ?>
             <?php if (!is_null($K2Plugin)): ?>
             <li>
@@ -111,5 +111,5 @@ defined('_JEXEC') or die;
     <input type="hidden" name="userID" value="<?php echo $this->row->userID; ?>" />
     <input type="hidden" name="ip" value="<?php echo $this->row->ip; ?>" />
     <input type="hidden" name="hostname" value="<?php echo $this->row->hostname; ?>" />
-    <?php echo JHTML::_('form.token'); ?>
+    <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

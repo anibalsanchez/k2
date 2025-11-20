@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -17,13 +17,13 @@ defined('_JEXEC') or die;
     <?php if (isset($commenters) && count($commenters)): ?>
     <ul>
         <?php foreach ($commenters as $key=>$commenter): ?>
-        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+        <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even';
             if (count($commenters) == $key + 1) {
                 echo ' lastItem';
             } ?>">
             <?php if ($commenter->userImage): ?>
             <a class="k2Avatar tcAvatar" rel="author" href="<?php echo $commenter->link; ?>">
-                <img src="<?php echo $commenter->userImage; ?>" alt="<?php echo JFilterOutput::cleanText($commenter->userName); ?>" style="width:<?php echo $tcAvatarWidth; ?>px;height:auto;" />
+                <img src="<?php echo $commenter->userImage; ?>" alt="<?php echo Joomla\CMS\Filter\OutputFilter::cleanText($commenter->userName); ?>" style="width:<?php echo $tcAvatarWidth; ?>px;height:auto;" />
             </a>
             <?php endif; ?>
 
@@ -43,7 +43,7 @@ defined('_JEXEC') or die;
             <a class="tcLatestComment" href="<?php echo $commenter->latestCommentLink; ?>">
                 <?php echo $commenter->latestCommentText; ?>
             </a>
-            <span class="tcLatestCommentDate"><?php echo JText::_('K2_POSTED_ON'); ?> <?php echo JHTML::_('date', $commenter->latestCommentDate, JText::_('K2_DATE_FORMAT_LC2')); ?></span>
+            <span class="tcLatestCommentDate"><?php echo Joomla\CMS\Language\Text::_('K2_POSTED_ON'); ?> <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $commenter->latestCommentDate, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?></span>
             <?php endif; ?>
 
             <div class="clr"></div>

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
 require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
@@ -24,14 +24,14 @@ class modK2ContentHelper
     {
         jimport('joomla.filesystem.file');
 
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
 
-        $jnow = JFactory::getDate();
+        $jnow = Joomla\CMS\Factory::getDate();
         $now = (K2_JVERSION != '15') ? $jnow->toSql() : $jnow->toMySQL();
         $nullDate = $db->getNullDate();
 
-        $componentParams = JComponentHelper::getParams('com_k2');
+        $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         $limit = $params->get('itemCount', 5);
         $cid = $params->get('category_id', null);
@@ -39,7 +39,7 @@ class modK2ContentHelper
         $limitstart = JRequest::getInt('limitstart');
 
         // Get ACL
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (K2_JVERSION != '15') {
             $userLevels = array_unique($user->getAuthorisedViewLevels());
             $aclCheck = 'IN('.implode(',', $userLevels).')';
@@ -50,19 +50,18 @@ class modK2ContentHelper
 
         // Get language on Joomla 2.5+
         $languageFilter = '';
-        if (K2_JVERSION != '15') {
-            if ($app->getLanguageFilter()) {
-                $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
-            }
+        if (K2_JVERSION != '15' && $app->getLanguageFilter()) {
+            $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
+            $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
         }
 
         // Sources (prepare the DB query)
         if ($params->get('source') == 'specific') {
             $specificItems = (array) $params->get('items');
             if (count($specificItems) == 0) {
-                return;
+                return null;
             }
+
             $ids = implode(',', $specificItems);
             $items = [];
             $query = "/* Frontend / mod_k2_content */ SELECT i.*, c.name AS categoryname, c.id AS categoryid, c.alias AS categoryalias, c.params AS categoryparams
@@ -78,10 +77,11 @@ class modK2ContentHelper
                         AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                         AND i.id IN({$ids})";
 
-            if ($languageFilter) {
-                $query .= " AND i.language IN({$languageFilter}) AND c.language IN({$languageFilter})";
+            if ($languageFilter !== '' && $languageFilter !== '0') {
+                $query .= sprintf(' AND i.language IN(%s) AND c.language IN(%s)', $languageFilter, $languageFilter);
             }
-            $query .= " ORDER BY FIELD(i.id,{$ids})";
+
+            $query .= sprintf(' ORDER BY FIELD(i.id,%s)', $ids);
             // TO DO: Set limit for specific items - $db->setQuery($query, 0, $limit);
             $db->setQuery($query);
             $items = $db->loadObjectList();
@@ -132,23 +132,19 @@ class modK2ContentHelper
                     $categories = $itemListModel->getCategoryTree($cid);
                     sort($categories);
                     $sql = @implode(',', $categories);
-                    $query .= " AND i.catid IN({$sql})";
-                } else {
-                    if ($params->get('catFilterInclusion', 'include') == 'include') {
-                        if (is_array($cid)) {
-                            sort($cid);
-                            $query .= ' AND i.catid IN('.implode(',', $cid).')';
-                        } else {
-                            $query .= ' AND i.catid = '.(int) $cid;
-                        }
+                    $query .= sprintf(' AND i.catid IN(%s)', $sql);
+                } elseif ($params->get('catFilterInclusion', 'include') == 'include') {
+                    if (is_array($cid)) {
+                        sort($cid);
+                        $query .= ' AND i.catid IN('.implode(',', $cid).')';
                     } else {
-                        if (is_array($cid)) {
-                            sort($cid);
-                            $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
-                        } else {
-                            $query .= ' AND i.catid != '.(int) $cid;
-                        }
+                        $query .= ' AND i.catid = '.(int) $cid;
                     }
+                } elseif (is_array($cid)) {
+                    sort($cid);
+                    $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
+                } else {
+                    $query .= ' AND i.catid != '.(int) $cid;
                 }
             }
 
@@ -174,8 +170,8 @@ class modK2ContentHelper
                 $query .= " AND (i.video IS NOT NULL AND i.video!='')";
             }
 
-            if ($languageFilter) {
-                $query .= " AND i.language IN({$languageFilter}) AND c.language IN({$languageFilter})";
+            if ($languageFilter !== '' && $languageFilter !== '0') {
+                $query .= sprintf(' AND i.language IN(%s) AND c.language IN(%s)', $languageFilter, $languageFilter);
             }
 
             if ($ordering == 'comments') {
@@ -200,30 +196,25 @@ class modK2ContentHelper
                     break;
 
                 case 'order':
-                    if ($params->get('FeaturedItems') == '2') {
-                        $orderby = 'i.featured_ordering';
-                    } else {
-                        $orderby = 'i.ordering';
-                    }
+                    $orderby = $params->get('FeaturedItems') == '2' ? 'i.featured_ordering' : 'i.ordering';
+
                     break;
 
                 case 'rorder':
-                    if ($params->get('FeaturedItems') == '2') {
-                        $orderby = 'i.featured_ordering DESC';
-                    } else {
-                        $orderby = 'i.ordering DESC';
-                    }
+                    $orderby = $params->get('FeaturedItems') == '2' ? 'i.featured_ordering DESC' : 'i.ordering DESC';
+
                     break;
 
                 case 'hits':
                     if ($params->get('popularityRange')) {
                         if ($params->get('popularityRange') == 'today') {
                             $date = (K2_JVERSION != '15') ? $jnow->format('%Y-%m-%d').' 00:00:00' : $jnow->toFormat('%Y-%m-%d').' 00:00:00';
-                            $query .= " AND i.publish_up > '{$date}'";
+                            $query .= sprintf(" AND i.publish_up > '%s'", $date);
                         } else {
-                            $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange').' DAY)';
+                            $query .= sprintf(" AND i.created > DATE_SUB('%s', INTERVAL ", $now).$params->get('popularityRange').' DAY)';
                         }
                     }
+
                     $orderby = 'i.hits DESC';
                     break;
 
@@ -237,8 +228,9 @@ class modK2ContentHelper
 
                 case 'comments':
                     if ($params->get('popularityRange')) {
-                        $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange').' DAY)';
+                        $query .= sprintf(" AND i.created > DATE_SUB('%s', INTERVAL ", $now).$params->get('popularityRange').' DAY)';
                     }
+
                     $orderby = 'numOfComments DESC';
                     break;
 
@@ -270,25 +262,27 @@ class modK2ContentHelper
 
         // Import plugins
         if ($params->get('JPlugins', 1)) {
-            JPluginHelper::importPlugin('content');
+            Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         }
+
         if ($params->get('K2Plugins', 1)) {
-            JPluginHelper::importPlugin('k2');
+            Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         }
+
         $dispatcher = JDispatcher::getInstance();
 
-        if (count($items)) {
+        if (count($items) > 0) {
             foreach ($items as $item) {
                 // Item (read more...) link
-                $item->link = urldecode(JRoute::_(K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($item->categoryalias))));
+                $item->link = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($item->categoryalias))));
 
                 // Category link
                 if ($params->get('itemCategory')) {
-                    $item->categoryLink = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($item->catid.':'.urlencode($item->categoryalias))));
+                    $item->categoryLink = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($item->catid.':'.urlencode($item->categoryalias))));
                 }
 
                 // Title cleanup
-                $item->title = JFilterOutput::ampReplace($item->title);
+                $item->title = Joomla\CMS\Filter\OutputFilter::ampReplace($item->title);
 
                 // Manipulate tag rendering in the feed URL
                 if (JRequest::getCmd('format') == 'feed') {
@@ -299,12 +293,14 @@ class modK2ContentHelper
                             $tagsForFeed[] = '#'.str_replace(' ', '_', $tag->name);
                         }
                     }
+
                     if (JRequest::getBool('tagsontitle', false) && is_array($tagsForFeed) && count($tagsForFeed)) {
                         // Limit no. of rendered tags in the title (if set)
                         $tagLimit = JRequest::getInt('taglimit', 0);
                         if ($tagLimit && $tagLimit < count($tagsForFeed)) {
                             $tagsForFeed = array_slice($tagsForFeed, 0, $tagLimit);
                         }
+
                         // Append tags to the title
                         $item->title = html_entity_decode($item->title.' '.implode(' ', $tagsForFeed));
                     }
@@ -313,9 +309,11 @@ class modK2ContentHelper
                 // Tags
                 if ($params->get('itemTags')) {
                     $tags = $model->getItemTags($item->id);
-                    for ($i = 0; $i < count($tags); $i++) {
-                        $tags[$i]->link = JRoute::_(K2HelperRoute::getTagRoute($tags[$i]->name));
+                    $counter = count($tags);
+                    for ($i = 0; $i < $counter; $i++) {
+                        $tags[$i]->link = Joomla\CMS\Router\Route::_(K2HelperRoute::getTagRoute($tags[$i]->name));
                     }
+
                     $item->tags = $tags;
                 }
 
@@ -337,18 +335,16 @@ class modK2ContentHelper
                     $item->imageMedium = '';
                     $item->imageLarge = '';
                     $item->imageXLarge = '';
-
                     $imageTimestamp = '';
-                    $dateModified = ((int) $item->modified) ? $item->modified : '';
+                    $dateModified = ((int) $item->modified !== 0) ? $item->modified : '';
                     if ($componentParams->get('imageTimestamp', 1) && $dateModified) {
                         $imageTimestamp = '?t='.strftime('%Y%m%d_%H%M%S', strtotime($dateModified));
                     }
 
                     $imageFilenamePrefix = md5('Image'.$item->id);
-                    $imagePathPrefix = JUri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
-
+                    $imagePathPrefix = Joomla\CMS\Uri\Uri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
                     // Check if the "generic" variant exists
-                    if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
+                    if (Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
                         $item->imageGeneric = $imagePathPrefix.'_Generic.jpg'.$imageTimestamp;
                         $item->imageXSmall = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
                         $item->imageSmall = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
@@ -363,11 +359,7 @@ class modK2ContentHelper
 
                     // Select the size to use
                     $image = 'image'.$params->get('itemImgSize', 'Small');
-                    if (!empty($item->$image)) {
-                        $item->image = $item->$image;
-                    } else {
-                        $item->image = null;
-                    }
+                    $item->image = empty($item->$image) ? null : $item->$image;
                 }
 
                 // Video
@@ -394,6 +386,7 @@ class modK2ContentHelper
                             ]);
                         }
                     }
+
                     if ($params->get('K2Plugins', 1)) {
                         $dispatcher->trigger('onK2PrepareContent', [
                             &$mediaTempText,
@@ -401,6 +394,7 @@ class modK2ContentHelper
                             $limitstart,
                         ]);
                     }
+
                     $item->video = $mediaTempText->text;
                 }
 
@@ -431,6 +425,7 @@ class modK2ContentHelper
                                         ]);
                                     }
                                 }
+
                                 if ($params->get('K2Plugins', 1)) {
                                     $dispatcher->trigger('onK2PrepareContent', [
                                         &$extraFieldTempText,
@@ -438,6 +433,7 @@ class modK2ContentHelper
                                         $limitstart,
                                     ]);
                                 }
+
                                 $extraField->value = $extraFieldTempText->text;
                             }
                         }
@@ -551,9 +547,10 @@ class modK2ContentHelper
                         if ($params->get('itemAuthorAvatar')) {
                             $item->authorAvatar = K2HelperUtilities::getAvatar('alias');
                         }
-                        $item->authorLink = JUri::root(true);
+
+                        $item->authorLink = Joomla\CMS\Uri\Uri::root(true);
                     } else {
-                        $author = JFactory::getUser($item->created_by);
+                        $author = Joomla\CMS\Factory::getUser($item->created_by);
                         $item->author = $author->name;
 
                         $query = 'SELECT `description`, `gender` FROM #__k2_users WHERE userID='.(int) $author->id;
@@ -572,7 +569,7 @@ class modK2ContentHelper
                             $item->authorAvatar = K2HelperUtilities::getAvatar($author->id, $author->email, $componentParams->get('userImageWidth'));
                         }
 
-                        $item->authorLink = JRoute::_(K2HelperRoute::getUserRoute($item->created_by));
+                        $item->authorLink = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($item->created_by));
                     }
                 }
 
@@ -580,11 +577,11 @@ class modK2ContentHelper
                 if ($params->get('itemAuthorAvatar') && !isset($item->authorAvatar)) {
                     if (!empty($item->created_by_alias)) {
                         $item->authorAvatar = K2HelperUtilities::getAvatar('alias');
-                        $item->authorLink = JUri::root(true);
+                        $item->authorLink = Joomla\CMS\Uri\Uri::root(true);
                     } else {
-                        $jAuthor = JFactory::getUser($item->created_by);
+                        $jAuthor = Joomla\CMS\Factory::getUser($item->created_by);
                         $item->authorAvatar = K2HelperUtilities::getAvatar($jAuthor->id, $jAuthor->email, $componentParams->get('userImageWidth'));
-                        $item->authorLink = JRoute::_(K2HelperRoute::getUserRoute($item->created_by));
+                        $item->authorLink = Joomla\CMS\Router\Route::_(K2HelperRoute::getUserRoute($item->created_by));
                     }
                 }
 
@@ -594,5 +591,7 @@ class modK2ContentHelper
 
             return $rows;
         }
+
+        return null;
     }
 }

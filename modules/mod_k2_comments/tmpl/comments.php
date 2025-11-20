@@ -7,23 +7,23 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
 <div id="k2ModuleBox<?php echo $module->id; ?>" class="k2LatestCommentsBlock<?php if ($params->get('moduleclass_sfx')) {
     echo ' '.$params->get('moduleclass_sfx');
 } ?>">
-    <?php if (count($comments)): ?>
+    <?php if (count($comments) > 0): ?>
     <ul>
         <?php foreach ($comments as $key=>$comment):    ?>
-        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+        <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even';
             if (count($comments) == $key + 1) {
                 echo ' lastItem';
             } ?>">
             <?php if ($comment->userImage): ?>
             <a class="k2Avatar lcAvatar" href="<?php echo $comment->link; ?>" title="<?php echo K2HelperUtilities::cleanHtml($comment->commentText); ?>">
-                <img src="<?php echo $comment->userImage; ?>" alt="<?php echo JFilterOutput::cleanText($comment->userName); ?>" style="width:<?php echo $lcAvatarWidth; ?>px;height:auto;" />
+                <img src="<?php echo $comment->userImage; ?>" alt="<?php echo Joomla\CMS\Filter\OutputFilter::cleanText($comment->userName); ?>" style="width:<?php echo $lcAvatarWidth; ?>px;height:auto;" />
             </a>
             <?php endif; ?>
 
@@ -34,7 +34,7 @@ defined('_JEXEC') or die;
             <?php endif; ?>
 
             <?php if ($params->get('commenterName')): ?>
-            <span class="lcUsername"><?php echo JText::_('K2_WRITTEN_BY'); ?>
+            <span class="lcUsername"><?php echo Joomla\CMS\Language\Text::_('K2_WRITTEN_BY'); ?>
                 <?php if (isset($comment->userLink)): ?>
                 <a rel="author" href="<?php echo $comment->userLink; ?>"><?php echo $comment->userName; ?></a>
                 <?php elseif ($comment->commentURL): ?>
@@ -50,7 +50,7 @@ defined('_JEXEC') or die;
                 <?php if ($params->get('commentDateFormat') == 'relative'): ?>
                 <?php echo $comment->commentDate; ?>
                 <?php else: ?>
-                <?php echo JText::_('K2_ON'); ?> <?php echo JHTML::_('date', $comment->commentDate, JText::_('K2_DATE_FORMAT_LC2')); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_ON'); ?> <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $comment->commentDate, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
                 <?php endif; ?>
             </span>
             <?php endif; ?>
@@ -74,8 +74,8 @@ defined('_JEXEC') or die;
 
     <?php if ($params->get('feed')): ?>
     <div class="k2FeedIcon">
-        <a href="<?php echo JRoute::_('index.php?option=com_k2&view=itemlist&format=feed&moduleID='.$module->id); ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-            <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+        <a href="<?php echo Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=itemlist&format=feed&moduleID='.$module->id); ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
         </a>
         <div class="clr"></div>
     </div>

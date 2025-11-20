@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -37,7 +37,7 @@ defined('_JEXEC') or die;
     <?php if ($this->item->params->get('latestItemDateCreated')): ?>
     <!-- Date created -->
     <span class="latestItemDateCreated">
-        <?php echo JHTML::_('date', $this->item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
+        <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $this->item->created, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
     </span>
     <?php endif; ?>
 
@@ -97,7 +97,7 @@ defined('_JEXEC') or die;
         <?php if ($this->item->params->get('latestItemCategory')): ?>
         <!-- Item category name -->
         <div class="latestItemCategory">
-            <span><?php echo JText::_('K2_PUBLISHED_IN'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_IN'); ?></span>
             <a href="<?php echo $this->item->category->link; ?>"><?php echo $this->item->category->name; ?></a>
         </div>
         <?php endif; ?>
@@ -105,7 +105,7 @@ defined('_JEXEC') or die;
         <?php if ($this->item->params->get('latestItemTags') && isset($this->item->tags) && count($this->item->tags)): ?>
         <!-- Item tags -->
         <div class="latestItemTagsBlock">
-            <span><?php echo JText::_('K2_TAGGED_UNDER'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_TAGGED_UNDER'); ?></span>
             <ul class="latestItemTags">
                 <?php foreach ($this->item->tags as $tag): ?>
                 <li><a href="<?php echo $tag->link; ?>"><?php echo $tag->name; ?></a></li>
@@ -124,7 +124,7 @@ defined('_JEXEC') or die;
     <?php if ($this->params->get('latestItemVideo') && !empty($this->item->video)): ?>
     <!-- Item video -->
     <div class="latestItemVideoBlock">
-        <h3><?php echo JText::_('K2_RELATED_VIDEO'); ?></h3>
+        <h3><?php echo Joomla\CMS\Language\Text::_('K2_RELATED_VIDEO'); ?></h3>
         <span class="latestItemVideo<?php if ($this->item->videoType == 'embedded'): ?> embedded<?php endif; ?>"><?php echo $this->item->video; ?></span>
     </div>
     <?php endif; ?>
@@ -138,11 +138,11 @@ defined('_JEXEC') or die;
         <?php else: ?>
         <?php if ($this->item->numOfComments > 0): ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">
-            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments > 1) ? JText::_('K2_COMMENTS') : JText::_('K2_COMMENT'); ?>
+            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments > 1) ? Joomla\CMS\Language\Text::_('K2_COMMENTS') : Joomla\CMS\Language\Text::_('K2_COMMENT'); ?>
         </a>
         <?php else: ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">
-            <?php echo JText::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
         </a>
         <?php endif; ?>
         <?php endif; ?>
@@ -153,7 +153,7 @@ defined('_JEXEC') or die;
     <!-- Item "read more..." link -->
     <div class="latestItemReadMore">
         <a class="k2ReadMore" href="<?php echo $this->item->link; ?>">
-            <?php echo JText::_('K2_READ_MORE'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_READ_MORE'); ?>
         </a>
     </div>
     <?php endif; ?>

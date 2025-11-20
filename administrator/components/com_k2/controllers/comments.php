@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -28,35 +28,35 @@ class K2ControllerComments extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->unpublish();
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->remove();
     }
 
     public function deleteUnpublished()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->deleteUnpublished();
     }
 
     public function saveComment()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('comments');
         $model->save();
     }

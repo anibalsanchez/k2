@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 } ?>">
     <ul>
         <?php foreach ($users as $key=>$user): ?>
-        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+        <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even';
             if (count($users) == $key + 1) {
                 echo ' lastItem';
             } ?>">
@@ -46,27 +46,27 @@ defined('_JEXEC') or die;
             <div class="ubUserAdditionalInfo">
                 <?php if ($userFeed): ?>
                 <!-- RSS feed icon -->
-                <a class="ubUserFeedIcon" href="<?php echo $user->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_USERS_RSS_FEED'); ?>">
-                    <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_USERS_RSS_FEED'); ?></span>
+                <a class="ubUserFeedIcon" href="<?php echo $user->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_USERS_RSS_FEED'); ?>">
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_USERS_RSS_FEED'); ?></span>
                 </a>
                 <?php endif; ?>
 
                 <?php if ($userURL && $user->url): ?>
-                <a class="ubUserURL" rel="me" href="<?php echo $user->url; ?>" title="<?php echo JText::_('K2_WEBSITE'); ?>" target="_blank">
-                    <span><?php echo JText::_('K2_WEBSITE'); ?></span>
+                <a class="ubUserURL" rel="me" href="<?php echo $user->url; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_WEBSITE'); ?>" target="_blank">
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_WEBSITE'); ?></span>
                 </a>
                 <?php endif; ?>
 
                 <?php if ($userEmail): ?>
-                <span class="ubUserEmail" title="<?php echo JText::_('K2_EMAIL'); ?>">
-                    <?php echo JHTML::_('Email.cloak', $user->email); ?>
+                <span class="ubUserEmail" title="<?php echo Joomla\CMS\Language\Text::_('K2_EMAIL'); ?>">
+                    <?php echo Joomla\CMS\HTML\HTMLHelper::_('Email.cloak', $user->email); ?>
                 </span>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
 
             <?php if ($userItemCount && count($user->items)): ?>
-            <h3><?php echo JText::_('K2_RECENT_ITEMS'); ?></h3>
+            <h3><?php echo Joomla\CMS\Language\Text::_('K2_RECENT_ITEMS'); ?></h3>
             <ul class="ubUserItems">
                 <?php foreach ($user->items as $item): ?>
                 <li>

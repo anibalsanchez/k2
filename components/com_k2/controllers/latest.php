@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -26,12 +26,9 @@ class K2ControllerLatest extends K2Controller
         $view->setModel($model);
         $itemModel = $this->getModel('item');
         $view->setModel($itemModel);
-        $user = JFactory::getUser();
-        if ($user->guest) {
-            $cache = true;
-        } else {
-            $cache = false;
-        }
+        $user = Joomla\CMS\Factory::getUser();
+        $cache = (bool) $user->guest;
+
         if (K2_JVERSION != '15') {
             $urlparams['Itemid'] = 'INT';
             $urlparams['m'] = 'INT';
@@ -39,6 +36,7 @@ class K2ControllerLatest extends K2Controller
             $urlparams['tmpl'] = 'CMD';
             $urlparams['template'] = 'CMD';
         }
+
         parent::display($cache, $urlparams);
     }
 }

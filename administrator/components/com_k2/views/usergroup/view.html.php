@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,15 +21,16 @@ class K2ViewUserGroup extends K2View
 {
     public function display($tpl = null)
     {
-        JHTML::_('behavior.tooltip');
+        Joomla\CMS\HTML\HTMLHelper::_('behavior.tooltip');
 
         $model = $this->getModel();
         $userGroup = $model->getData();
         if (K2_JVERSION == '15') {
-            JFilterOutput::objectHTMLSafe($userGroup);
+            Joomla\CMS\Filter\OutputFilter::objectHTMLSafe($userGroup);
         } else {
-            JFilterOutput::objectHTMLSafe($userGroup, ENT_QUOTES, 'permissions');
+            Joomla\CMS\Filter\OutputFilter::objectHTMLSafe($userGroup, ENT_QUOTES, 'permissions');
         }
+
         $this->assignRef('row', $userGroup);
 
         if (K2_JVERSION == '15') {
@@ -39,12 +40,13 @@ class K2ViewUserGroup extends K2View
             $inheritance = $form->get('inheritance');
         } else {
             jimport('joomla.form.form');
-            $form = JForm::getInstance('permissions', JPATH_COMPONENT_ADMINISTRATOR.'/models/usergroup.xml');
+            $form = Joomla\CMS\Form\Form::getInstance('permissions', JPATH_COMPONENT_ADMINISTRATOR.'/models/usergroup.xml');
             $values = ['params' => json_decode($userGroup->permissions)];
             $form->bind($values);
             $inheritance = $values['params']->inheritance ?? 0;
             $appliedCategories = $values['params']->categories ?? '';
         }
+
         $this->assignRef('form', $form);
         $this->assignRef('categories', $appliedCategories);
 
@@ -52,24 +54,24 @@ class K2ViewUserGroup extends K2View
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/categories.php';
         $categoriesModel = K2Model::getInstance('Categories', 'K2Model');
         $categories = $categoriesModel->categoriesTree(null, true);
-        $lists['categories'] = JHTML::_('select.genericlist', $categories, 'params[categories][]', 'multiple="multiple" size="15"', 'value', 'text', $appliedCategories);
-        $lists['inheritance'] = JHTML::_('select.booleanlist', 'params[inheritance]', null, $inheritance);
+        $lists['categories'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $categories, 'params[categories][]', 'multiple="multiple" size="15"', 'value', 'text', $appliedCategories);
+        $lists['inheritance'] = Joomla\CMS\HTML\HTMLHelper::_('select.booleanlist', 'params[inheritance]', null, $inheritance);
         $this->assignRef('lists', $lists);
 
         // Disable Joomla menu
         JRequest::setVar('hidemainmenu', 1);
 
         // Toolbar
-        $title = (JRequest::getInt('cid')) ? JText::_('K2_EDIT_USER_GROUP') : JText::_('K2_ADD_USER_GROUP');
-        JToolBarHelper::title($title, 'k2.png');
-        JToolBarHelper::apply();
-        JToolBarHelper::save();
+        $title = (JRequest::getInt('cid')) ? Joomla\CMS\Language\Text::_('K2_EDIT_USER_GROUP') : Joomla\CMS\Language\Text::_('K2_ADD_USER_GROUP');
+        Joomla\CMS\Toolbar\ToolbarHelper::title($title, 'k2.png');
+        Joomla\CMS\Toolbar\ToolbarHelper::apply();
+        Joomla\CMS\Toolbar\ToolbarHelper::save();
         $saveNewIcon = version_compare(JVERSION, '2.5.0', 'ge') ? 'save-new.png' : 'save.png';
-        JToolBarHelper::custom('saveAndNew', $saveNewIcon, 'save_f2.png', 'K2_SAVE_AND_NEW', false);
-        JToolBarHelper::cancel();
+        Joomla\CMS\Toolbar\ToolbarHelper::custom('saveAndNew', $saveNewIcon, 'save_f2.png', 'K2_SAVE_AND_NEW', false);
+        Joomla\CMS\Toolbar\ToolbarHelper::cancel();
 
         // JS
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $document->addScriptDeclaration("
             Joomla.submitbutton = function(pressbutton) {
                 if (pressbutton == 'cancel') {
@@ -77,7 +79,7 @@ class K2ViewUserGroup extends K2View
                     return;
                 }
                 if (\$K2.trim(\$K2('#name').val()) == '') {
-                    alert('".JText::_('K2_GROUP_NAME_CANNOT_BE_EMPTY', true)."');
+                    alert('".Joomla\CMS\Language\Text::_('K2_GROUP_NAME_CANNOT_BE_EMPTY', true)."');
                 } else {
                     submitform(pressbutton);
                 }

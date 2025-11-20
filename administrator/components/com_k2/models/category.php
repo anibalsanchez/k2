@@ -13,18 +13,18 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
 class K2ModelCategory extends K2Model
 {
     public function getData()
     {
         $cid = JRequest::getVar('cid');
-        $row = JTable::getInstance('K2Category', 'Table');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
         $row->load($cid);
 
         return $row;
@@ -32,15 +32,15 @@ class K2ModelCategory extends K2Model
 
     public function save()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         jimport('joomla.filesystem.file');
-        $row = JTable::getInstance('K2Category', 'Table');
-        $params = JComponentHelper::getParams('com_k2');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         // Plugin Events
-        JPluginHelper::importPlugin('k2');
-        JPluginHelper::importPlugin('content');
-        JPluginHelper::importPlugin('finder');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
 
         if (!$row->bind(JRequest::get('post'))) {
@@ -48,7 +48,7 @@ class K2ModelCategory extends K2Model
             $app->redirect('index.php?option=com_k2&view=categories');
         }
 
-        $isNew = ($row->id) ? false : true;
+        $isNew = !(bool) $row->id;
 
         // Trigger K2 plugins
         $result = $dispatcher->trigger('onBeforeK2Save', [&$row, $isNew]);
@@ -65,8 +65,8 @@ class K2ModelCategory extends K2Model
 
         $row->description = JRequest::getVar('description', '', 'post', 'string', 2);
         if ($params->get('xssFiltering')) {
-            $filter = new JFilterInput([], [], 1, 1, 0);
-            $row->description = $filter->clean($row->description);
+            $jFilterInput = new JFilterInput([], [], 1, 1, 0);
+            $row->description = $jFilterInput->clean($row->description);
         }
 
         if (!$row->id) {
@@ -87,7 +87,7 @@ class K2ModelCategory extends K2Model
             $row->reorder('parent = '.(int) $row->parent.' AND trash=0');
         }
 
-        if ((int) $params->get('imageMemoryLimit')) {
+        if ((int) $params->get('imageMemoryLimit') !== 0) {
             ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
@@ -95,11 +95,7 @@ class K2ModelCategory extends K2Model
 
         $existingImage = JRequest::getVar('existingImage');
         if (($files['image']['error'] == 0 || $existingImage) && !JRequest::getBool('del_image')) {
-            if ($files['image']['error'] == 0) {
-                $image = $files['image'];
-            } else {
-                $image = JPATH_SITE.'/'.JPath::clean($existingImage);
-            }
+            $image = $files['image']['error'] == 0 ? $files['image'] : JPATH_SITE.'/'.Joomla\CMS\Filesystem\Path::clean($existingImage);
 
             require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
             $savepath = JPATH_ROOT.'/media/k2/categories/';
@@ -125,23 +121,25 @@ class K2ModelCategory extends K2Model
                         if ($files['image']['error'] == 0) {
                             $handle->clean();
                         }
+
                         $row->image = $handle->file_dst_name;
                     } else {
                         throw new RuntimeException($handle->error);
                     }
                 }
             } catch (Exception $e) {
-                $app->enqueueMessage(JText::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
+                $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
                 $app->redirect('index.php?option=com_k2&view=categories');
             }
         }
 
         if (JRequest::getBool('del_image')) {
-            $savedRow = JTable::getInstance('K2Category', 'Table');
+            $savedRow = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
             $savedRow->load($row->id);
-            if (JFile::exists(JPATH_ROOT.'/media/k2/categories/'.$savedRow->image)) {
-                JFile::delete(JPATH_ROOT.'/media/k2/categories/'.$savedRow->image);
+            if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/categories/'.$savedRow->image)) {
+                Joomla\CMS\Filesystem\File::delete(JPATH_ROOT.'/media/k2/categories/'.$savedRow->image);
             }
+
             $row->image = '';
         }
 
@@ -150,7 +148,7 @@ class K2ModelCategory extends K2Model
             $app->redirect('index.php?option=com_k2&view=categories');
         }
 
-        $cache = JFactory::getCache('com_k2');
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
         // Trigger K2 plugins
@@ -162,32 +160,36 @@ class K2ModelCategory extends K2Model
         } else {
             $dispatcher->trigger('onAfterContentSave', [&$row, $isNew]);
         }
+
         $results = $dispatcher->trigger('onFinderAfterSave', ['com_k2.category', $row, $isNew]);
 
         switch (JRequest::getCmd('task')) {
             case 'apply':
-                $msg = JText::_('K2_CHANGES_TO_CATEGORY_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_CATEGORY_SAVED');
                 $link = 'index.php?option=com_k2&view=category&cid='.$row->id;
                 break;
             case 'saveAndNew':
-                $msg = JText::_('K2_CATEGORY_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_CATEGORY_SAVED');
                 $link = 'index.php?option=com_k2&view=category';
                 break;
             case 'save':
             default:
-                $msg = JText::_('K2_CATEGORY_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_CATEGORY_SAVED');
                 $link = 'index.php?option=com_k2&view=categories';
                 break;
         }
+
         $app->enqueueMessage($msg);
         $app->redirect($link);
+
+        return null;
     }
 
     public function countCategoryItems($catid, $trash = 0)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $catid = (int) $catid;
-        $query = "SELECT COUNT(*) FROM #__k2_items WHERE catid={$catid} AND trash = ".(int) $trash;
+        $query = sprintf('SELECT COUNT(*) FROM #__k2_items WHERE catid=%d AND trash = ', $catid).(int) $trash;
         $db->setQuery($query);
         $result = $db->loadResult();
 

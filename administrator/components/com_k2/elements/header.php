@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -26,17 +26,15 @@ class K2ElementHeader extends K2Element
             if ($node->attributes()->class) {
                 $additionalCssClass = ' '.$node->attributes()->class;
             }
-        } else {
-            if ($node->attributes('class')) {
-                $additionalCssClass = ' '.$node->attributes('class');
-            }
+        } elseif ($node->attributes('class')) {
+            $additionalCssClass = ' '.$node->attributes('class');
         }
 
         if (version_compare(JVERSION, '2.5.0', 'ge')) {
-            return '<div class="jwHeaderContainer'.$additionalCssClass.'"><div class="jwHeaderContent">'.JText::_($value).'</div><div class="jwHeaderClr"></div></div>';
+            return '<div class="jwHeaderContainer'.$additionalCssClass.'"><div class="jwHeaderContent">'.Joomla\CMS\Language\Text::_($value).'</div><div class="jwHeaderClr"></div></div>';
         }
 
-        return '<div class="jwHeaderContainer15'.$additionalCssClass.'"><div class="jwHeaderContent">'.JText::_($value).'</div><div class="jwHeaderClr"></div></div>';
+        return '<div class="jwHeaderContainer15'.$additionalCssClass.'"><div class="jwHeaderContent">'.Joomla\CMS\Language\Text::_($value).'</div><div class="jwHeaderClr"></div></div>';
     }
 
     public function fetchTooltip($label, $description, &$node, $control_name, $name)

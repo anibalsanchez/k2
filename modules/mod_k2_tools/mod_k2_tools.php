@@ -13,14 +13,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION != '15') {
-    $language = JFactory::getLanguage();
+    $language = Joomla\CMS\Factory::getLanguage();
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
 }
 
-require_once dirname(__FILE__).'/helper.php';
+require_once __DIR__.'/helper.php';
 
 // Params
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
@@ -30,50 +30,52 @@ $authorAvatarWidth = $params->get('authorAvatarWidth', 50);
 $button = $params->get('button');
 $imagebutton = $params->get('imagebutton');
 $button_pos = $params->get('button_pos', 'left');
-$button_text = $params->get('button_text', JText::_('K2_SEARCH'));
-$text = $params->get('text', JText::_('K2_SEARCH'));
+$button_text = $params->get('button_text', Joomla\CMS\Language\Text::_('K2_SEARCH'));
+$text = $params->get('text', Joomla\CMS\Language\Text::_('K2_SEARCH'));
 $searchItemId = $params->get('searchItemId', '');
 
 // API
-$document = JFactory::getDocument();
-$app = JFactory::getApplication();
+$document = Joomla\CMS\Factory::getDocument();
+$app = Joomla\CMS\Factory::getApplication();
 
 // Output
 switch ($module_usage) {
     case '0':
         $months = modK2ToolsHelper::getArchive($params);
-        if (count($months)) {
-            require JModuleHelper::getLayoutPath('mod_k2_tools', 'archive');
+        if (count($months) > 0) {
+            require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'archive');
         }
+
         break;
 
     case '1':
         // User avatar
         if ($authorAvatarWidthSelect == 'inherit') {
-            $componentParams = JComponentHelper::getParams('com_k2');
+            $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
             $avatarWidth = $componentParams->get('userImageWidth');
         } else {
             $avatarWidth = $authorAvatarWidth;
         }
+
         $authors = modK2ToolsHelper::getAuthors($params);
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'authors');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'authors');
         break;
 
     case '2':
         $calendar = modK2ToolsHelper::calendar($params);
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'calendar');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'calendar');
         break;
 
     case '3':
         $breadcrumbs = modK2ToolsHelper::breadcrumbs($params);
         $path = $breadcrumbs[0];
         $title = $breadcrumbs[1];
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'breadcrumbs');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'breadcrumbs');
         break;
 
     case '4':
         $output = modK2ToolsHelper::treerecurse($params, 0, 0, true);
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'categories');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'categories');
         break;
 
     case '5':
@@ -82,27 +84,29 @@ switch ($module_usage) {
 
     case '6':
         $categoryFilter = modK2ToolsHelper::getSearchCategoryFilter($params);
-        $action = JRoute::_(K2HelperRoute::getSearchRoute($searchItemId));
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'search');
+        $action = Joomla\CMS\Router\Route::_(K2HelperRoute::getSearchRoute($searchItemId));
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'search');
         break;
 
     case '7':
         $tags = modK2ToolsHelper::tagCloud($params);
-        if (count($tags)) {
-            require JModuleHelper::getLayoutPath('mod_k2_tools', 'tags');
+        if (count($tags) > 0) {
+            require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'tags');
         }
+
         break;
 
     case '8':
         $customcode = modK2ToolsHelper::renderCustomCode($params);
-        require JModuleHelper::getLayoutPath('mod_k2_tools', 'customcode');
+        require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'customcode');
         break;
 
     case '9':
         $selectedTags = (array) $params->get('selectedTags');
         $selectedTagsLimit = (int) $params->get('selectedTagsLimit', 0);
-        if (count($selectedTags)) {
-            require JModuleHelper::getLayoutPath('mod_k2_tools', 'selected_tags');
+        if ($selectedTags !== []) {
+            require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_tools', 'selected_tags');
         }
+
         break;
 }

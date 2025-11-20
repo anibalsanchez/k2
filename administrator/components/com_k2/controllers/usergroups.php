@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,20 +27,20 @@ class K2ControllerUserGroups extends K2Controller
 
     public function edit()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $cid = JRequest::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=usergroup&cid='.$cid[0]);
     }
 
     public function add()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=usergroup');
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('userGroups');
         $model->remove();
     }

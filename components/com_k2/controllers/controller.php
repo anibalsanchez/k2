@@ -13,12 +13,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
 if (version_compare(JVERSION, '3.0', 'ge')) {
-    class K2Controller extends JControllerLegacy
+    class K2Controller extends Joomla\CMS\MVC\Controller\BaseController
     {
         public function display($cachable = false, $urlparams = [])
         {

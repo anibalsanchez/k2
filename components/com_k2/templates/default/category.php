@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -25,8 +25,8 @@ defined('_JEXEC') or die;
     <?php if ($this->params->get('catFeedIcon')): ?>
     <!-- RSS feed icon -->
     <div class="k2FeedIcon">
-        <a href="<?php echo $this->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-            <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+        <a href="<?php echo $this->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
         </a>
         <div class="clr"></div>
     </div>
@@ -42,7 +42,7 @@ defined('_JEXEC') or die;
             <!-- Item add link -->
             <span class="catItemAddLink">
                 <a data-k2-modal="edit" href="<?php echo $this->addLink; ?>">
-                    <?php echo JText::_('K2_ADD_A_NEW_ITEM_IN_THIS_CATEGORY'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_ADD_A_NEW_ITEM_IN_THIS_CATEGORY'); ?>
                 </a>
             </span>
             <?php endif; ?>
@@ -74,16 +74,12 @@ defined('_JEXEC') or die;
         <?php if ($this->params->get('subCategories') && isset($this->subCategories) && count($this->subCategories)): ?>
         <!-- Subcategories -->
         <div class="itemListSubCategories">
-            <h3><?php echo JText::_('K2_CHILDREN_CATEGORIES'); ?></h3>
+            <h3><?php echo Joomla\CMS\Language\Text::_('K2_CHILDREN_CATEGORIES'); ?></h3>
 
             <?php foreach ($this->subCategories as $key=>$subCategory): ?>
             <?php
             // Define a CSS class for the last container on each row
-            if ((($key + 1) % ($this->params->get('subCatColumns')) == 0)) {
-                $lastContainer = ' subCategoryContainerLast';
-            } else {
-                $lastContainer = '';
-            }
+            $lastContainer = ($key + 1) % $this->params->get('subCatColumns') == 0 ? ' subCategoryContainerLast' : '';
                 ?>
             <div class="subCategoryContainer<?php echo $lastContainer; ?>"<?php echo (count($this->subCategories) == 1) ? '' : ' style="width:'.number_format(100 / $this->params->get('subCatColumns'), 1).'%;"'; ?>>
                 <div class="subCategory">
@@ -112,7 +108,7 @@ defined('_JEXEC') or die;
 
                     <!-- Subcategory more... -->
                     <a class="subCategoryMore" href="<?php echo $subCategory->link; ?>">
-                        <?php echo JText::_('K2_VIEW_ITEMS'); ?>
+                        <?php echo Joomla\CMS\Language\Text::_('K2_VIEW_ITEMS'); ?>
                     </a>
 
                     <div class="clr"></div>
@@ -216,7 +212,7 @@ defined('_JEXEC') or die;
         <?php if (isset($this->links) && count($this->links)): ?>
         <!-- Link items -->
         <div id="itemListLinks">
-            <h4><?php echo JText::_('K2_MORE'); ?></h4>
+            <h4><?php echo Joomla\CMS\Language\Text::_('K2_MORE'); ?></h4>
             <?php foreach ($this->links as $key=>$item): ?>
             <?php
             // Define a CSS class for the last container on each row

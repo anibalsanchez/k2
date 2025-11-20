@@ -7,28 +7,28 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 ?>
 
 <form action="index.php" method="post" name="adminForm">
     <fieldset>
         <div style="float:right;">
             <button onclick="submitbutton('save');window.top.setTimeout('window.parent.document.getElementById(\'sbox-window\').close()', 700);" type="button">
-                <?php echo JText::_('K2_SAVE'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_SAVE'); ?>
             </button>
             <button onclick="window.parent.document.getElementById('sbox-window').close();" type="button">
-                <?php echo JText::_('K2_CANCEL'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_CANCEL'); ?>
             </button>
         </div>
         <div class="configuration">
-            <?php echo JText::_('K2_SETTINGS'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_SETTINGS'); ?>
         </div>
         <div class="clr"></div>
     </fieldset>
 
     <?php echo $this->pane->startPane('settings'); ?>
     <?php foreach ($this->params->getGroups() as $group=>$value): ?>
-    <?php echo $this->pane->startPanel(JText::_($group), $group.'-tab'); ?>
+    <?php echo $this->pane->startPanel(Joomla\CMS\Language\Text::_($group), $group.'-tab'); ?>
     <?php echo $this->params->render('params', $group); ?>
     <?php echo $this->pane->endPanel(); ?>
     <?php endforeach; ?>
@@ -37,5 +37,5 @@ defined('_JEXEC') or die;
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="settings" />
     <input type="hidden" id="task" name="task" value="" />
-    <?php echo JHTML::_('form.token'); ?>
+    <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

@@ -13,14 +13,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION != '15') {
-    $language = JFactory::getLanguage();
+    $language = Joomla\CMS\Factory::getLanguage();
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
 }
 
-require_once dirname(__FILE__).'/helper.php';
+require_once __DIR__.'/helper.php';
 
 // Params
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
@@ -31,22 +31,24 @@ $itemCustomLinkTitle = $params->get('itemCustomLinkTitle', '');
 $itemCustomLinkURL = trim($params->get('itemCustomLinkURL'));
 $itemCustomLinkMenuItem = $params->get('itemCustomLinkMenuItem');
 
-if ($itemCustomLinkURL && $itemCustomLinkURL != 'http://' && $itemCustomLinkURL != 'https://') {
+if ($itemCustomLinkURL && $itemCustomLinkURL !== 'http://' && $itemCustomLinkURL !== 'https://') {
     if ($itemCustomLinkTitle == '') {
-        if (strpos($itemCustomLinkURL, '://') !== false) {
+        if (str_contains($itemCustomLinkURL, '://')) {
             $linkParts = explode('://', $itemCustomLinkURL);
             $itemCustomLinkURL = $linkParts[1];
         }
+
         $itemCustomLinkTitle = $itemCustomLinkURL;
     }
 } elseif ($itemCustomLinkMenuItem) {
-    $menu = JMenu::getInstance('site');
+    $menu = Joomla\CMS\Menu\AbstractMenu::getInstance('site');
     $menuLink = $menu->getItem($itemCustomLinkMenuItem);
     if (!empty($menuLink)) {
         if (!$itemCustomLinkTitle) {
             $itemCustomLinkTitle = (K2_JVERSION != '15') ? $menuLink->title : $menuLink->name;
         }
-        $itemCustomLinkURL = JRoute::_('index.php?&Itemid='.$menuLink->id);
+
+        $itemCustomLinkURL = Joomla\CMS\Router\Route::_('index.php?&Itemid='.$menuLink->id);
     } else {
         $itemCustomLinkTitle = '';
         $itemCustomLinkURL = '';
@@ -58,7 +60,7 @@ $params->set('itemCustomLinkTitle', $itemCustomLinkTitle);
 $params->set('itemCustomLinkURL', $itemCustomLinkURL);
 
 // Get component params
-$componentParams = JComponentHelper::getParams('com_k2');
+$componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
 // User avatar
 if ($itemAuthorAvatarWidthSelect == 'inherit') {
@@ -70,5 +72,5 @@ if ($itemAuthorAvatarWidthSelect == 'inherit') {
 $items = modK2ContentHelper::getItems($params);
 
 if (is_array($items) && count($items)) {
-    require JModuleHelper::getLayoutPath('mod_k2_content', $getTemplate.'/default');
+    require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_content', $getTemplate.'/default');
 }

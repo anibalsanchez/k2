@@ -13,13 +13,13 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 class modK2StatsHelper
 {
     public static function getLatestItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT i.*, v.name AS author
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
@@ -30,6 +30,7 @@ class modK2StatsHelper
             $query = str_ireplace('#__groups', '#__viewlevels', $query);
             $query = str_ireplace('g.name', 'g.title', $query);
         }
+
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
 
@@ -38,7 +39,7 @@ class modK2StatsHelper
 
     public static function getPopularItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT i.*, v.name AS author
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
@@ -53,7 +54,7 @@ class modK2StatsHelper
 
     public static function getMostCommentedItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT i.*, v.name AS author, (SELECT COUNT(*) FROM #__k2_comments WHERE itemID = i.id) AS numOfComments
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
@@ -68,7 +69,7 @@ class modK2StatsHelper
 
     public static function getLatestComments()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_comments ORDER BY commentDate DESC';
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
@@ -95,7 +96,7 @@ class modK2StatsHelper
 
     public static function countItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_items';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -105,7 +106,7 @@ class modK2StatsHelper
 
     public static function countDraftItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_items WHERE published=0 AND trash=0';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -115,7 +116,7 @@ class modK2StatsHelper
 
     public static function countFeaturedItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_items WHERE featured=1';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -125,7 +126,7 @@ class modK2StatsHelper
 
     public static function countTrashedItems()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_items WHERE trash=1';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -135,7 +136,7 @@ class modK2StatsHelper
 
     public static function countComments()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_comments';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -145,7 +146,7 @@ class modK2StatsHelper
 
     public static function countCategories()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_categories';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -155,7 +156,7 @@ class modK2StatsHelper
 
     public static function countTrashedCategories()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_categories WHERE trash=1';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -165,7 +166,7 @@ class modK2StatsHelper
 
     public static function countUsers()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_users';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -175,7 +176,7 @@ class modK2StatsHelper
 
     public static function countUserGroups()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
         $db->setQuery($query);
         $result = $db->loadResult();
@@ -185,7 +186,7 @@ class modK2StatsHelper
 
     public static function countTags()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT COUNT(*) FROM #__k2_tags';
         $db->setQuery($query);
         $result = $db->loadResult();

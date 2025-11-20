@@ -13,11 +13,11 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.plugin.plugin');
 
-class plgUserK2 extends JPlugin
+class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
 {
     public function onUserAfterSave($user, $isnew, $success, $msg)
     {
@@ -47,8 +47,8 @@ class plgUserK2 extends JPlugin
     public function onAfterStoreUser($user, $isnew, $success, $msg)
     {
         jimport('joomla.filesystem.file');
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $task = JRequest::getCmd('task');
 
         if ($app->isSite() && ($task == 'activate' || $isnew) && $params->get('stopForumSpam')) {
@@ -56,9 +56,9 @@ class plgUserK2 extends JPlugin
         }
 
         if ($app->isSite() && $task != 'activate' && JRequest::getInt('K2UserForm')) {
-            JPlugin::loadLanguage('com_k2');
-            JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
-            $row = JTable::getInstance('K2User', 'Table');
+            Joomla\CMS\Plugin\CMSPlugin::loadLanguage('com_k2');
+            Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
+            $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
             $k2id = $this->getK2UserID($user['id']);
             JRequest::setVar('id', $k2id, 'post');
             $row->bind(JRequest::get('post'));
@@ -69,6 +69,7 @@ class plgUserK2 extends JPlugin
             if (isset($user['notes'])) {
                 $row->set('notes', $user['notes']);
             }
+
             if ($isnew) {
                 $row->set('group', $params->get('K2UserGroup', 1));
             } else {
@@ -76,6 +77,7 @@ class plgUserK2 extends JPlugin
                 $row->set('gender', JRequest::getVar('gender', 'n'));
                 $row->set('url', JRequest::getString('url'));
             }
+
             /*
             if ($row->gender != 'm' && $row->gender != 'f') {
                 $row->gender = 'n';
@@ -85,12 +87,13 @@ class plgUserK2 extends JPlugin
             $row->url = JString::str_ireplace('"', '', $row->url);
             $row->url = JString::str_ireplace('<', '', $row->url);
             $row->url = JString::str_ireplace('>', '', $row->url);
-            $row->url = JString::str_ireplace('\'', '', $row->url);
+            $row->url = JString::str_ireplace("'", '', $row->url);
             $row->set('description', JRequest::getVar('description', '', 'post', 'string', 4));
             if ($params->get('xssFiltering')) {
-                $filter = new JFilterInput([], [], 1, 1, 0);
-                $row->description = $filter->clean($row->description);
+                $jFilterInput = new JFilterInput([], [], 1, 1, 0);
+                $row->description = $jFilterInput->clean($row->description);
             }
+
             $row->store();
 
             $file = JRequest::get('files');
@@ -124,17 +127,19 @@ class plgUserK2 extends JPlugin
                         }
                     }
                 } catch (Exception $e) {
-                    $app->enqueueMessage(JText::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
+                    $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
                 }
             }
 
             if (JRequest::getBool('del_image')) {
                 $currentImage = basename($row->image);
-                if (JFile::exists(JPATH_ROOT.'/media/k2/users/'.$currentImage)) {
-                    JFile::delete(JPATH_ROOT.'/media/k2/users/'.$currentImage);
+                if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/users/'.$currentImage)) {
+                    Joomla\CMS\Filesystem\File::delete(JPATH_ROOT.'/media/k2/users/'.$currentImage);
                 }
+
                 $image = '';
             }
+
             if (isset($image)) {
                 $row->image = $image;
                 $row->store();
@@ -144,11 +149,11 @@ class plgUserK2 extends JPlugin
             if (!$isnew && $itemid) {
                 $menu = $app->getMenu();
                 $item = $menu->getItem($itemid);
-                $url = JRoute::_($item->link.'&Itemid='.$itemid, false);
+                $url = Joomla\CMS\Router\Route::_($item->link.'&Itemid='.$itemid, false);
 
                 if (K2_JVERSION == '15') {
-                    if (JURI::isInternal($url)) {
-                        $app->enqueueMessage(JText::_('K2_YOUR_SETTINGS_HAVE_BEEN_SAVED'));
+                    if (Joomla\CMS\Uri\Uri::isInternal($url)) {
+                        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOUR_SETTINGS_HAVE_BEEN_SAVED'));
                         $app->redirect($url);
                     }
                 } else {
@@ -160,19 +165,19 @@ class plgUserK2 extends JPlugin
 
     public function onLoginUser($user, $options)
     {
-        $params = JComponentHelper::getParams('com_k2');
-        $app = JFactory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
         if ($app->isSite()) {
             // Get the user id
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             $db->setQuery('SELECT id FROM #__users WHERE username = '.$db->Quote($user['username']));
             $id = $db->loadResult();
 
             // If K2 profiles are enabled assign non-existing K2 users to the default K2 group. Update user info for existing K2 users.
             if ($params->get('K2UserProfile') && $id) {
                 $k2id = $this->getK2UserID($id);
-                JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
-                $row = JTable::getInstance('K2User', 'Table');
+                Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
+                $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
                 if ($k2id) {
                     $row->load($k2id);
                 } else {
@@ -180,6 +185,7 @@ class plgUserK2 extends JPlugin
                     $row->set('userName', $user['fullname']);
                     $row->set('group', $params->get('K2UserGroup', 1));
                 }
+
                 $row->ip = $_SERVER['REMOTE_ADDR'];
                 $row->hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
                 $row->store();
@@ -187,7 +193,7 @@ class plgUserK2 extends JPlugin
 
             // Set the Cookie domain for user based on K2 parameters
             if ($params->get('cookieDomain') && $id) {
-                setcookie('userID', $id, 0, '/', $params->get('cookieDomain'), 0);
+                setcookie('userID', $id, ['expires' => 0, 'path' => '/', 'domain' => $params->get('cookieDomain'), 'secure' => 0]);
             }
         }
 
@@ -196,10 +202,10 @@ class plgUserK2 extends JPlugin
 
     public function onLogoutUser($user)
     {
-        $params = JComponentHelper::getParams('com_k2');
-        $app = JFactory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
         if ($app->isSite() && $params->get('cookieDomain')) {
-            setcookie('userID', '', time() - 3600, '/', $params->get('cookieDomain'), 0);
+            setcookie('userID', '', ['expires' => time() - 3600, 'path' => '/', 'domain' => $params->get('cookieDomain'), 'secure' => 0]);
         }
 
         return true;
@@ -207,27 +213,24 @@ class plgUserK2 extends JPlugin
 
     public function onAfterDeleteUser($user, $succes, $msg)
     {
-        $app = JFactory::getApplication();
-        $db = JFactory::getDbo();
-        $query = "DELETE FROM #__k2_users WHERE userID={$user['id']}";
+        $app = Joomla\CMS\Factory::getApplication();
+        $db = Joomla\CMS\Factory::getDbo();
+        $query = 'DELETE FROM #__k2_users WHERE userID='.$user['id'];
         $db->setQuery($query);
         $db->query();
     }
 
     public function onBeforeStoreUser($user, $isNew)
     {
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
-        $session = JFactory::getSession();
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
+        $session = Joomla\CMS\Factory::getSession();
         if ($params->get('K2UserProfile') && $isNew && $params->get('recaptchaOnRegistration') && $app->isSite() && !$session->get('socialConnectData')) {
             require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
             if (!K2HelperUtilities::verifyRecaptcha()) {
-                if (K2_JVERSION != '15') {
-                    $url = 'index.php?option=com_users&view=registration';
-                } else {
-                    $url = 'index.php?option=com_user&view=register';
-                }
-                $app->enqueueMessage(JText::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT'), 'error');
+                $url = K2_JVERSION != '15' ? 'index.php?option=com_users&view=registration' : 'index.php?option=com_user&view=register';
+
+                $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT'), 'error');
                 $app->redirect($url);
             }
         }
@@ -235,8 +238,8 @@ class plgUserK2 extends JPlugin
 
     public function getK2UserID($id)
     {
-        $db = JFactory::getDbo();
-        $query = "SELECT id FROM #__k2_users WHERE userID={$id}";
+        $db = Joomla\CMS\Factory::getDbo();
+        $query = 'SELECT id FROM #__k2_users WHERE userID='.$id;
         $db->setQuery($query);
         $result = $db->loadResult();
 
@@ -260,10 +263,10 @@ class plgUserK2 extends JPlugin
             if ($httpCode == 200) {
                 $response = json_decode($response);
                 if ($response->ip->appears || $response->email->appears || $response->username->appears) {
-                    $db = JFactory::getDbo();
+                    $db = Joomla\CMS\Factory::getDbo();
                     $db->setQuery('UPDATE #__users SET block = 1 WHERE id = '.$user['id']);
                     $db->query();
-                    $user['notes'] = JText::_('K2_POSSIBLE_SPAMMER_DETECTED_BY_STOPFORUMSPAM');
+                    $user['notes'] = Joomla\CMS\Language\Text::_('K2_POSSIBLE_SPAMMER_DETECTED_BY_STOPFORUMSPAM');
                 }
             }
         }

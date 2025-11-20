@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -32,8 +32,8 @@ defined('_JEXEC') or die;
             <?php if ($this->params->get('categoryFeed')): ?>
             <!-- RSS feed icon -->
             <div class="k2FeedIcon">
-                <a href="<?php echo $category->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-                    <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+                <a href="<?php echo $category->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
                 </a>
                 <div class="clr"></div>
             </div>
@@ -70,8 +70,8 @@ defined('_JEXEC') or die;
             <?php if ($this->params->get('userFeed')): ?>
             <!-- RSS feed icon -->
             <div class="k2FeedIcon">
-                <a href="<?php echo $user->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
-                    <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+                <a href="<?php echo $user->feed; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+                    <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
                 </a>
                 <div class="clr"></div>
             </div>
@@ -93,13 +93,13 @@ defined('_JEXEC') or die;
             <p class="latestItemsUserAdditionalInfo">
                 <?php if ($this->params->get('userURL') && isset($user->profile->url)): ?>
                 <span class="latestItemsUserURL">
-                    <?php echo JText::_('K2_WEBSITE_URL'); ?>: <a rel="me" href="<?php echo $user->profile->url; ?>" target="_blank"><?php echo $user->profile->url; ?></a>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_WEBSITE_URL'); ?>: <a rel="me" href="<?php echo $user->profile->url; ?>" target="_blank"><?php echo $user->profile->url; ?></a>
                 </span>
                 <?php endif; ?>
 
                 <?php if ($this->params->get('userEmail')): ?>
                 <span class="latestItemsUserEmail">
-                    <?php echo JText::_('K2_EMAIL'); ?>: <?php echo JHTML::_('Email.cloak', $user->email); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_EMAIL'); ?>: <?php echo Joomla\CMS\HTML\HTMLHelper::_('Email.cloak', $user->email); ?>
                 </span>
                 <?php endif; ?>
             </p>

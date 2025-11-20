@@ -13,9 +13,9 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-$params = JComponentHelper::getParams('com_k2');
+$params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
 if ($params->get('k2Sef')) {
     function k2BuildRoute(&$query)
@@ -24,17 +24,13 @@ if ($params->get('k2Sef')) {
         $segments = [];
 
         // Get params
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         // Get the menu
-        $menu = JFactory::getApplication()->getMenu();
+        $menu = Joomla\CMS\Factory::getApplication()->getMenu();
 
         // Detect the active menu item
-        if (empty($query['Itemid'])) {
-            $menuItem = $menu->getActive();
-        } else {
-            $menuItem = $menu->getItem($query['Itemid']);
-        }
+        $menuItem = empty($query['Itemid']) ? $menu->getActive() : $menu->getItem($query['Itemid']);
 
         // Load data from the current menu item
         $mView = (empty($menuItem->query['view'])) ? null : $menuItem->query['view'];
@@ -106,11 +102,7 @@ if ($params->get('k2Sef')) {
                 $itemTasks = ['edit', 'download'];
 
                 // If it's a task pick the next key
-                if (in_array($segments[1], $itemTasks)) {
-                    $itemID = $segments[2];
-                } else {
-                    $itemID = $segments[1];
-                }
+                $itemID = in_array($segments[1], $itemTasks) ? $segments[2] : $segments[1];
 
                 // Get the item ID
                 $parts = explode(':', $itemID);
@@ -178,15 +170,12 @@ if ($params->get('k2Sef')) {
                     $temp = @explode(':', $segments[1]);
                     $segments[1] = $temp[0];
                 }
-            } else {
-                if (isset($segments[1]) && $segments[1] != 'download') {
-                    // Try to split the slug
-                    $temp = @explode(':', $segments[1]);
-
-                    // If the slug contained an item id do not use it
-                    if (count($temp) > 1) {
-                        $segments[1] = $temp[1];
-                    }
+            } elseif (isset($segments[1]) && $segments[1] != 'download') {
+                // Try to split the slug
+                $temp = @explode(':', $segments[1]);
+                // If the slug contained an item id do not use it
+                if (count($temp) > 1) {
+                    $segments[1] = $temp[1];
                 }
             }
         }
@@ -199,19 +188,21 @@ if ($params->get('k2Sef')) {
                         if ($params->get('k2SefUseCatTitleAlias')) {
                             $k2SefLabelCat_fallback = '';
                         }
+
                         $segments[0] = $params->get('k2SefLabelCat', $k2SefLabelCat_fallback);
                         unset($segments[1]);
 
                         $parts = @explode(':', $segments[2]);
-                        $catid = (!empty($parts[0])) ? (int) $parts[0] : '';
-                        $slug = (!empty($parts[1])) ? $parts[1] : '';
+                        $catid = (empty($parts[0])) ? '' : (int) $parts[0];
+                        $slug = (empty($parts[1])) ? '' : $parts[1];
 
                         $slugs = [];
                         $categories = getCategoryPath($catid);
-                        if (count($categories)) {
+                        if (count($categories) > 0) {
                             foreach ($categories as $category) {
                                 $slugs[] = $category['alias'];
                             }
+
                             // Single category path
                             $slug = end($slugs);
                             // Full category path
@@ -270,12 +261,13 @@ if ($params->get('k2Sef')) {
         // Initialize
         $vars = [];
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         $request_url_parts = [];
         foreach ($segments as $segment) {
             $request_url_parts[] = str_replace(':', '-', $segment);
         }
+
         $lastSegment = end($request_url_parts);
         $lastSegmentParts = explode('-', $lastSegment);
         $request_url = implode('/', $request_url_parts);
@@ -286,11 +278,8 @@ if ($params->get('k2Sef')) {
             // Category view
             if ($request_url_parts[0] == $params->get('k2SefLabelCat')) {
                 $request_url_parts[0] = 'itemlist';
-                if (count($request_url_parts) > 1) {
-                    $categoryPath = implode('/', $request_url_parts);
-                } else {
-                    $categoryPath = $request_url_parts[0];
-                }
+                $categoryPath = count($request_url_parts) > 1 ? implode('/', $request_url_parts) : $request_url_parts[0];
+
                 array_splice($request_url_parts, 1, 0, 'category');
             }
             // Tag view
@@ -314,19 +303,14 @@ if ($params->get('k2Sef')) {
                 array_splice($request_url_parts, 1, 0, 'search');
             }
             // Category path, without a prefix
-            elseif (
-                isset(getCategoryProps($request_url_parts[0])->alias) &&
-                $request_url_parts[0] == getCategoryProps($request_url_parts[0])->alias &&
-                (
-                    array_reverse($request_url_parts)[0] != @getItemProps(array_reverse($request_url_parts)[0])->alias &&
-                    array_reverse($request_url_parts)[0] != @getItemProps((int) array_reverse($request_url_parts)[0])->id
-                )
-            ) {
-                if (count($request_url_parts) > 1) {
-                    $categoryPath = implode('/', $request_url_parts);
-                } else {
-                    $categoryPath = $request_url_parts[0];
-                }
+            elseif (isset(getCategoryProps($request_url_parts[0])->alias) &&
+            $request_url_parts[0] == getCategoryProps($request_url_parts[0])->alias &&
+            (
+                array_reverse($request_url_parts)[0] != @getItemProps(array_reverse($request_url_parts)[0])->alias &&
+                array_reverse($request_url_parts)[0] != @getItemProps((int) array_reverse($request_url_parts)[0])->id
+            )) {
+                $categoryPath = count($request_url_parts) > 1 ? implode('/', $request_url_parts) : $request_url_parts[0];
+
                 $request_url_parts[0] = 'itemlist';
                 array_splice($request_url_parts, 1, 0, 'category');
             }
@@ -340,6 +324,7 @@ if ($params->get('k2Sef')) {
                 else {
                     array_splice($request_url_parts, 0, 0, 'item');
                 }
+
                 // Reinsert item id to the item alias
                 if (!$params->get('k2SefInsertItemId') && @$request_url_parts[1] != 'download' && @$request_url_parts[1] != 'edit') {
                     $alias = array_reverse($request_url_parts)[0];
@@ -369,44 +354,49 @@ if ($params->get('k2Sef')) {
                             $catId = getCategoryProps($request_url_parts[2])->id;
                             $request_url_parts[2] = $catId.':'.$request_url_parts[2];
                         }
+
                         $vars['id'] = $request_url_parts[2];
+                    } elseif (str_contains($categoryPath, '/')) {
+                        // Nested category path
+                        $categoryPath = str_replace('-', ':', $categoryPath);
+                        $categories = explode('/', $categoryPath);
+                        $last = array_reverse($categories)[0];
+                        $last = str_replace(':', '-', $last);
+                        $vars['id'] = getCategoryProps($last)->id.':'.$last;
                     } else {
-                        if (strpos($categoryPath, '/') !== false) {
-                            // Nested category path
-                            $categoryPath = str_replace('-', ':', $categoryPath);
-                            $categories = explode('/', $categoryPath);
-                            $last = array_reverse($categories)[0];
-                            $last = str_replace(':', '-', $last);
-                            $vars['id'] = getCategoryProps($last)->id.':'.$last;
-                        } else {
-                            // Single category path
-                            $vars['id'] = ($categoryPath) ? getCategoryProps($categoryPath)->id.':'.$categoryPath : null;
-                        }
+                        // Single category path
+                        $vars['id'] = ($categoryPath) ? getCategoryProps($categoryPath)->id.':'.$categoryPath : null;
                     }
+
                     break;
 
                 case 'tag':
                     if (isset($request_url_parts[2])) {
                         $vars['tag'] = $request_url_parts[2];
                     }
+
                     break;
 
                 case 'user':
                     if (isset($request_url_parts[2])) {
                         $vars['id'] = $request_url_parts[2];
                     }
+
                     break;
 
                 case 'date':
                     if (isset($request_url_parts[2])) {
                         $vars['year'] = $request_url_parts[2];
                     }
+
                     if (isset($request_url_parts[3])) {
                         $vars['month'] = $request_url_parts[3];
                     }
+
                     if (isset($request_url_parts[4])) {
                         $vars['day'] = $request_url_parts[4];
                     }
+
                     break;
             }
         } elseif ($request_url_parts[0] == 'item') {
@@ -416,12 +406,14 @@ if ($params->get('k2Sef')) {
                     if (isset($request_url_parts[2])) {
                         $vars['cid'] = $request_url_parts[2];
                     }
+
                     break;
 
                 case 'download':
                     if (isset($request_url_parts[2])) {
                         $vars['id'] = $request_url_parts[2];
                     }
+
                     break;
 
                 default:
@@ -429,6 +421,7 @@ if ($params->get('k2Sef')) {
                     if (isset($request_url_parts[2])) {
                         $vars['id'] .= ':'.$request_url_parts[2];
                     }
+
                     unset($vars['task']);
                     break;
             }
@@ -444,7 +437,7 @@ if ($params->get('k2Sef')) {
     /* --- Helpers --- */
     function getItemProps($id_or_slug = null, $getCategoryProps = false)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         $item = null;
 
@@ -464,18 +457,17 @@ if ($params->get('k2Sef')) {
                         ON i.catid = c.id
                     WHERE i.alias = {$quoted} AND i.published = 1";
             }
+        } elseif (is_int($id_or_slug)) {
+            $query = 'SELECT id, alias FROM #__k2_items WHERE published = 1 AND id = '.$id_or_slug;
         } else {
-            if (is_int($id_or_slug)) {
-                $query = "SELECT id, alias FROM #__k2_items WHERE published = 1 AND id = {$id_or_slug}";
-            } else {
-                $escaped = (K2_JVERSION == '15') ? $db->getEscaped($id_or_slug, true) : $db->escape($id_or_slug, true);
-                $quoted = $db->Quote($escaped, false);
-                $query = "SELECT id, alias FROM #__k2_items WHERE published = 1 AND alias = {$quoted}";
-            }
+            $escaped = (K2_JVERSION == '15') ? $db->getEscaped($id_or_slug, true) : $db->escape($id_or_slug, true);
+            $quoted = $db->Quote($escaped, false);
+            $query = 'SELECT id, alias FROM #__k2_items WHERE published = 1 AND alias = '.$quoted;
         }
+
         $db->setQuery($query);
         if ($result = $db->loadObject()) {
-            $item = $result;
+            return $result;
         }
 
         return $item;
@@ -483,22 +475,22 @@ if ($params->get('k2Sef')) {
 
     function getCategoryProps($id_or_slug = null)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
 
         $category = null;
 
         if (is_numeric($id_or_slug)) {
-            $query = "SELECT id, alias, parent FROM #__k2_categories WHERE published = 1 AND id = {$id_or_slug}";
+            $query = 'SELECT id, alias, parent FROM #__k2_categories WHERE published = 1 AND id = '.$id_or_slug;
         } else {
             $escaped = (K2_JVERSION == '15') ? $db->getEscaped($id_or_slug, true) : $db->escape($id_or_slug, true);
             $quoted = $db->Quote($escaped, false);
-            $query = "SELECT id, alias, parent FROM #__k2_categories WHERE published = 1 AND alias = {$quoted}";
+            $query = 'SELECT id, alias, parent FROM #__k2_categories WHERE published = 1 AND alias = '.$quoted;
         }
 
         $db->setQuery($query);
 
         if ($result = $db->loadObject()) {
-            $category = $result;
+            return $result;
         }
 
         return $category;
@@ -515,6 +507,7 @@ if ($params->get('k2Sef')) {
 
             return getCategoryPath($category->parent, $path);
         }
+
         $path[] = [
             'id' => $id,
             'alias' => $category->alias,
@@ -526,13 +519,10 @@ if ($params->get('k2Sef')) {
     function K2BuildRoute(&$query)
     {
         $segments = [];
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $menu = $app->getMenu();
-        if (empty($query['Itemid'])) {
-            $menuItem = $menu->getActive();
-        } else {
-            $menuItem = $menu->getItem($query['Itemid']);
-        }
+        $menuItem = empty($query['Itemid']) ? $menu->getActive() : $menu->getItem($query['Itemid']);
+
         $mView = (empty($menuItem->query['view'])) ? null : $menuItem->query['view'];
         $mTask = (empty($menuItem->query['task'])) ? null : $menuItem->query['task'];
         $mId = (empty($menuItem->query['id'])) ? null : $menuItem->query['id'];
@@ -618,6 +608,7 @@ if ($params->get('k2Sef')) {
         if (!isset($segments[1])) {
             $segments[1] = '';
         }
+
         $vars['task'] = $segments[1];
 
         if ($segments[0] == 'itemlist') {
@@ -626,30 +617,36 @@ if ($params->get('k2Sef')) {
                     if (isset($segments[2])) {
                         $vars['id'] = $segments[2];
                     }
+
                     break;
 
                 case 'tag':
                     if (isset($segments[2])) {
                         $vars['tag'] = $segments[2];
                     }
+
                     break;
 
                 case 'user':
                     if (isset($segments[2])) {
                         $vars['id'] = $segments[2];
                     }
+
                     break;
 
                 case 'date':
                     if (isset($segments[2])) {
                         $vars['year'] = $segments[2];
                     }
+
                     if (isset($segments[3])) {
                         $vars['month'] = $segments[3];
                     }
+
                     if (isset($segments[4])) {
                         $vars['day'] = $segments[4];
                     }
+
                     break;
             }
         } elseif ($segments[0] == 'item') {
@@ -659,12 +656,14 @@ if ($params->get('k2Sef')) {
                     if (isset($segments[2])) {
                         $vars['cid'] = $segments[2];
                     }
+
                     break;
 
                 case 'download':
                     if (isset($segments[2])) {
                         $vars['id'] = $segments[2];
                     }
+
                     break;
 
                 default:

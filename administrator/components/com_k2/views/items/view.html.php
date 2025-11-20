@@ -13,23 +13,29 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
 class K2ViewItems extends K2View
 {
+    public $lists;
+
+    public $filter_featured;
+
+    public $filter_trash;
+
     public function display($tpl = null)
     {
         jimport('joomla.filesystem.file');
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
 
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -44,18 +50,19 @@ class K2ViewItems extends K2View
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-.,:!?\'"()]/u', '', $search));
+
         $tag = $app->getUserStateFromRequest($option.$view.'tag', 'tag', 0, 'int');
         $language = $app->getUserStateFromRequest($option.$view.'language', 'language', '', 'string');
 
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $nullDate = $db->getNullDate();
 
         // JS
         $document->addScriptDeclaration("
-            var K2SelectItemsError = '".JText::_('K2_SELECT_SOME_ITEMS_FIRST', true)."';
+            var K2SelectItemsError = '".Joomla\CMS\Language\Text::_('K2_SELECT_SOME_ITEMS_FIRST', true)."';
             \$K2(document).ready(function() {
                 \$K2('#K2ImportContentButton').click(function(event) {
-                    var answer = confirm('".JText::_('K2_WARNING_YOU_ARE_ABOUT_TO_IMPORT_ALL_SECTIONS_CATEGORIES_AND_ARTICLES_FROM_JOOMLAS_CORE_CONTENT_COMPONENT_COM_CONTENT_INTO_K2_IF_THIS_IS_THE_FIRST_TIME_YOU_IMPORT_CONTENT_TO_K2_AND_YOUR_SITE_HAS_MORE_THAN_A_FEW_THOUSAND_ARTICLES_THE_PROCESS_MAY_TAKE_A_FEW_MINUTES_IF_YOU_HAVE_EXECUTED_THIS_OPERATION_BEFORE_DUPLICATE_CONTENT_MAY_BE_PRODUCED', true)."');
+                    var answer = confirm('".Joomla\CMS\Language\Text::_('K2_WARNING_YOU_ARE_ABOUT_TO_IMPORT_ALL_SECTIONS_CATEGORIES_AND_ARTICLES_FROM_JOOMLAS_CORE_CONTENT_COMPONENT_COM_CONTENT_INTO_K2_IF_THIS_IS_THE_FIRST_TIME_YOU_IMPORT_CONTENT_TO_K2_AND_YOUR_SITE_HAS_MORE_THAN_A_FEW_THOUSAND_ARTICLES_THE_PROCESS_MAY_TAKE_A_FEW_MINUTES_IF_YOU_HAVE_EXECUTED_THIS_OPERATION_BEFORE_DUPLICATE_CONTENT_MAY_BE_PRODUCED', true)."');
                     if (!answer) {
                         event.preventDefault();
                     }
@@ -84,9 +91,9 @@ class K2ViewItems extends K2View
         }
 
         if (K2_JVERSION != '15') {
-            $langs = JLanguageHelper::getLanguages();
+            $langs = Joomla\CMS\Language\LanguageHelper::getLanguages();
             $langsMapping = [];
-            $langsMapping['*'] = JText::_('K2_ALL');
+            $langsMapping['*'] = Joomla\CMS\Language\Text::_('K2_ALL');
             foreach ($langs as $lang) {
                 $langsMapping[$lang->lang_code] = $lang->title;
             }
@@ -94,7 +101,7 @@ class K2ViewItems extends K2View
 
         foreach ($items as $key => $item) {
             if (K2_JVERSION != '15') {
-                $item->status = JHtml::_('jgrid.published', $item->published, $key, '', ($filter_trash == 0), 'cb', $item->publish_up, $item->publish_down);
+                $item->status = Joomla\CMS\HTML\HTMLHelper::_('jgrid.published', $item->published, $key, '', ($filter_trash == 0), 'cb', $item->publish_up, $item->publish_down);
                 $states = [
                     1 => [
                         'featured',
@@ -115,17 +122,17 @@ class K2ViewItems extends K2View
                         'unpublish',
                     ],
                 ];
-                $item->featuredStatus = JHtml::_('jgrid.state', $states, $item->featured, $key, '', $filter_trash == 0);
+                $item->featuredStatus = Joomla\CMS\HTML\HTMLHelper::_('jgrid.state', $states, $item->featured, $key, '', $filter_trash == 0);
                 $item->canChange = $user->authorise('core.edit.state', 'com_k2.item.'.$item->id);
-                $item->language = $item->language ? $item->language : '*';
+                $item->language = $item->language ?: '*';
                 if (isset($langsMapping)) {
                     $item->language = $langsMapping[$item->language];
                 }
             } else {
-                $now = JFactory::getDate();
-                $config = JFactory::getConfig();
-                $publish_up = JFactory::getDate($item->publish_up);
-                $publish_down = JFactory::getDate($item->publish_down);
+                $now = Joomla\CMS\Factory::getDate();
+                $config = Joomla\CMS\Factory::getConfig();
+                $publish_up = Joomla\CMS\Factory::getDate($item->publish_up);
+                $publish_down = Joomla\CMS\Factory::getDate($item->publish_down);
                 $publish_up->setOffset($config->getValue('config.offset'));
                 $publish_down->setOffset($config->getValue('config.offset'));
                 $img = 'tick.png';
@@ -136,31 +143,34 @@ class K2ViewItems extends K2View
                 } elseif ($now->toUnix() > $publish_down->toUnix() && $item->published == 1) {
                     $img = 'publish_r.png';
                 }
-                $item->status = JHTML::_('grid.published', $item, $key, $img);
+
+                $item->status = Joomla\CMS\HTML\HTMLHelper::_('grid.published', $item, $key, $img);
                 if ($filter_trash) {
                     $item->status = strip_tags($item->status, '<img>');
                 }
 
                 $item->featuredStatus = '';
                 if (!$filter_trash) {
-                    $tmpTitle = $item->featured ? JText::_('K2_REMOVE_FEATURED_FLAG') : JText::_('K2_FLAG_AS_FEATURED');
+                    $tmpTitle = $item->featured ? Joomla\CMS\Language\Text::_('K2_REMOVE_FEATURED_FLAG') : Joomla\CMS\Language\Text::_('K2_FLAG_AS_FEATURED');
                     $item->featuredStatus .= '<a href="javascript:void(0);" onclick="return listItemTask(\'cb'.$key.'\',\'featured\')" title="'.$tmpTitle.'">';
                 }
+
                 $item->state = $item->published;
                 $item->published = $item->featured;
-                $item->featuredStatus .= strip_tags(JHTML::_('grid.published', $item, $key), '<img>');
+                $item->featuredStatus .= strip_tags(Joomla\CMS\HTML\HTMLHelper::_('grid.published', $item, $key), '<img>');
                 $item->published = $item->state;
                 if (!$filter_trash) {
                     $item->featuredStatus .= '</a>';
                 }
             }
         }
+
         $this->assignRef('rows', $items);
 
         $lists = [];
 
         // Detect exact search phrase using double quotes in search string
-        if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
+        if (str_starts_with($search, '"') && str_ends_with($search, '"')) {
             $lists['search'] = '"'.trim(str_replace('"', '', $search)).'"';
         } else {
             $lists['search'] = trim(str_replace('"', '', $search));
@@ -169,83 +179,88 @@ class K2ViewItems extends K2View
         if (!$filter_order) {
             $filter_order = 'category';
         }
+
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;
 
-        $filter_trash_options[] = JHTML::_('select.option', 0, JText::_('K2_CURRENT'));
-        $filter_trash_options[] = JHTML::_('select.option', 1, JText::_('K2_TRASHED'));
-        $lists['trash'] = JHTML::_('select.genericlist', $filter_trash_options, 'filter_trash', '', 'value', 'text', $filter_trash);
+        $filter_trash_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_CURRENT'));
+        $filter_trash_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_TRASHED'));
+        $lists['trash'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_trash_options, 'filter_trash', '', 'value', 'text', $filter_trash);
 
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/categories.php';
         $categoriesModel = K2Model::getInstance('Categories', 'K2Model');
-        $categories_option[] = JHTML::_('select.option', 0, JText::_('K2_SELECT_CATEGORY'));
+        $categories_option[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_SELECT_CATEGORY'));
         $categories = $categoriesModel->categoriesTree(null, true, false);
         $categories_options = @array_merge($categories_option, $categories);
-        $lists['categories'] = JHTML::_('select.genericlist', $categories_options, 'filter_category', '', 'value', 'text', $filter_category);
+        $lists['categories'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $categories_options, 'filter_category', '', 'value', 'text', $filter_category);
 
         $authors = $model->getItemsAuthors();
         $options = [];
-        $options[] = JHTML::_('select.option', 0, JText::_('K2_NO_USER'));
+        $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_NO_USER'));
         foreach ($authors as $author) {
             $name = $author->name;
             if ($author->block) {
-                $name .= ' ['.JText::_('K2_USER_DISABLED').']';
+                $name .= ' ['.Joomla\CMS\Language\Text::_('K2_USER_DISABLED').']';
             }
-            $options[] = JHTML::_('select.option', $author->id, $name);
+
+            $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $author->id, $name);
         }
-        $lists['authors'] = JHTML::_('select.genericlist', $options, 'filter_author', '', 'value', 'text', $filter_author);
 
-        $filter_state_options[] = JHTML::_('select.option', -1, JText::_('K2_SELECT_PUBLISHING_STATE'));
-        $filter_state_options[] = JHTML::_('select.option', 1, JText::_('K2_PUBLISHED'));
-        $filter_state_options[] = JHTML::_('select.option', 0, JText::_('K2_UNPUBLISHED'));
-        $lists['state'] = JHTML::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
+        $lists['authors'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, 'filter_author', '', 'value', 'text', $filter_author);
 
-        $filter_featured_options[] = JHTML::_('select.option', -1, JText::_('K2_SELECT_FEATURED_STATE'));
-        $filter_featured_options[] = JHTML::_('select.option', 1, JText::_('K2_FEATURED'));
-        $filter_featured_options[] = JHTML::_('select.option', 0, JText::_('K2_NOT_FEATURED'));
-        $lists['featured'] = JHTML::_('select.genericlist', $filter_featured_options, 'filter_featured', '', 'value', 'text', $filter_featured);
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', -1, Joomla\CMS\Language\Text::_('K2_SELECT_PUBLISHING_STATE'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_PUBLISHED'));
+        $filter_state_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_UNPUBLISHED'));
+        $lists['state'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_state_options, 'filter_state', '', 'value', 'text', $filter_state);
+
+        $filter_featured_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', -1, Joomla\CMS\Language\Text::_('K2_SELECT_FEATURED_STATE'));
+        $filter_featured_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 1, Joomla\CMS\Language\Text::_('K2_FEATURED'));
+        $filter_featured_options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', 0, Joomla\CMS\Language\Text::_('K2_NOT_FEATURED'));
+        $lists['featured'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $filter_featured_options, 'filter_featured', '', 'value', 'text', $filter_featured);
 
         if ($params->get('showTagFilter')) {
             $tagsModel = K2Model::getInstance('Tags', 'K2Model');
             $options = $tagsModel->getFilter();
             $option = new stdClass();
             $option->id = 0;
-            $option->name = JText::_('K2_SELECT_TAG');
+            $option->name = Joomla\CMS\Language\Text::_('K2_SELECT_TAG');
             array_unshift($options, $option);
-            $lists['tag'] = JHTML::_('select.genericlist', $options, 'tag', '', 'id', 'name', $tag);
+            $lists['tag'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, 'tag', '', 'id', 'name', $tag);
         }
 
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
-            $languages = JHTML::_('contentlanguage.existing', true, true);
-            array_unshift($languages, JHTML::_('select.option', '', JText::_('K2_SELECT_LANGUAGE')));
-            $lists['language'] = JHTML::_('select.genericlist', $languages, 'language', '', 'value', 'text', $language);
+            $languages = Joomla\CMS\HTML\HTMLHelper::_('contentlanguage.existing', true, true);
+            array_unshift($languages, Joomla\CMS\HTML\HTMLHelper::_('select.option', '', Joomla\CMS\Language\Text::_('K2_SELECT_LANGUAGE')));
+            $lists['language'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $languages, 'language', '', 'value', 'text', $language);
         }
 
         // Batch Operations
         $categoriesModel = K2Model::getInstance('Categories', 'K2Model');
         $categories = $categoriesModel->categoriesTree(null, true, false);
-        array_unshift($categories, JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -'));
-        $lists['batchCategories'] = JHTML::_('select.genericlist', $categories, 'batchCategory', '', 'value', 'text');
-        $lists['batchAccess'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'batchAccess', null, '', [JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -')]) : str_replace('size="3"', '', JHTML::_('list.accesslevel', $item));
+        array_unshift($categories, Joomla\CMS\HTML\HTMLHelper::_('select.option', '', '- '.Joomla\CMS\Language\Text::_('K2_LEAVE_UNCHANGED').' -'));
+        $lists['batchCategories'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $categories, 'batchCategory', '', 'value', 'text');
+        $lists['batchAccess'] = version_compare(JVERSION, '2.5', 'ge') ? Joomla\CMS\HTML\HTMLHelper::_('access.level', 'batchAccess', null, '', [Joomla\CMS\HTML\HTMLHelper::_('select.option', '', '- '.Joomla\CMS\Language\Text::_('K2_LEAVE_UNCHANGED').' -')]) : str_replace('size="3"', '', Joomla\CMS\HTML\HTMLHelper::_('list.accesslevel', $item));
 
         if (version_compare(JVERSION, '2.5.0', 'ge')) {
-            $languages = JHTML::_('contentlanguage.existing', true, true);
-            array_unshift($languages, JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -'));
-            $lists['batchLanguage'] = JHTML::_('select.genericlist', $languages, 'batchLanguage', '', 'value', 'text', null);
+            $languages = Joomla\CMS\HTML\HTMLHelper::_('contentlanguage.existing', true, true);
+            array_unshift($languages, Joomla\CMS\HTML\HTMLHelper::_('select.option', '', '- '.Joomla\CMS\Language\Text::_('K2_LEAVE_UNCHANGED').' -'));
+            $lists['batchLanguage'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $languages, 'batchLanguage', '', 'value', 'text', null);
         }
 
         $model = $this->getModel('items');
         $authors = $model->getItemsAuthors();
         $options = [];
-        $options[] = JHTML::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -');
+        $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '', '- '.Joomla\CMS\Language\Text::_('K2_LEAVE_UNCHANGED').' -');
         foreach ($authors as $author) {
             $name = $author->name;
             if ($author->block) {
-                $name .= ' ['.JText::_('K2_USER_DISABLED').']';
+                $name .= ' ['.Joomla\CMS\Language\Text::_('K2_USER_DISABLED').']';
             }
-            $options[] = JHTML::_('select.option', $author->id, $name);
+
+            $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $author->id, $name);
         }
-        $lists['batchAuthor'] = JHTML::_('select.genericlist', $options, 'batchAuthor', '', 'value', 'text', null);
+
+        $lists['batchAuthor'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, 'batchAuthor', '', 'value', 'text', null);
         $this->assignRef('lists', $lists);
 
         // Pagination
@@ -257,7 +272,7 @@ class K2ViewItems extends K2View
         $filters = [];
         $columns = [];
 
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
         $dispatcher->trigger('onK2BeforeAssignFilters', [&$filters]);
         $this->assignRef('filters', $filters);
@@ -265,48 +280,51 @@ class K2ViewItems extends K2View
         $this->assignRef('columns', $columns);
 
         // Toolbar
-        $toolbar = JToolBar::getInstance('toolbar');
-        JToolBarHelper::title(JText::_('K2_ITEMS'), 'k2.png');
+        $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
+        Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_ITEMS'), 'k2.png');
 
         if ($filter_trash == 1) {
-            JToolBarHelper::deleteList('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_ITEMS', 'remove', 'K2_DELETE');
-            JToolBarHelper::custom('restore', 'publish.png', 'publish_f2.png', 'K2_RESTORE', true);
+            Joomla\CMS\Toolbar\ToolbarHelper::deleteList('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_ITEMS', 'remove', 'K2_DELETE');
+            Joomla\CMS\Toolbar\ToolbarHelper::custom('restore', 'publish.png', 'publish_f2.png', 'K2_RESTORE', true);
         } else {
-            JToolBarHelper::addNew();
-            JToolBarHelper::editList();
+            Joomla\CMS\Toolbar\ToolbarHelper::addNew();
+            Joomla\CMS\Toolbar\ToolbarHelper::editList();
             if (K2_JVERSION == '30') {
-                JToolBarHelper::custom('featured', 'featured.png', 'featured_f2.png', 'K2_TOGGLE_FEATURED_STATE', true);
+                Joomla\CMS\Toolbar\ToolbarHelper::custom('featured', 'featured.png', 'featured_f2.png', 'K2_TOGGLE_FEATURED_STATE', true);
             } else {
-                JToolBarHelper::custom('featured', 'default.png', 'default_f2.png', 'K2_TOGGLE_FEATURED_STATE', true);
+                Joomla\CMS\Toolbar\ToolbarHelper::custom('featured', 'default.png', 'default_f2.png', 'K2_TOGGLE_FEATURED_STATE', true);
             }
-            JToolBarHelper::publishList();
-            JToolBarHelper::unpublishList();
-            JToolBarHelper::trash('trash');
-            JToolBarHelper::custom('copy', 'copy.png', 'copy_f2.png', 'K2_COPY', true);
+
+            Joomla\CMS\Toolbar\ToolbarHelper::publishList();
+            Joomla\CMS\Toolbar\ToolbarHelper::unpublishList();
+            Joomla\CMS\Toolbar\ToolbarHelper::trash('trash');
+            Joomla\CMS\Toolbar\ToolbarHelper::custom('copy', 'copy.png', 'copy_f2.png', 'K2_COPY', true);
             // Batch button in modal
             if (K2_JVERSION == '30') {
-                $batchButton = '<a id="K2BatchButton" class="btn btn-small" href="#"><i class="icon-edit"></i>'.JText::_('K2_BATCH').'</a>';
+                $batchButton = '<a id="K2BatchButton" class="btn btn-small" href="#"><i class="icon-edit"></i>'.Joomla\CMS\Language\Text::_('K2_BATCH').'</a>';
             } else {
-                $batchButton = '<a id="K2BatchButton" href="#"><span class="icon-32-edit" title="'.JText::_('K2_BATCH').'"></span>'.JText::_('K2_BATCH').'</a>';
+                $batchButton = '<a id="K2BatchButton" href="#"><span class="icon-32-edit" title="'.Joomla\CMS\Language\Text::_('K2_BATCH').'"></span>'.Joomla\CMS\Language\Text::_('K2_BATCH').'</a>';
             }
+
             $toolbar->appendButton('Custom', $batchButton);
 
             // Display import button for Joomla content
             if ($user->gid > 23 && !$params->get('hideImportButton')) {
-                $buttonUrl = JURI::base().'index.php?option=com_k2&amp;view=items&amp;task=import';
-                $buttonText = JText::_('K2_IMPORT_JOOMLA_CONTENT');
+                $buttonUrl = Joomla\CMS\Uri\Uri::base().'index.php?option=com_k2&amp;view=items&amp;task=import';
+                $buttonText = Joomla\CMS\Language\Text::_('K2_IMPORT_JOOMLA_CONTENT');
                 if (K2_JVERSION == '30') {
                     $button = '<a id="K2ImportContentButton" class="btn btn-small" href="'.$buttonUrl.'"><i class="icon-archive"></i>'.$buttonText.'</a>';
                 } else {
                     $button = '<a id="K2ImportContentButton" href="'.$buttonUrl.'"><span class="icon-32-archive" title="'.$buttonText.'"></span>'.$buttonText.'</a>';
                 }
+
                 $toolbar->appendButton('Custom', $button);
             }
         }
 
         // Preferences (Parameters/Settings)
         if (K2_JVERSION != '15') {
-            JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+            Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
         } else {
             $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
         }
@@ -319,26 +337,24 @@ class K2ViewItems extends K2View
         $this->assignRef('filter_featured', $filter_featured);
         $this->assignRef('filter_trash', $filter_trash);
         $this->assignRef('user', $user);
-        if (K2_JVERSION != '15') {
-            $dateFormat = JText::_('K2_J16_DATE_FORMAT');
-        } else {
-            $dateFormat = JText::_('K2_DATE_FORMAT');
-        }
+        $dateFormat = K2_JVERSION != '15' ? Joomla\CMS\Language\Text::_('K2_J16_DATE_FORMAT') : Joomla\CMS\Language\Text::_('K2_DATE_FORMAT');
+
         $this->assignRef('dateFormat', $dateFormat);
 
         $ordering = (($this->lists['order'] == 'i.ordering' || $this->lists['order'] == 'category' || ($this->filter_featured > 0 && $this->lists['order'] == 'i.featured_ordering')) && (!$this->filter_trash));
         $this->assignRef('ordering', $ordering);
 
-        JTable::addIncludePath(JPATH_COMPONENT.'/tables');
-        $table = JTable::getInstance('K2Item', 'Table');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
+        $table = Joomla\CMS\Table\Table::getInstance('K2Item', 'Table');
         $this->assignRef('table', $table);
 
         // Joomla 3.x drag-n-drop sorting variables
         if (K2_JVERSION == '30') {
             if ($ordering) {
                 $action = $this->filter_featured == 1 ? 'savefeaturedorder' : 'saveorder';
-                JHtml::_('sortablelist.sortable', 'k2ItemsList', 'adminForm', strtolower($this->lists['order_Dir']), 'index.php?option=com_k2&view=items&task='.$action.'&format=raw');
+                Joomla\CMS\HTML\HTMLHelper::_('sortablelist.sortable', 'k2ItemsList', 'adminForm', strtolower($this->lists['order_Dir']), 'index.php?option=com_k2&view=items&task='.$action.'&format=raw');
             }
+
             $document->addScriptDeclaration('
                 /* K2 */
                 Joomla.orderTable = function() {

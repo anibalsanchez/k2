@@ -13,23 +13,23 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_COMPONENT.'/tables');
+Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT.'/tables');
 
 class K2ModelUser extends K2Model
 {
     public function getData()
     {
         $cid = JRequest::getInt('cid');
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_users WHERE userID = '.$cid;
         $db->setQuery($query);
         $row = $db->loadObject();
         if (!$row) {
-            $row = JTable::getInstance('K2User', 'Table');
+            return Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
         }
 
         return $row;
@@ -37,10 +37,10 @@ class K2ModelUser extends K2Model
 
     public function save()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         jimport('joomla.filesystem.file');
-        $row = JTable::getInstance('K2User', 'Table');
-        $params = JComponentHelper::getParams('com_k2');
+        $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         if (!$row->bind(JRequest::get('post'))) {
             $app->enqueueMessage($row->getError(), 'error');
@@ -49,10 +49,11 @@ class K2ModelUser extends K2Model
 
         $row->description = JRequest::getVar('description', '', 'post', 'string', 2);
         if ($params->get('xssFiltering')) {
-            $filter = new JFilterInput([], [], 1, 1, 0);
-            $row->description = $filter->clean($row->description);
+            $jFilterInput = new JFilterInput([], [], 1, 1, 0);
+            $row->description = $jFilterInput->clean($row->description);
         }
-        $jUser = JFactory::getUser($row->userID);
+
+        $jUser = Joomla\CMS\Factory::getUser($row->userID);
         $row->userName = $jUser->name;
 
         if (!$row->store()) {
@@ -61,7 +62,7 @@ class K2ModelUser extends K2Model
         }
 
         // Image
-        if ((int) $params->get('imageMemoryLimit')) {
+        if ((int) $params->get('imageMemoryLimit') !== 0) {
             ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
@@ -96,18 +97,19 @@ class K2ModelUser extends K2Model
                     }
                 }
             } catch (Exception $e) {
-                $app->enqueueMessage(JText::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
+                $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
                 $app->redirect('index.php?option=com_k2&view=users');
             }
         }
 
         if (JRequest::getBool('del_image')) {
-            $current = JTable::getInstance('K2User', 'Table');
+            $current = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
             $current->load($row->id);
             $currentImage = basename($current->image);
-            if (JFile::exists(JPATH_ROOT.'/media/k2/users/'.$currentImage)) {
-                JFile::delete(JPATH_ROOT.'/media/k2/users/'.$currentImage);
+            if (Joomla\CMS\Filesystem\File::exists(JPATH_ROOT.'/media/k2/users/'.$currentImage)) {
+                Joomla\CMS\Filesystem\File::delete(JPATH_ROOT.'/media/k2/users/'.$currentImage);
             }
+
             $row->image = '';
         }
 
@@ -121,27 +123,28 @@ class K2ModelUser extends K2Model
             $app->redirect('index.php?option=com_k2&view=users');
         }
 
-        $cache = JFactory::getCache('com_k2');
+        $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
 
         switch (JRequest::getCmd('task')) {
             case 'apply':
-                $msg = JText::_('K2_CHANGES_TO_USER_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_CHANGES_TO_USER_SAVED');
                 $link = 'index.php?option=com_k2&view=user&cid='.$row->userID;
                 break;
             case 'save':
             default:
-                $msg = JText::_('K2_USER_SAVED');
+                $msg = Joomla\CMS\Language\Text::_('K2_USER_SAVED');
                 $link = 'index.php?option=com_k2&view=users';
                 break;
         }
+
         $app->enqueueMessage($msg);
         $app->redirect($link);
     }
 
     public function getUserGroups()
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT * FROM #__k2_user_groups';
         $db->setQuery($query);
         $rows = $db->loadObjectList();
@@ -151,53 +154,58 @@ class K2ModelUser extends K2Model
 
     public function reportSpammer()
     {
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_k2');
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $id = (int) $this->getState('id');
-        if (!$id) {
+        if ($id === 0) {
             return false;
         }
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->id == $id) {
-            $app->enqueueMessage(JText::_('K2_YOU_CANNOT_REPORT_YOURSELF'), 'error');
+            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_CANNOT_REPORT_YOURSELF'), 'error');
 
             return false;
         }
-        $db = JFactory::getDbo();
+
+        $db = Joomla\CMS\Factory::getDbo();
 
         // Unpublish user comments
         $db->setQuery('UPDATE #__k2_comments SET published = 0 WHERE userID = '.$id);
         $db->query();
-        $app->enqueueMessage(JText::_('K2_USER_COMMENTS_UNPUBLISHED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_COMMENTS_UNPUBLISHED'));
 
         // Unpublish user items
         $db->setQuery('UPDATE #__k2_items SET published = 0 WHERE created_by = '.$id);
         $db->query();
-        $app->enqueueMessage(JText::_('K2_USER_ITEMS_UNPUBLISHED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_ITEMS_UNPUBLISHED'));
 
         // Report the user to stopforumspam.com
         // We need the IP for this, so the user has to be a registered K2 user
-        $spammer = JFactory::getUser($id);
+        $spammer = Joomla\CMS\Factory::getUser($id);
         $db->setQuery('SELECT ip FROM #__k2_users WHERE userID='.$id, 0, 1);
         $ip = $db->loadResult();
         $stopForumSpamApiKey = trim($params->get('stopForumSpamApiKey'));
         if ($ip && function_exists('fsockopen') && $stopForumSpamApiKey) {
             $data = 'username='.$spammer->username.'&ip_addr='.$ip.'&email='.$spammer->email.'&api_key='.$stopForumSpamApiKey;
             $fp = fsockopen('www.stopforumspam.com', 80);
-            fputs($fp, "POST /add.php HTTP/1.1\n");
-            fputs($fp, "Host: www.stopforumspam.com\n");
-            fputs($fp, "Content-type: application/x-www-form-urlencoded\n");
-            fputs($fp, 'Content-length: '.strlen($data)."\n");
-            fputs($fp, "Connection: close\n\n");
-            fputs($fp, $data);
+            fwrite($fp, "POST /add.php HTTP/1.1\n");
+            fwrite($fp, "Host: www.stopforumspam.com\n");
+            fwrite($fp, "Content-type: application/x-www-form-urlencoded\n");
+            fwrite($fp, 'Content-length: '.strlen($data)."\n");
+            fwrite($fp, "Connection: close\n\n");
+            fwrite($fp, $data);
             fclose($fp);
-            $app->enqueueMessage(JText::_('K2_USER_DATA_SUBMITTED_TO_STOPFORUMSPAM'));
+            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_DATA_SUBMITTED_TO_STOPFORUMSPAM'));
         }
 
         // Finally block the user
         $db->setQuery('UPDATE #__users SET block = 1 WHERE id='.$id);
         $db->query();
-        $app->enqueueMessage(JText::_('K2_USER_BLOCKED'));
+
+        $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_BLOCKED'));
 
         return true;
     }

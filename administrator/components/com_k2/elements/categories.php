@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -21,30 +21,32 @@ class K2ElementCategories extends K2Element
 {
     public function fetchElement($name, $value, &$node, $control_name)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         $query = 'SELECT m.* FROM #__k2_categories m WHERE trash = 0 ORDER BY parent, ordering';
         $db->setQuery($query);
         $mitems = $db->loadObjectList();
         $children = [];
         if ($mitems) {
-            foreach ($mitems as $v) {
+            foreach ($mitems as $mitem) {
                 if (K2_JVERSION != '15') {
-                    $v->title = $v->name;
-                    $v->parent_id = $v->parent;
+                    $mitem->title = $mitem->name;
+                    $mitem->parent_id = $mitem->parent;
                 }
-                $pt = $v->parent;
+
+                $pt = $mitem->parent;
                 $list = @$children[$pt] ? $children[$pt] : [];
-                array_push($list, $v);
+                $list[] = $mitem;
                 $children[$pt] = $list;
             }
         }
-        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+
+        $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         $mitems = [];
-        $mitems[] = JHTML::_('select.option', '0', JText::_('K2_NONE_ONSELECTLISTS'));
+        $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '0', Joomla\CMS\Language\Text::_('K2_NONE_ONSELECTLISTS'));
 
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', ' -', $item->treename);
-            $mitems[] = JHTML::_('select.option', $item->id, $item->treename);
+            $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, $item->treename);
         }
 
         $attributes = 'class="inputbox"';
@@ -53,10 +55,8 @@ class K2ElementCategories extends K2Element
             if ($attribute) {
                 $attributes .= ' multiple="multiple" size="10"';
             }
-        } else {
-            if ($node->attributes('multiple')) {
-                $attributes .= ' multiple="multiple" size="10"';
-            }
+        } elseif ($node->attributes('multiple')) {
+            $attributes .= ' multiple="multiple" size="10"';
         }
 
         if (K2_JVERSION != '15') {
@@ -68,7 +68,7 @@ class K2ElementCategories extends K2Element
             }
         }
 
-        return JHTML::_('select.genericlist', $mitems, $fieldName, $attributes, 'value', 'text', $value);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $mitems, $fieldName, $attributes, 'value', 'text', $value);
     }
 }
 

@@ -13,15 +13,23 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.helper');
 
 // Load the base adapter.
 require_once JPATH_ADMINISTRATOR.'/components/com_finder/helpers/indexer/adapter.php';
 
-class plgFinderK2 extends FinderIndexerAdapter
+class plgFinderK2 extends Joomla\Component\Finder\Administrator\Indexer\Adapter
 {
+    public $old_access;
+
+    public $old_cataccess;
+
+    public $params;
+
+    public $db;
+
     protected $context = 'K2';
 
     protected $extension = 'com_k2';
@@ -38,9 +46,10 @@ class plgFinderK2 extends FinderIndexerAdapter
     {
         parent::__construct($subject, $config);
         if (PHP_SAPI === 'cli') {
-            JPluginHelper::importPlugin('system', 'k2');
+            Joomla\CMS\Plugin\PluginHelper::importPlugin('system', 'k2');
             JEventDispatcher::getInstance()->trigger('onAfterInitialise');
         }
+
         $this->loadLanguage();
     }
 
@@ -97,19 +106,15 @@ class plgFinderK2 extends FinderIndexerAdapter
     public function onFinderBeforeSave($context, $row, $isNew)
     {
         // We only want to handle items here
-        if ($context == 'com_k2.item') {
-            // Query the database for the old access level if the item isn't new
-            if (!$isNew) {
-                $this->checkItemAccess($row);
-            }
+        // Query the database for the old access level if the item isn't new
+        if ($context == 'com_k2.item' && !$isNew) {
+            $this->checkItemAccess($row);
         }
 
         // Check for access levels from the category
-        if ($context == 'com_k2.category') {
-            // Query the database for the old access level if the item isn't new
-            if (!$isNew) {
-                $this->checkCategoryAccess($row);
-            }
+        // Query the database for the old access level if the item isn't new
+        if ($context == 'com_k2.category' && !$isNew) {
+            $this->checkCategoryAccess($row);
         }
 
         return true;
@@ -121,96 +126,99 @@ class plgFinderK2 extends FinderIndexerAdapter
         if ($context == 'com_k2.item') {
             $this->itemStateChange($pks, $value);
         }
+
         // Categories
         if ($context == 'com_k2.category') {
             $this->categoryStateChange($pks, $value);
         }
     }
 
-    protected function index(FinderIndexerResult $item, $format = 'html')
+    protected function index(FinderIndexerResult $finderIndexerResult, $format = 'html')
     {
         // Check if the extension is enabled
-        if (JComponentHelper::isEnabled($this->extension) == false) {
+        if (Joomla\CMS\Component\ComponentHelper::isEnabled($this->extension) == false) {
             return;
         }
 
         // Initialize the item parameters.
         $registry = new JRegistry();
-        $registry->loadString($item->params);
-        $item->params = JComponentHelper::getParams('com_k2', true);
-        $item->params->merge($registry);
+        $registry->loadString($finderIndexerResult->params);
+
+        $finderIndexerResult->params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2', true);
+        $finderIndexerResult->params->merge($registry);
 
         $registry = new JRegistry();
-        $registry->loadString($item->metadata);
-        $item->metadata = $registry;
+        $registry->loadString($finderIndexerResult->metadata);
+
+        $finderIndexerResult->metadata = $registry;
 
         // Trigger the onContentPrepare event.
-        $item->summary = FinderIndexerHelper::prepareContent($item->summary, $item->params);
-        $item->body = FinderIndexerHelper::prepareContent($item->body, $item->params);
+        $finderIndexerResult->summary = Joomla\Component\Finder\Administrator\Indexer\Helper::prepareContent($finderIndexerResult->summary, $finderIndexerResult->params);
+        $finderIndexerResult->body = Joomla\Component\Finder\Administrator\Indexer\Helper::prepareContent($finderIndexerResult->body, $finderIndexerResult->params);
 
         // Build the necessary route and path information.
-        $item->url = $this->getURL($item->id, $this->extension, $this->layout);
-        $item->route = K2HelperRoute::getItemRoute($item->slug, $item->catslug);
-        $item->path = FinderIndexerHelper::getContentPath($item->route);
+        $finderIndexerResult->url = $this->getURL($finderIndexerResult->id, $this->extension, $this->layout);
+        $finderIndexerResult->route = K2HelperRoute::getItemRoute($finderIndexerResult->slug, $finderIndexerResult->catslug);
+        $finderIndexerResult->path = Joomla\Component\Finder\Administrator\Indexer\Helper::getContentPath($finderIndexerResult->route);
 
         // Get the menu title if it exists.
-        $title = $this->getItemMenuTitle($item->url);
+        $title = $this->getItemMenuTitle($finderIndexerResult->url);
 
         // Adjust the title if necessary.
         if (!empty($title) && $this->params->get('use_menu_title', true)) {
-            $item->title = $title;
+            $finderIndexerResult->title = $title;
         }
 
         // Add the meta-author.
-        $item->metaauthor = $item->metadata->get('author');
+        $finderIndexerResult->metaauthor = $finderIndexerResult->metadata->get('author');
 
         // Add the meta-data processing instructions.
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'metakey');
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'metadesc');
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'metaauthor');
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'author');
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'created_by_alias');
-        $item->addInstruction(FinderIndexer::META_CONTEXT, 'extra_fields_search');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'metakey');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'metadesc');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'metaauthor');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'author');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'created_by_alias');
+        $finderIndexerResult->addInstruction(Joomla\Component\Finder\Administrator\Indexer\Indexer::META_CONTEXT, 'extra_fields_search');
 
         // Translate the state. Items should only be published if the category is published.
-        $item->state = $this->translateState($item->state, $item->cat_state);
+        $finderIndexerResult->state = $this->translateState($finderIndexerResult->state, $finderIndexerResult->cat_state);
 
         // Translate the trash state. Items should only be accesible if the category is accessible.
-        if ($item->trash || $item->cat_trash) {
-            $item->state = 0;
+        if ($finderIndexerResult->trash || $finderIndexerResult->cat_trash) {
+            $finderIndexerResult->state = 0;
         }
 
         // Add the type taxonomy data.
-        $item->addTaxonomy('Type', 'K2 Item');
+        $finderIndexerResult->addTaxonomy('Type', 'K2 Item');
 
         // Add the author taxonomy data.
-        if (!empty($item->author) || !empty($item->created_by_alias)) {
-            $item->addTaxonomy('Author', !empty($item->created_by_alias) ? $item->created_by_alias : $item->author);
+        if (!empty($finderIndexerResult->author) || !empty($finderIndexerResult->created_by_alias)) {
+            $finderIndexerResult->addTaxonomy('Author', empty($finderIndexerResult->created_by_alias) ? $finderIndexerResult->author : $finderIndexerResult->created_by_alias);
         }
 
         // Add the category taxonomy data.
-        $item->addTaxonomy('K2 Category', $item->category, $item->cat_state, $item->cat_access);
+        $finderIndexerResult->addTaxonomy('K2 Category', $finderIndexerResult->category, $finderIndexerResult->cat_state, $finderIndexerResult->cat_access);
 
         // Add the language taxonomy data.
-        $item->addTaxonomy('Language', $item->language);
+        $finderIndexerResult->addTaxonomy('Language', $finderIndexerResult->language);
 
         // Add the extra_fields data.
-        $item->addTaxonomy('Extra fields', $item->extra_fields);
+        $finderIndexerResult->addTaxonomy('Extra fields', $finderIndexerResult->extra_fields);
 
         // Get content extras.
-        FinderIndexerHelper::getContentExtras($item);
+        Joomla\Component\Finder\Administrator\Indexer\Helper::getContentExtras($finderIndexerResult);
 
         // Index the item.
         if (method_exists('FinderIndexer', 'getInstance')) {
-            FinderIndexer::getInstance()->index($item);
+            Joomla\Component\Finder\Administrator\Indexer\Indexer::getInstance()->index($finderIndexerResult);
         } else {
-            FinderIndexer::index($item);
+            Joomla\Component\Finder\Administrator\Indexer\Indexer::index($finderIndexerResult);
         }
     }
 
     protected function getListQuery($sql = null)
     {
-        $db = JFactory::getDbo();
+        $db = Joomla\CMS\Factory::getDbo();
         // Check if we can use the supplied SQL query.
         $sql = is_a($sql, 'JDatabaseQuery') ? $sql : $db->getQuery(true);
         $sql->select('a.id, a.title, a.alias, a.introtext AS summary, a.fulltext AS body');
@@ -255,6 +263,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         $query->select($this->db->quoteName('access'));
         $query->from($this->db->quoteName('#__k2_categories'));
         $query->where($this->db->quoteName('id').' = '.(int) $row->id);
+
         $this->db->setQuery($query);
 
         // Store the access level to determine if it changes

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 class K2HelperUtilities
 {
@@ -22,14 +22,14 @@ class K2HelperUtilities
     {
         jimport('joomla.filesystem.folder');
         jimport('joomla.application.component.model');
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $params = self::getParams('com_k2');
         $template = JRequest::getCmd('template');
 
         // Check for placeholder overrides
-        if (isset($template) && JFile::exists(JPATH_SITE.'/templates/'.$template.'/images/placeholder/user.png')) {
+        if (isset($template) && Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/templates/'.$template.'/images/placeholder/user.png')) {
             $avatarPath = 'templates/'.$template.'/images/placeholder/user.png';
-        } elseif (JFile::exists(JPATH_SITE.'/templates/'.$app->getTemplate().'/images/placeholder/user.png')) {
+        } elseif (Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/templates/'.$app->getTemplate().'/images/placeholder/user.png')) {
             $avatarPath = 'templates/'.$app->getTemplate().'/images/placeholder/user.png';
         } else {
             $avatarPath = 'components/com_k2/images/placeholder/user.png';
@@ -37,12 +37,12 @@ class K2HelperUtilities
 
         // Continue with default K2 avatar determination
         if ($userID == 'alias') {
-            $avatar = JURI::root(true).'/'.$avatarPath;
+            $avatar = Joomla\CMS\Uri\Uri::root(true).'/'.$avatarPath;
         } elseif ($userID == 0) {
             if ($params->get('gravatar') && !is_null($email)) {
-                $avatar = 'https://secure.gravatar.com/avatar/'.md5($email).'?s='.$width.'&amp;default='.urlencode(JURI::root().$avatarPath);
+                $avatar = 'https://secure.gravatar.com/avatar/'.md5($email).'?s='.$width.'&amp;default='.urlencode(Joomla\CMS\Uri\Uri::root().$avatarPath);
             } else {
-                $avatar = JURI::root(true).'/'.$avatarPath;
+                $avatar = Joomla\CMS\Uri\Uri::root(true).'/'.$avatarPath;
             }
         } elseif (is_numeric($userID) && $userID > 0) {
             K2Model::addIncludePath(JPATH_SITE.'/components/com_k2/models');
@@ -51,9 +51,9 @@ class K2HelperUtilities
             $avatar = (is_null($profile)) ? '' : $profile->image;
             if (empty($avatar)) {
                 if ($params->get('gravatar') && !is_null($email)) {
-                    $avatar = 'https://secure.gravatar.com/avatar/'.md5($email).'?s='.$width.'&amp;default='.urlencode(JURI::root().$avatarPath);
+                    $avatar = 'https://secure.gravatar.com/avatar/'.md5($email).'?s='.$width.'&amp;default='.urlencode(Joomla\CMS\Uri\Uri::root().$avatarPath);
                 } else {
-                    $avatar = JURI::root(true).'/'.$avatarPath;
+                    $avatar = Joomla\CMS\Uri\Uri::root(true).'/'.$avatarPath;
                 }
             } else {
                 $avatarTimestamp = '';
@@ -61,12 +61,13 @@ class K2HelperUtilities
                 if (is_file($avatarFile) && filemtime($avatarFile)) {
                     $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                 }
-                $avatar = JURI::root(true).'/media/k2/users/'.$avatar.$avatarTimestamp;
+
+                $avatar = Joomla\CMS\Uri\Uri::root(true).'/media/k2/users/'.$avatar.$avatarTimestamp;
             }
         }
 
-        if (!$params->get('userImageDefault') && $avatar == JURI::root(true).'/'.$avatarPath) {
-            $avatar = '';
+        if (!$params->get('userImageDefault') && $avatar === Joomla\CMS\Uri\Uri::root(true).'/'.$avatarPath) {
+            return '';
         }
 
         return $avatar;
@@ -74,7 +75,7 @@ class K2HelperUtilities
 
     public static function getCategoryImage($image, $params)
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $categoryImage = null;
         if (!empty($image)) {
             $catImageTimestamp = '';
@@ -82,14 +83,13 @@ class K2HelperUtilities
             if (is_file($catImageFile) && filemtime($catImageFile)) {
                 $catImageTimestamp = '?t='.date('Ymd_Hi', filemtime($catImageFile));
             }
-            $categoryImage = JURI::root(true).'/media/k2/categories/'.$image.$catImageTimestamp;
-        } else {
-            if ($params->get('catImageDefault')) {
-                if (is_file(JPATH_SITE.'/templates/'.$app->getTemplate().'/images/placeholder/category.png')) {
-                    $categoryImage = JURI::root(true).'/templates/'.$app->getTemplate().'/images/placeholder/category.png';
-                } else {
-                    $categoryImage = JURI::root(true).'/components/com_k2/images/placeholder/category.png';
-                }
+
+            $categoryImage = Joomla\CMS\Uri\Uri::root(true).'/media/k2/categories/'.$image.$catImageTimestamp;
+        } elseif ($params->get('catImageDefault')) {
+            if (is_file(JPATH_SITE.'/templates/'.$app->getTemplate().'/images/placeholder/category.png')) {
+                $categoryImage = Joomla\CMS\Uri\Uri::root(true).'/templates/'.$app->getTemplate().'/images/placeholder/category.png';
+            } else {
+                $categoryImage = Joomla\CMS\Uri\Uri::root(true).'/components/com_k2/images/placeholder/category.png';
             }
         }
 
@@ -153,14 +153,18 @@ class K2HelperUtilities
     public static function writtenBy($gender)
     {
         if (empty($gender) || $gender == 'n') {
-            return JText::_('K2_WRITTEN_BY');
+            return Joomla\CMS\Language\Text::_('K2_WRITTEN_BY');
         }
+
         if ($gender == 'm') {
-            return JText::_('K2_WRITTEN_BY_MALE');
+            return Joomla\CMS\Language\Text::_('K2_WRITTEN_BY_MALE');
         }
+
         if ($gender == 'f') {
-            return JText::_('K2_WRITTEN_BY_FEMALE');
+            return Joomla\CMS\Language\Text::_('K2_WRITTEN_BY_FEMALE');
         }
+
+        return null;
     }
 
     public static function setDefaultImage(&$item, $view, $params = null)
@@ -257,25 +261,21 @@ class K2HelperUtilities
     public static function getParams($option)
     {
         if (K2_JVERSION != '15') {
-            $app = JFactory::getApplication();
-            if ($app->isSite()) {
-                $params = $app->getParams($option);
-            } else {
-                $params = JComponentHelper::getParams($option);
-            }
-        } else {
-            $params = JComponentHelper::getParams($option);
+            $app = Joomla\CMS\Factory::getApplication();
+
+            return $app->isSite() ? $app->getParams($option) : Joomla\CMS\Component\ComponentHelper::getParams($option);
         }
 
-        return $params;
+        return Joomla\CMS\Component\ComponentHelper::getParams($option);
     }
 
     public static function cleanTags($string, $allowed_tags)
     {
         $allowed_htmltags = [];
-        foreach ($allowed_tags as $tag) {
-            $allowed_htmltags[] .= '<'.$tag.'>';
+        foreach ($allowed_tags as $allowed_tag) {
+            $allowed_htmltags[] .= '<'.$allowed_tag.'>';
         }
+
         $allowed_htmltags = implode('', $allowed_htmltags);
         $string = strip_tags($string, $allowed_htmltags);
 
@@ -288,7 +288,7 @@ class K2HelperUtilities
     {
         $attr = implode('|', $attr_array);
         foreach ($tag_array as $tag) {
-            preg_match_all("#<($tag) .+?>#", $string, $matches, PREG_PATTERN_ORDER);
+            preg_match_all(sprintf('#<(%s) .+?>#', $tag), $string, $matches, PREG_PATTERN_ORDER);
             foreach ($matches[0] as $match) {
                 preg_match_all('/('.$attr.')=([\\"\\\']).+?([\\"\\\'])/', $match, $matchesAttr, PREG_PATTERN_ORDER);
                 foreach ($matchesAttr[0] as $attrToClean) {
@@ -304,7 +304,7 @@ class K2HelperUtilities
 
     public static function verifyRecaptcha()
     {
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $vars = [];
         $vars['secret'] = $params->get('recaptcha_private_key');
         $vars['response'] = $_POST['g-recaptcha-response'];

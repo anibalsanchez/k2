@@ -13,27 +13,32 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
 class K2ViewComments extends K2View
 {
+    /**
+     * @var string
+     */
+    public $recaptchaClass;
+
     public function report($tpl = null)
     {
         $params = K2HelperUtilities::getParams('com_k2');
-        $document = JFactory::getDocument();
-        $user = JFactory::getUser();
+        $document = Joomla\CMS\Factory::getDocument();
+        $user = Joomla\CMS\Factory::getUser();
 
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
-        $row = JTable::getInstance('K2Comment', 'Table');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');
         $row->load(JRequest::getInt('commentID'));
         if (!$row->published) {
-            JError::raiseError(404, JText::_('K2_NOT_FOUND'));
+            JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
         }
 
         if (!$params->get('comments') || !$params->get('commentsReporting') || ($params->get('commentsReporting') == '2' && $user->guest)) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
 
         // B/C code for reCAPTCHA
@@ -42,6 +47,7 @@ class K2ViewComments extends K2View
         } else {
             $params->set('recaptcha', false);
         }
+
         $params->set('recaptchaV2', true);
 
         // Load reCAPTCHA

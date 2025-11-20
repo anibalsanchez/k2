@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -22,26 +22,24 @@ class K2ElementModuleTemplate extends K2Element
     public function fetchElement($name, $value, &$node, $control_name)
     {
         jimport('joomla.filesystem.folder');
-        if (K2_JVERSION != '15') {
-            $moduleName = $node->attributes()->modulename;
-        } else {
-            $moduleName = $node->_attributes['modulename'];
-        }
-        $moduleTemplatesPath = JPATH_SITE.'/modules/'.$moduleName.'/tmpl';
-        $moduleTemplatesFolders = JFolder::folders($moduleTemplatesPath);
+        $moduleName = K2_JVERSION != '15' ? $node->attributes()->modulename : $node->_attributes['modulename'];
 
-        $db = JFactory::getDbo();
+        $moduleTemplatesPath = JPATH_SITE.'/modules/'.$moduleName.'/tmpl';
+        $moduleTemplatesFolders = Joomla\CMS\Filesystem\Folder::folders($moduleTemplatesPath);
+
+        $db = Joomla\CMS\Factory::getDbo();
         if (K2_JVERSION != '15') {
             $query = 'SELECT template FROM #__template_styles WHERE client_id = 0 AND home = 1';
         } else {
             $query = 'SELECT template FROM #__templates_menu WHERE client_id = 0 AND menuid = 0';
         }
+
         $db->setQuery($query);
         $defaultemplate = $db->loadResult();
         $templatePath = JPATH_SITE.'/templates/'.$defaultemplate.'/html/'.$moduleName;
 
-        if (JFolder::exists($templatePath)) {
-            $templateFolders = JFolder::folders($templatePath);
+        if (Joomla\CMS\Filesystem\Folder::exists($templatePath)) {
+            $templateFolders = Joomla\CMS\Filesystem\Folder::folders($templatePath);
             $folders = @array_merge($templateFolders, $moduleTemplatesFolders);
             $folders = @array_unique($folders);
         } else {
@@ -55,18 +53,15 @@ class K2ElementModuleTemplate extends K2Element
             if (preg_match(chr(1).$exclude.chr(1), $folder)) {
                 continue;
             }
-            $options[] = JHTML::_('select.option', $folder, $folder);
+
+            $options[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $folder, $folder);
         }
 
-        array_unshift($options, JHTML::_('select.option', 'Default', '-- '.JText::_('K2_USE_DEFAULT').' --'));
+        array_unshift($options, Joomla\CMS\HTML\HTMLHelper::_('select.option', 'Default', '-- '.Joomla\CMS\Language\Text::_('K2_USE_DEFAULT').' --'));
 
-        if (K2_JVERSION != '15') {
-            $fieldName = $name;
-        } else {
-            $fieldName = $control_name.'['.$name.']';
-        }
+        $fieldName = K2_JVERSION != '15' ? $name : $control_name.'['.$name.']';
 
-        return JHTML::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, $fieldName, 'class="inputbox"', 'value', 'text', $value);
     }
 }
 

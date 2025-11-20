@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,7 +27,7 @@ class K2ControllerItem extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->save();
     }
@@ -39,7 +39,7 @@ class K2ControllerItem extends K2Controller
 
     public function cancel()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->cancel();
     }
@@ -58,10 +58,11 @@ class K2ControllerItem extends K2Controller
 
     public function tags()
     {
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         $model = $this->getModel('tag');
         $model->tags();
     }
@@ -74,7 +75,7 @@ class K2ControllerItem extends K2Controller
 
     public function extraFields()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $id = JRequest::getInt('id', null);
 
         $categoryModel = $this->getModel('category');
@@ -105,12 +106,13 @@ class K2ControllerItem extends K2Controller
                     ';
                 }
             }
+
             $output .= '</div>';
         } else {
             $output = '
                 <div class="k2-generic-message">
-                    <h3>'.JText::_('K2_NOTICE').'</h3>
-                    <p>'.JText::_('K2_THIS_CATEGORY_DOESNT_HAVE_ASSIGNED_EXTRA_FIELDS').'</p>
+                    <h3>'.Joomla\CMS\Language\Text::_('K2_NOTICE').'</h3>
+                    <p>'.Joomla\CMS\Language\Text::_('K2_THIS_CATEGORY_DOESNT_HAVE_ASSIGNED_EXTRA_FIELDS').'</p>
                 </div>
             ';
         }
@@ -122,14 +124,14 @@ class K2ControllerItem extends K2Controller
 
     public function resetHits()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->resetHits();
     }
 
     public function resetRating()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('item');
         $model->resetRating();
     }

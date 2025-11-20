@@ -13,12 +13,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.model');
 
 if (version_compare(JVERSION, '2.5', 'ge')) {
-    class K2Model extends JModelLegacy
+    class K2Model extends Joomla\CMS\MVC\Model\BaseDatabaseModel
     {
         public static function addIncludePath($path = '', $prefix = 'K2Model')
         {

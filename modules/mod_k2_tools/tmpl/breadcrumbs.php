@@ -7,12 +7,12 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 $output = '';
 if ($params->get('home')) {
-    $output .= '<span class="bcTitle">'.JText::_('K2_YOU_ARE_HERE').'</span><a href="'.JURI::root().'">'.$params->get('home', JText::_('K2_HOME')).'</a>';
-    if (count($path)) {
+    $output .= '<span class="bcTitle">'.Joomla\CMS\Language\Text::_('K2_YOU_ARE_HERE').'</span><a href="'.Joomla\CMS\Uri\Uri::root().'">'.$params->get('home', Joomla\CMS\Language\Text::_('K2_HOME')).'</a>';
+    if (count($path) > 0) {
         foreach ($path as $link) {
             $output .= '<span class="bcSeparator">'.$params->get('seperator', '&raquo;').'</span>'.$link;
         }
@@ -22,9 +22,9 @@ if ($params->get('home')) {
     }
 } else {
     if ($title) {
-        $output .= '<span class="bcTitle">'.JText::_('K2_YOU_ARE_HERE').'</span>';
+        $output .= '<span class="bcTitle">'.Joomla\CMS\Language\Text::_('K2_YOU_ARE_HERE').'</span>';
     }
-    if (count($path)) {
+    if (count($path) > 0) {
         foreach ($path as $link) {
             $output .= $link.'<span class="bcSeparator">'.$params->get('seperator', '&raquo;').'</span>';
         }

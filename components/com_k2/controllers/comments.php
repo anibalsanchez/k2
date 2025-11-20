@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -21,30 +21,31 @@ class K2ControllerComments extends K2Controller
 {
     public function display($cachable = false, $urlparams = [])
     {
-        $document = JFactory::getDocument();
-        $user = JFactory::getUser();
+        $document = Joomla\CMS\Factory::getDocument();
+        $user = Joomla\CMS\Factory::getUser();
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
         K2HelperHTML::loadHeadIncludes(true, true, true);
 
         // Message for guests
         if ($user->guest) {
-            $uri = JFactory::getURI();
+            $uri = Joomla\CMS\Factory::getURI();
             if (K2_JVERSION != '15') {
                 $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
             } else {
                 $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
             }
-            $app = JFactory::getApplication();
-            $app->enqueueMessage(JText::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
-            $app->redirect(JRoute::_($url, false));
+
+            $app = Joomla\CMS\Factory::getApplication();
+            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
+            $app->redirect(Joomla\CMS\Router\Route::_($url, false));
         }
 
         JRequest::setVar('tmpl', 'component');
 
         // Language
-        $language = JFactory::getLanguage();
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
 
         $this->addViewPath(JPATH_COMPONENT_ADMINISTRATOR.'/views');
@@ -58,13 +59,15 @@ class K2ControllerComments extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
-        $language = JFactory::getLanguage();
+        JRequest::checkToken() || jexit('Invalid Token');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->publish();
@@ -72,13 +75,15 @@ class K2ControllerComments extends K2Controller
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
-        $language = JFactory::getLanguage();
+        JRequest::checkToken() || jexit('Invalid Token');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->unpublish();
@@ -86,13 +91,15 @@ class K2ControllerComments extends K2Controller
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
-        $language = JFactory::getLanguage();
+        JRequest::checkToken() || jexit('Invalid Token');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->remove();
@@ -100,13 +107,15 @@ class K2ControllerComments extends K2Controller
 
     public function deleteUnpublished()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
-        $language = JFactory::getLanguage();
+        JRequest::checkToken() || jexit('Invalid Token');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->deleteUnpublished();
@@ -114,16 +123,19 @@ class K2ControllerComments extends K2Controller
 
     public function saveComment()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
-        $language = JFactory::getLanguage();
+        JRequest::checkToken() || jexit('Invalid Token');
+        $language = Joomla\CMS\Factory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $user = JFactory::getUser();
+
+        $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->save();
+
         $app->close();
     }
 
@@ -137,12 +149,13 @@ class K2ControllerComments extends K2Controller
 
     public function sendReport()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $params = K2HelperUtilities::getParams('com_k2');
-        $user = JFactory::getUser();
+        $user = Joomla\CMS\Factory::getUser();
         if (!$params->get('comments') || !$params->get('commentsReporting') || ($params->get('commentsReporting') == '2' && $user->guest)) {
-            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
         $model = K2Model::getInstance('Comments', 'K2Model');
         $model->setState('id', JRequest::getInt('id'));
@@ -151,27 +164,27 @@ class K2ControllerComments extends K2Controller
         if (!$model->report()) {
             echo $model->getError();
         } else {
-            echo JText::_('K2_REPORT_SUBMITTED');
+            echo Joomla\CMS\Language\Text::_('K2_REPORT_SUBMITTED');
         }
-        $app = JFactory::getApplication();
+
+        $app = Joomla\CMS\Factory::getApplication();
         $app->close();
     }
 
     public function reportSpammer()
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $format = JRequest::getVar('format');
         $errors = [];
         if (K2_JVERSION != '15') {
             if (!$user->authorise('core.admin', 'com_k2')) {
-                $format == 'raw' ? die(JText::_('K2_ALERTNOTAUTH')) : JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                $format == 'raw' ? die(Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH')) : JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
             }
-        } else {
-            if ($user->gid < 25) {
-                $format == 'raw' ? die(JText::_('K2_ALERTNOTAUTH')) : JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
-            }
+        } elseif ($user->gid < 25) {
+            $format == 'raw' ? die(Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH')) : JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
         }
+
         K2Model::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/models');
         $model = K2Model::getInstance('User', 'K2Model');
         $model->setState('id', JRequest::getInt('id'));
@@ -182,8 +195,10 @@ class K2ControllerComments extends K2Controller
             foreach ($messages as $message) {
                 $response .= $message['message']."\n";
             }
+
             die($response);
         }
+
         $this->setRedirect('index.php?option=com_k2&view=comments&tmpl=component');
     }
 }

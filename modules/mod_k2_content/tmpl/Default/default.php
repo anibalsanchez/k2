@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
     <?php if (isset($items) && count($items)): ?>
     <ul>
         <?php foreach ($items as $key=>$item):  ?>
-        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+        <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even';
             if (count($items) == $key + 1) {
                 echo ' lastItem';
             } ?>">
@@ -74,7 +74,7 @@ defined('_JEXEC') or die;
             <?php if ($params->get('itemImage') || $params->get('itemIntroText')): ?>
             <div class="moduleItemIntrotext">
                 <?php if ($params->get('itemImage') && !empty($item->image)): ?>
-                <a class="moduleItemImage" href="<?php echo $item->link; ?>" title="<?php echo JText::_('K2_CONTINUE_READING'); ?> &quot;<?php echo K2HelperUtilities::cleanHtml($item->title); ?>&quot;">
+                <a class="moduleItemImage" href="<?php echo $item->link; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_CONTINUE_READING'); ?> &quot;<?php echo K2HelperUtilities::cleanHtml($item->title); ?>&quot;">
                     <img src="<?php echo $item->image; ?>" alt="<?php echo K2HelperUtilities::cleanHtml($item->title); ?>" />
                 </a>
                 <?php endif; ?>
@@ -87,11 +87,11 @@ defined('_JEXEC') or die;
 
             <?php if ($params->get('itemExtraFields') && isset($item->extra_fields) && count($item->extra_fields)): ?>
             <div class="moduleItemExtraFields">
-                <b><?php echo JText::_('K2_ADDITIONAL_INFO'); ?></b>
+                <b><?php echo Joomla\CMS\Language\Text::_('K2_ADDITIONAL_INFO'); ?></b>
                 <ul>
                     <?php foreach ($item->extra_fields as $key => $extraField): ?>
                     <?php if ($extraField->value != ''): ?>
-                    <li class="<?php echo ($key % 2) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
+                    <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
                         <?php if ($extraField->type == 'header'): ?>
                         <h4 class="moduleItemExtraFieldsHeader"><?php echo $extraField->name; ?></h4>
                         <?php else: ?>
@@ -126,17 +126,17 @@ defined('_JEXEC') or die;
 
             <?php if ($params->get('itemDateCreated')): ?>
             <span class="moduleItemDateCreated">
-                <?php echo JText::_('K2_WRITTEN_ON'); ?> <?php echo JHTML::_('date', $item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_WRITTEN_ON'); ?> <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $item->created, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
             </span>
             <?php endif; ?>
 
             <?php if ($params->get('itemCategory')): ?>
-            <?php echo JText::_('K2_IN'); ?> <a class="moduleItemCategory" href="<?php echo $item->categoryLink; ?>"><?php echo $item->categoryname; ?></a>
+            <?php echo Joomla\CMS\Language\Text::_('K2_IN'); ?> <a class="moduleItemCategory" href="<?php echo $item->categoryLink; ?>"><?php echo $item->categoryname; ?></a>
             <?php endif; ?>
 
             <?php if ($params->get('itemTags') && isset($item->tags) && count($item->tags) > 0): ?>
             <div class="moduleItemTags">
-                <b><?php echo JText::_('K2_TAGS'); ?>:</b>
+                <b><?php echo Joomla\CMS\Language\Text::_('K2_TAGS'); ?>:</b>
                 <?php foreach ($item->tags as $tag): ?>
                 <a href="<?php echo $tag->link; ?>"><?php echo $tag->name; ?></a>
                 <?php endforeach; ?>
@@ -161,14 +161,14 @@ defined('_JEXEC') or die;
             <?php if ($item->numOfComments > 0): ?>
             <a class="moduleItemComments" href="<?php echo $item->link.'#itemCommentsAnchor'; ?>">
                 <?php echo $item->numOfComments; ?> <?php if ($item->numOfComments > 1) {
-                    echo JText::_('K2_COMMENTS');
+                    echo Joomla\CMS\Language\Text::_('K2_COMMENTS');
                 } else {
-                    echo JText::_('K2_COMMENT');
+                    echo Joomla\CMS\Language\Text::_('K2_COMMENT');
                 } ?>
             </a>
             <?php else: ?>
             <a class="moduleItemComments" href="<?php echo $item->link.'#itemCommentsAnchor'; ?>">
-                <?php echo JText::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
             </a>
             <?php endif; ?>
             <?php endif; ?>
@@ -176,13 +176,13 @@ defined('_JEXEC') or die;
 
             <?php if ($params->get('itemHits')): ?>
             <span class="moduleItemHits">
-                <?php echo JText::_('K2_READ'); ?> <?php echo $item->hits; ?> <?php echo JText::_('K2_TIMES'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_READ'); ?> <?php echo $item->hits; ?> <?php echo Joomla\CMS\Language\Text::_('K2_TIMES'); ?>
             </span>
             <?php endif; ?>
 
             <?php if ($params->get('itemReadMore') && $item->fulltext): ?>
             <a class="moduleItemReadMore" href="<?php echo $item->link; ?>">
-                <?php echo JText::_('K2_READ_MORE'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_READ_MORE'); ?>
             </a>
             <?php endif; ?>
 
@@ -207,9 +207,9 @@ defined('_JEXEC') or die;
 
     <?php if ($params->get('feed')): ?>
     <div class="k2FeedIcon">
-        <a href="<?php echo JRoute::_('index.php?option=com_k2&view=itemlist&format=feed&moduleID='.$module->id); ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
+        <a href="<?php echo Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=itemlist&format=feed&moduleID='.$module->id); ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
             <i class="icon-feed"></i>
-            <span><?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?></span>
         </a>
         <div class="clr"></div>
     </div>

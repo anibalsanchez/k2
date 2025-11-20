@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 /*
  * Important note for template overrides:
@@ -27,7 +27,7 @@ defined('_JEXEC') or die;
 
         <?php if ($button): ?>
         <?php if ($imagebutton): ?>
-        <input type="image" alt="<?php echo $button_text; ?>" class="button" onclick="this.form.searchword.focus();" src="<?php echo JURI::base(true); ?>/components/com_k2/images/search.png" />
+        <input type="image" alt="<?php echo $button_text; ?>" class="button" onclick="this.form.searchword.focus();" src="<?php echo Joomla\CMS\Uri\Uri::base(true); ?>/components/com_k2/images/search.png" />
         <?php else: ?>
         <input type="submit" value="<?php echo $button_text; ?>" class="button" onclick="this.form.searchword.focus();" />
         <?php endif; ?>

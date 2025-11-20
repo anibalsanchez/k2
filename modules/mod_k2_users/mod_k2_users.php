@@ -13,14 +13,14 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 if (K2_JVERSION != '15') {
-    $language = JFactory::getLanguage();
+    $language = Joomla\CMS\Factory::getLanguage();
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
 }
 
-require_once dirname(__FILE__).'/helper.php';
+require_once __DIR__.'/helper.php';
 
 // Params
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
@@ -38,7 +38,7 @@ $userItemCount = $params->get('userItemCount', 1);
 
 // User avatar
 if ($userAvatarWidthSelect == 'inherit') {
-    $componentParams = JComponentHelper::getParams('com_k2');
+    $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
     $avatarWidth = $componentParams->get('userImageWidth');
 } else {
     $avatarWidth = $userAvatarWidth;
@@ -46,4 +46,4 @@ if ($userAvatarWidthSelect == 'inherit') {
 
 $users = modK2UsersHelper::getUsers($params);
 
-require JModuleHelper::getLayoutPath('mod_k2_users', $getTemplate.'/default');
+require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_users', $getTemplate.'/default');

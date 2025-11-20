@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,13 +21,13 @@ class K2ViewLatest extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
+        $user = Joomla\CMS\Factory::getUser();
 
         $params = K2HelperUtilities::getParams('com_k2');
 
-        $cache = JFactory::getCache('com_k2_extended');
+        $cache = Joomla\CMS\Factory::getCache('com_k2_extended');
 
         $limit = $params->get('latestItemsLimit');
         $limitstart = JRequest::getInt('limitstart');
@@ -41,36 +41,37 @@ class K2ViewLatest extends K2View
         $menuActive = $menu->getActive();
 
         // Important URLs
-        $currentAbsoluteUrl = JUri::getInstance()->toString();
-        $currentRelativeUrl = JUri::root(true).str_replace(substr(JUri::root(), 0, -1), '', $currentAbsoluteUrl);
+        $currentAbsoluteUrl = Joomla\CMS\Uri\Uri::getInstance()->toString();
+        $currentRelativeUrl = Joomla\CMS\Uri\Uri::root(true).str_replace(substr(Joomla\CMS\Uri\Uri::root(), 0, -1), '', $currentAbsoluteUrl);
 
         // Set layout
         $this->setLayout('latest');
 
         // Import plugins
-        JPluginHelper::importPlugin('content');
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
         if ($params->get('source')) {
             // Categories
             $categoryIDs = $params->get('categoryIDs');
-            if (is_string($categoryIDs) && !empty($categoryIDs)) {
+            if (is_string($categoryIDs) && ($categoryIDs !== '' && $categoryIDs !== '0')) {
                 $categoryIDs = [];
                 $categoryIDs[] = $params->get('categoryIDs');
             }
+
             $categories = [];
-            JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
+            Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
             if (is_array($categoryIDs)) {
                 foreach ($categoryIDs as $categoryID) {
-                    $category = JTable::getInstance('K2Category', 'Table');
+                    $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                     $category->load($categoryID);
                     $category->event = new stdClass();
                     $languageCheck = true;
                     if (K2_JVERSION != '15') {
                         $accessCheck = in_array($category->access, $user->getAuthorisedViewLevels());
                         if ($app->getLanguageFilter()) {
-                            $languageTag = JFactory::getLanguage()->getTag();
+                            $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
                             $languageCheck = in_array($category->language, [$languageTag, '*']);
                         }
                     } else {
@@ -81,10 +82,11 @@ class K2ViewLatest extends K2View
                         // Merge params
                         $cparams = class_exists('JParameter') ? new JParameter($category->params) : new JRegistry($category->params);
                         if ($cparams->get('inheritFrom')) {
-                            $masterCategory = JTable::getInstance('K2Category', 'Table');
+                            $masterCategory = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                             $masterCategory->load($cparams->get('inheritFrom'));
                             $cparams = class_exists('JParameter') ? new JParameter($masterCategory->params) : new JRegistry($masterCategory->params);
                         }
+
                         $params->merge($cparams);
 
                         // Category image
@@ -98,6 +100,7 @@ class K2ViewLatest extends K2View
                         } else {
                             $dispatcher->trigger('onPrepareContent', [&$category, &$params, $limitstart]);
                         }
+
                         $category->description = $category->text;
 
                         // Category K2 plugins
@@ -110,8 +113,8 @@ class K2ViewLatest extends K2View
 
                         // Category link
                         $link = urldecode(K2HelperRoute::getCategoryRoute($category->id.':'.urlencode($category->alias)));
-                        $category->link = JRoute::_($link);
-                        $category->feed = JRoute::_($link.'&format=feed');
+                        $category->link = Joomla\CMS\Router\Route::_($link);
+                        $category->feed = Joomla\CMS\Router\Route::_($link.'&format=feed');
 
                         JRequest::setVar('view', 'itemlist');
                         JRequest::setVar('task', 'category');
@@ -126,8 +129,9 @@ class K2ViewLatest extends K2View
 
                             JRequest::setVar('view', 'latest');
                             JRequest::setVar('task', '');
+                            $counter = count($category->items);
 
-                            for ($i = 0; $i < count($category->items); $i++) {
+                            for ($i = 0; $i < $counter; $i++) {
                                 $hits = $category->items[$i]->hits;
                                 $category->items[$i]->hits = 0;
                                 $category->items[$i] = $cache->call([$itemModel, 'prepareItem'], $category->items[$i], 'latest', '');
@@ -141,16 +145,18 @@ class K2ViewLatest extends K2View
                         } else {
                             $category->items = [];
                         }
+
                         $categories[] = $category;
                     }
                 }
             }
+
             $source = 'categories';
             $this->assignRef('blocks', $categories);
         } else {
             // Users
             $usersIDs = $params->get('userIDs');
-            if (is_string($usersIDs) && !empty($usersIDs)) {
+            if (is_string($usersIDs) && ($usersIDs !== '' && $usersIDs !== '0')) {
                 $usersIDs = [];
                 $usersIDs[] = $params->get('userIDs');
             }
@@ -158,7 +164,7 @@ class K2ViewLatest extends K2View
             $users = [];
             if (is_array($usersIDs)) {
                 foreach ($usersIDs as $userID) {
-                    $userObject = JFactory::getUser($userID);
+                    $userObject = Joomla\CMS\Factory::getUser($userID);
                     if (!$userObject->block) {
                         $userObject->event = new stdClass();
 
@@ -177,13 +183,14 @@ class K2ViewLatest extends K2View
                         }
 
                         $link = K2HelperRoute::getUserRoute($userObject->id);
-                        $userObject->link = JRoute::_($link);
-                        $userObject->feed = JRoute::_($link.'&format=feed');
+                        $userObject->link = Joomla\CMS\Router\Route::_($link);
+                        $userObject->feed = Joomla\CMS\Router\Route::_($link.'&format=feed');
                         $userObject->name = htmlspecialchars($userObject->name, ENT_QUOTES, 'utf-8');
                         if ($limit) {
                             $userObject->items = $model->getAuthorLatest(0, $limit, $userID);
+                            $counter = count($userObject->items);
 
-                            for ($i = 0; $i < count($userObject->items); $i++) {
+                            for ($i = 0; $i < $counter; $i++) {
                                 $hits = $userObject->items[$i]->hits;
                                 $userObject->items[$i]->hits = 0;
                                 $userObject->items[$i] = $cache->call([$itemModel, 'prepareItem'], $userObject->items[$i], 'latest', '');
@@ -199,10 +206,12 @@ class K2ViewLatest extends K2View
                         } else {
                             $userObject->items = [];
                         }
+
                         $users[] = $userObject;
                     }
                 }
             }
+
             $source = 'users';
             $this->assignRef('blocks', $users);
         }
@@ -216,9 +225,9 @@ class K2ViewLatest extends K2View
             if (K2_JVERSION != '15') {
                 // Prepend/append site name
                 if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                    $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                    $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                 } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                    $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                    $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                 }
 
                 // B/C assignment so Joomla 2.5+ uses the 'show_page_title' parameter as Joomla 1.5 does
@@ -231,10 +240,8 @@ class K2ViewLatest extends K2View
             // Set meta description
             $metaDesc = $document->getMetadata('description');
 
-            if (K2_JVERSION != '15') {
-                if ($params->get('menu-meta_description')) {
-                    $metaDesc = $params->get('menu-meta_description');
-                }
+            if (K2_JVERSION != '15' && $params->get('menu-meta_description')) {
+                $metaDesc = $params->get('menu-meta_description');
             }
 
             $metaDesc = trim($metaDesc);
@@ -243,10 +250,8 @@ class K2ViewLatest extends K2View
             // Set meta keywords
             $metaKeywords = $document->getMetadata('keywords');
 
-            if (K2_JVERSION != '15') {
-                if ($params->get('menu-meta_keywords')) {
-                    $metaKeywords = $params->get('menu-meta_keywords');
-                }
+            if (K2_JVERSION != '15' && $params->get('menu-meta_keywords')) {
+                $metaKeywords = $params->get('menu-meta_keywords');
             }
 
             $metaKeywords = trim($metaKeywords);
@@ -255,10 +260,8 @@ class K2ViewLatest extends K2View
             // Set meta robots
             $metaRobots = (K2_JVERSION != '15') ? $document->getMetadata('robots') : '';
 
-            if (K2_JVERSION != '15') {
-                if ($params->get('robots')) {
-                    $metaRobots = $params->get('robots');
-                }
+            if (K2_JVERSION != '15' && $params->get('robots')) {
+                $metaRobots = $params->get('robots');
             }
 
             $document->setMetadata('robots', $metaRobots);
@@ -277,6 +280,7 @@ class K2ViewLatest extends K2View
                 if ($params->get('twitterUsername')) {
                     $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                 }
+
                 $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                 $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
             }
@@ -321,12 +325,13 @@ class K2ViewLatest extends K2View
 
     private function setCanonicalUrl($url)
     {
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $params = K2HelperUtilities::getParams('com_k2');
         $canonicalURL = $params->get('canonicalURL', 'relative');
         if ($canonicalURL == 'absolute') {
-            $url = substr(str_replace(JUri::root(true), '', JUri::root(false)), 0, -1).$url;
+            $url = substr(str_replace(Joomla\CMS\Uri\Uri::root(true), '', Joomla\CMS\Uri\Uri::root(false)), 0, -1).$url;
         }
+
         $document->addHeadLink($url, 'canonical', 'rel');
     }
 }

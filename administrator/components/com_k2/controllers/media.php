@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 jimport('joomla.filesystem.file');
@@ -29,35 +29,33 @@ class K2ControllerMedia extends K2Controller
     public function connector()
     {
         // Check token
-        $method = ($_POST) ? 'post' : 'get';
+        $method = ($_POST !== []) ? 'post' : 'get';
         if (version_compare(JVERSION, '2.5', 'ge')) {
-            JSession::checkToken($method) or jexit(JText::_('JINVALID_TOKEN'));
+            Joomla\CMS\Session\Session::checkToken($method) || jexit(Joomla\CMS\Language\Text::_('JINVALID_TOKEN'));
         } else {
-            JRequest::checkToken($method) or jexit(JText::_('JINVALID_TOKEN'));
+            JRequest::checkToken($method) || jexit(Joomla\CMS\Language\Text::_('JINVALID_TOKEN'));
         }
 
-        $app = JFactory::getApplication();
-        $params = JComponentHelper::getParams('com_media');
+        $app = Joomla\CMS\Factory::getApplication();
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_media');
         $root = $params->get('file_path', 'media');
         $folder = JRequest::getVar('folder', $root, 'default', 'path');
         $type = JRequest::getCmd('type', 'video');
 
         if (JString::trim($folder) == '') {
             $folder = $root;
-        } else {
+        } elseif (!str_starts_with($folder, $root)) {
             // Ensure that we are always below the root directory
-            if (strpos($folder, $root) !== 0) {
-                $folder = $root;
-            }
+            $folder = $root;
         }
 
         // Disable debug
         JRequest::setVar('debug', false);
 
-        $url = JURI::root(true).'/'.$folder;
-        $path = JPATH_SITE.'/'.JPath::clean($folder);
+        $url = Joomla\CMS\Uri\Uri::root(true).'/'.$folder;
+        $path = JPATH_SITE.'/'.Joomla\CMS\Filesystem\Path::clean($folder);
 
-        JPath::check($path);
+        Joomla\CMS\Filesystem\Path::check($path);
 
         // Disallow force downloading sensitive file types
         $disallowedFileTypes = ['php', 'ini', 'sql', 'htaccess'];
@@ -75,17 +73,17 @@ class K2ControllerMedia extends K2Controller
 
         function access($attr, $path, $data, $volume)
         {
-            $app = JFactory::getApplication();
+            $app = Joomla\CMS\Factory::getApplication();
 
             // Hide PHP files
-            $ext = strtolower(JFile::getExt(basename($path)));
+            $ext = strtolower(Joomla\CMS\Filesystem\File::getExt(basename($path)));
 
-            if ($ext == 'php') {
+            if ($ext === 'php') {
                 return true;
             }
 
             // Hide files and folders starting with .
-            if (strpos(basename($path), '.') === 0 && $attr == 'hidden') {
+            if (str_starts_with(basename($path), '.') && $attr == 'hidden') {
                 return true;
             }
 
@@ -95,22 +93,20 @@ class K2ControllerMedia extends K2Controller
                     return true;
                     break;
                 case 'write':
-                    return ($app->isSite()) ? false : true;
+                    return !(bool) $app->isSite();
                     break;
                 case 'locked':
-                    return ($app->isSite()) ? true : false;
+                    return (bool) $app->isSite();
                     break;
                 case 'hidden':
                     return false;
                     break;
             }
+
+            return null;
         }
 
-        if ($app->isAdmin()) {
-            $permissions = ['read' => true, 'write' => true];
-        } else {
-            $permissions = ['read' => true, 'write' => false];
-        }
+        $permissions = $app->isAdmin() ? ['read' => true, 'write' => true] : ['read' => true, 'write' => false];
 
         $options = [
             'debug' => false,

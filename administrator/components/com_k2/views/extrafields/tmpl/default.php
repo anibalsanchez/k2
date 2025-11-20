@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -15,11 +15,11 @@ defined('_JEXEC') or die;
     <table class="k2AdminTableFilters table">
         <tr>
             <td class="k2AdminTableFiltersSearch">
-                <label class="k2ui-not-visible"><?php echo JText::_('K2_FILTER'); ?></label>
+                <label class="k2ui-not-visible"><?php echo Joomla\CMS\Language\Text::_('K2_FILTER'); ?></label>
                 <div class="btn-wrapper input-append">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" title="<?php echo JText::_('K2_FILTER_BY_TITLE'); ?>" placeholder="<?php echo JText::_('K2_FILTER'); ?>" />
-                    <button id="k2SubmitButton" class="btn"><?php echo JText::_('K2_GO'); ?></button>
-                    <button id="k2ResetButton" class="btn"><?php echo JText::_('K2_RESET'); ?></button>
+                    <input type="text" name="search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" title="<?php echo Joomla\CMS\Language\Text::_('K2_FILTER_BY_TITLE'); ?>" placeholder="<?php echo Joomla\CMS\Language\Text::_('K2_FILTER'); ?>" />
+                    <button id="k2SubmitButton" class="btn"><?php echo Joomla\CMS\Language\Text::_('K2_GO'); ?></button>
+                    <button id="k2ResetButton" class="btn"><?php echo Joomla\CMS\Language\Text::_('K2_RESET'); ?></button>
                 </div>
             </td>
             <td class="k2AdminTableFiltersSelects k2ui-hide-on-mobile">
@@ -35,22 +35,22 @@ defined('_JEXEC') or die;
                 <tr>
                     <?php if (K2_JVERSION == '30'): ?>
                     <th width="1%" class="k2ui-center k2ui-hide-on-mobile">
-                        <?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'ordering', @$this->lists['order_Dir'], @$this->lists['order'], null, 'asc', 'K2_ORDER'); ?>
+                        <?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', '<i class="icon-menu-2"></i>', 'ordering', @$this->lists['order_Dir'], @$this->lists['order'], null, 'asc', 'K2_ORDER'); ?>
                     </th>
                     <?php else: ?>
                     <th width="1%">#</th>
                     <?php endif; ?>
                     <th class="k2ui-center"><input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" /></th>
-                    <th class="k2ui-left"><?php echo JHTML::_('grid.sort', 'K2_NAME', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_GROUP', 'groupname', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                    <th class="k2ui-left"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_NAME', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_GROUP', 'groupname', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                     <?php if (K2_JVERSION != '30'): ?>
-                    <th><?php echo JHTML::_('grid.sort', 'K2_ORDER', 'ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?> <?php if ($this->ordering) {
-                        echo JHTML::_('grid.order', $this->rows);
+                    <th><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_ORDER', 'ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?> <?php if ($this->ordering) {
+                        echo Joomla\CMS\HTML\HTMLHelper::_('grid.order', $this->rows);
                     } ?></th>
                     <?php endif; ?>
-                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_TYPE', 'type', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                    <th class="k2ui-center"><?php echo JHTML::_('grid.sort', 'K2_PUBLISHED', 'published', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
-                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_ID', 'exf.id', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_TYPE', 'type', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                    <th class="k2ui-center"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_PUBLISHED', 'published', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
+                    <th class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\HTML\HTMLHelper::_('grid.sort', 'K2_ID', 'exf.id', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                 </tr>
             </thead>
             <?php
@@ -77,17 +77,17 @@ if (K2_JVERSION != '30') {
                 <tr class="row<?php echo $key % 2; ?>" sortable-group-id="<?php echo $row->group; ?>">
                     <?php if (K2_JVERSION == '30'): ?>
                     <td class="k2ui-order k2ui-center k2ui-hide-on-mobile">
-                        <span class="sortable-handler<?php echo ($this->ordering) ? '' : ' inactive tip-top'; ?>" title="<?php echo ($this->ordering) ? '' : JText::_('JORDERINGDISABLED'); ?>" rel="tooltip"><i class="icon-menu"></i></span>
+                        <span class="sortable-handler<?php echo ($this->ordering) ? '' : ' inactive tip-top'; ?>" title="<?php echo ($this->ordering) ? '' : Joomla\CMS\Language\Text::_('JORDERINGDISABLED'); ?>" rel="tooltip"><i class="icon-menu"></i></span>
                         <input type="text" style="display:none" name="order[]" size="5" value="<?php echo $row->ordering; ?>" class="width-20 text-area-order" />
                     </td>
                     <?php else: ?>
                     <td><?php echo $key + 1; ?></td>
                     <?php endif; ?>
                     <td class="k2ui-center"><?php $row->checked_out = 0;
-                    echo @JHTML::_('grid.checkedout', $row, $key); ?></td>
+                    echo @Joomla\CMS\HTML\HTMLHelper::_('grid.checkedout', $row, $key); ?></td>
                     <td>
-                        <a href="<?php echo JRoute::_('index.php?option=com_k2&view=extrafield&cid='.$row->id); ?>"><?php echo $row->name; ?></a>
-                        <span class="k2AliasValue"><?php echo JText::_('K2_ALIAS'); ?>: <?php echo $row->alias; ?></span>
+                        <a href="<?php echo Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=extrafield&cid='.$row->id); ?>"><?php echo $row->name; ?></a>
+                        <span class="k2AliasValue"><?php echo Joomla\CMS\Language\Text::_('K2_ALIAS'); ?>: <?php echo $row->alias; ?></span>
                     </td>
                     <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->groupname; ?></td>
                     <?php if (K2_JVERSION != '30'): ?>
@@ -97,7 +97,7 @@ if (K2_JVERSION != '30') {
                         <input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>"<?php echo ($this->ordering) ? '' : ' disabled="disabled"'; ?> class="text_area" />
                     </td>
                     <?php endif; ?>
-                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo JText::_('K2_EXTRA_FIELD_'.JString::strtoupper($row->type)); ?></td>
+                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\Language\Text::_('K2_EXTRA_FIELD_'.JString::strtoupper($row->type)); ?></td>
                     <td class="k2ui-center"><?php echo $row->status; ?></td>
                     <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->id; ?></td>
                 </tr>
@@ -106,7 +106,7 @@ if (K2_JVERSION != '30') {
                 <tr>
                     <td colspan="<?php echo $tfootColspan; ?>" class="k2ui-nocontent">
                         <div class="k2ui-nocontent-message">
-                            <i class="fa fa-list" aria-hidden="true"></i><?php echo JText::_('K2_BE_NO_EXTRA_FIELDS_FOUND'); ?>
+                            <i class="fa fa-list" aria-hidden="true"></i><?php echo Joomla\CMS\Language\Text::_('K2_BE_NO_EXTRA_FIELDS_FOUND'); ?>
                         </div>
                     </td>
                 </tr>
@@ -120,5 +120,5 @@ if (K2_JVERSION != '30') {
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
     <input type="hidden" name="boxchecked" value="0" />
-    <?php echo JHTML::_('form.token'); ?>
+    <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

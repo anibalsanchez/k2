@@ -13,9 +13,9 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-class K2Table extends JTable
+class K2Table extends Joomla\CMS\Table\Table
 {
     public function load($keys = null, $reset = true)
     {

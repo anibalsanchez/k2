@@ -13,10 +13,10 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-$params = JComponentHelper::getParams('com_k2');
-$user = JFactory::getUser();
+$params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
+$user = Joomla\CMS\Factory::getUser();
 
 $option = JRequest::getCmd('option');
 $view = JRequest::getCmd('view', 'items');
@@ -38,18 +38,14 @@ if (K2_JVERSION == '15') {
             $view == 'usergroups'
         )
     ) {
-        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+        JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
     }
 } else {
     JLoader::register('K2HelperPermissions', JPATH_SITE.'/administrator/components/com_k2/helpers/permissions.php');
     K2HelperPermissions::checkPermissions();
 
     // Compatibility for gid variable
-    if ($user->authorise('core.admin', 'com_k2')) {
-        $user->gid = 1000;
-    } else {
-        $user->gid = 1;
-    }
+    $user->gid = $user->authorise('core.admin', 'com_k2') ? 1000 : 1;
 
     if (
         ($params->get('lockTags') && !$user->authorise('core.admin', 'com_k2') && ($view == 'tags' || $view == 'tag')) ||
@@ -64,11 +60,11 @@ if (K2_JVERSION == '15') {
             $view == 'usergroups'
         )
     ) {
-        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+        JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
     }
 }
 
-$document = JFactory::getDocument();
+$document = Joomla\CMS\Factory::getDocument();
 
 $document->setMetadata('theme-color', '#10223e');
 

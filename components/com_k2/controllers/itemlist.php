@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -23,16 +23,14 @@ class K2ControllerItemlist extends K2Controller
     {
         $model = $this->getModel('item');
         $format = JRequest::getWord('format', 'html');
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $viewType = $document->getType();
         $view = $this->getView('itemlist', $viewType);
         $view->setModel($model);
-        $user = JFactory::getUser();
-        if ($user->guest) {
-            $cache = true;
-        } else {
-            $cache = false;
-        }
+
+        $user = Joomla\CMS\Factory::getUser();
+        $cache = (bool) $user->guest;
+
         if (K2_JVERSION != '15') {
             $urlparams['amp'] = 'INT';
             $urlparams['day'] = 'INT';
@@ -52,13 +50,14 @@ class K2ControllerItemlist extends K2Controller
             $urlparams['tmpl'] = 'CMD';
             $urlparams['year'] = 'INT';
         }
+
         parent::display($cache, $urlparams);
     }
 
     // For mod_k2_content
     public function module()
     {
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $view = $this->getView('itemlist', 'raw');
         $model = $this->getModel('itemlist');
         $view->setModel($model);

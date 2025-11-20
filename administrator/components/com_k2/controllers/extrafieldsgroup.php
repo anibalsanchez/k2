@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -35,10 +35,11 @@ class K2ControllerExtraFieldsGroup extends K2Controller
 
     public function save()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $view = $this->getView('extrafieldsgroup', 'html');
         $view->setModel($model, true);
+
         $model->saveGroup();
     }
 
@@ -49,7 +50,7 @@ class K2ControllerExtraFieldsGroup extends K2Controller
 
     public function cancel()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=extrafieldsgroups');
     }
 }

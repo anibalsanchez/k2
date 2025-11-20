@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
@@ -23,7 +23,7 @@ class K2ElementK2Tags extends K2Element
     {
         $fieldName = (K2_JVERSION != '15') ? $name.'[]' : $control_name.'['.$name.'][]';
 
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $document->addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
         $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js');
         $document->addScriptDeclaration('
@@ -36,7 +36,7 @@ class K2ElementK2Tags extends K2Element
 					minimumInputLength : 2,
 					ajax: {
 						dataType : "json",
-						url: "'.JURI::root(true).'/administrator/index.php?option=com_k2&view=item&task=tags&id=1",
+						url: "'.Joomla\CMS\Uri\Uri::root(true).'/administrator/index.php?option=com_k2&view=item&task=tags&id=1",
 						cache: "true",
 						 data: function (params) {
 						 	var queryParameters = {q: params.term};
@@ -61,13 +61,13 @@ class K2ElementK2Tags extends K2Element
 
         $options = [];
         if (is_array($value) && count($value)) {
-            $db = JFactory::getDbo();
+            $db = Joomla\CMS\Factory::getDbo();
             $query = 'SELECT id AS value, name AS text FROM #__k2_tags WHERE id IN('.implode(',', $value).')';
             $db->setQuery($query);
             $options = $db->loadObjectList();
         }
 
-        return JHTML::_('select.genericlist', $options, $fieldName, 'class="k2TagsElement" multiple="multiple" size="15"', 'value', 'text', $value);
+        return Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $options, $fieldName, 'class="k2TagsElement" multiple="multiple" size="15"', 'value', 'text', $value);
     }
 }
 

@@ -7,11 +7,11 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
-<?php if (count($selectedTags)): ?>
+<?php if (count($selectedTags) > 0): ?>
 <div id="k2ModuleBox<?php echo $module->id; ?>" class="k2SelectedTagsBlock<?php if ($params->get('moduleclass_sfx')) {
     echo ' '.$params->get('moduleclass_sfx');
 } ?>">
@@ -21,7 +21,7 @@ defined('_JEXEC') or die;
             break;
         } ?>
         <li>
-            <a href="<?php echo JRoute::_(K2HelperRoute::getTagRoute(urldecode($tag))); ?>"><?php echo urldecode($tag); ?></a>
+            <a href="<?php echo Joomla\CMS\Router\Route::_(K2HelperRoute::getTagRoute(urldecode($tag))); ?>"><?php echo urldecode($tag); ?></a>
         </li>
         <?php endforeach; ?>
     </ul>

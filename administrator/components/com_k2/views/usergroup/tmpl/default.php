@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 ?>
 
@@ -16,15 +16,15 @@ defined('_JEXEC') or die;
         <div class="xmlParamsFields">
             <h3>
                 <?php if ($this->row->id): ?>
-                <?php echo JText::_('K2_EDIT_USER_GROUP'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_EDIT_USER_GROUP'); ?>
                 <?php else: ?>
-                <?php echo JText::_('K2_ADD_USER_GROUP'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_ADD_USER_GROUP'); ?>
                 <?php endif; ?>
             </h3>
             <ul class="adminformlist">
                 <li>
                     <div class="paramLabel">
-                        <label for="name"><?php echo JText::_('K2_GROUP_NAME'); ?></label>
+                        <label for="name"><?php echo Joomla\CMS\Language\Text::_('K2_GROUP_NAME'); ?></label>
                     </div>
                     <div class="paramValue">
                         <input class="text_area k2TitleBox" type="text" name="name" id="name" value="<?php echo $this->row->name; ?>" size="50" maxlength="250" />
@@ -33,7 +33,7 @@ defined('_JEXEC') or die;
             </ul>
         </div>
         <div class="xmlParamsFields">
-            <h3 class="paramHeader"><?php echo JText::_('K2_ASSIGN_PERMISSIONS_FOR_THIS_GROUP'); ?></h3>
+            <h3 class="paramHeader"><?php echo Joomla\CMS\Language\Text::_('K2_ASSIGN_PERMISSIONS_FOR_THIS_GROUP'); ?></h3>
             <?php if (K2_JVERSION == '15'): ?>
             <?php echo $this->form->render('params'); ?>
             <?php else: ?>
@@ -58,34 +58,34 @@ defined('_JEXEC') or die;
             <?php endif; ?>
         </div>
         <div class="xmlParamsFields">
-            <h3 class="paramHeader"><?php echo JText::_('K2_ASSIGN_GROUP_PERMISSIONS_TO_THESE_CATEGORIES'); ?></h3>
+            <h3 class="paramHeader"><?php echo Joomla\CMS\Language\Text::_('K2_ASSIGN_GROUP_PERMISSIONS_TO_THESE_CATEGORIES'); ?></h3>
             <fieldset class="panelform">
                 <ul class="adminformlist">
                     <li>
-                        <div class="paramLabel"><label><?php echo JText::_('K2_FILTER'); ?></label></div>
+                        <div class="paramLabel"><label><?php echo Joomla\CMS\Language\Text::_('K2_FILTER'); ?></label></div>
                         <div class="paramValue">
                             <input id="categories-all" type="radio" name="categories" value="all" <?php if ($this->categories == 'all') {
                                 echo ' checked="checked"';
                             } ?> />
-                            <label for="categories-all"><?php echo JText::_('K2_ALL'); ?></label>
+                            <label for="categories-all"><?php echo Joomla\CMS\Language\Text::_('K2_ALL'); ?></label>
                             <input id="categories-none" type="radio" name="categories" value="none" <?php if ($this->categories == 'none') {
                                 echo ' checked="checked"';
                             } ?> />
-                            <label for="categories-none"><?php echo JText::_('K2_NONE'); ?></label>
+                            <label for="categories-none"><?php echo Joomla\CMS\Language\Text::_('K2_NONE'); ?></label>
                             <input id="categories-select" type="radio" name="categories" value="select" <?php if ($this->categories != 'all' && $this->categories != 'none') {
                                 echo ' checked="checked"';
                             } ?> />
-                            <label for="categories-select"><?php echo JText::_('K2_SELECT_FROM_LIST'); ?></label>
+                            <label for="categories-select"><?php echo Joomla\CMS\Language\Text::_('K2_SELECT_FROM_LIST'); ?></label>
                         </div>
                         <div class="clr"></div>
                     </li>
                     <li>
-                        <div class="paramLabel"><span class="editlinktip"><label for="paramscategories" id="paramscategories-lbl"><?php echo JText::_('K2_CATEGORIES'); ?></label></span></div>
+                        <div class="paramLabel"><span class="editlinktip"><label for="paramscategories" id="paramscategories-lbl"><?php echo Joomla\CMS\Language\Text::_('K2_CATEGORIES'); ?></label></span></div>
                         <div class="paramValue"><?php echo $this->lists['categories']; ?></div>
                         <div class="clr"></div>
                     </li>
                     <li>
-                        <div class="paramLabel"><span class="editlinktip"><label for="paramsinheritance" id="paramsinheritanceh-lbl"><?php echo JText::_('K2_AUTOMATICALLY_ASSIGN_GROUP_PERMISSIONS_TO_THE_CHILDREN_OF_SELECTED_CATEGORIES'); ?></label></span></div>
+                        <div class="paramLabel"><span class="editlinktip"><label for="paramsinheritance" id="paramsinheritanceh-lbl"><?php echo Joomla\CMS\Language\Text::_('K2_AUTOMATICALLY_ASSIGN_GROUP_PERMISSIONS_TO_THE_CHILDREN_OF_SELECTED_CATEGORIES'); ?></label></span></div>
                         <div class="paramValue"><?php echo $this->lists['inheritance']; ?></div>
                         <div class="clr"></div>
                     </li>
@@ -97,5 +97,5 @@ defined('_JEXEC') or die;
     <input type="hidden" name="option" value="com_k2" />
     <input type="hidden" name="view" value="usergroup" />
     <input type="hidden" name="task" value="<?php echo JRequest::getVar('task'); ?>" />
-    <?php echo JHTML::_('form.token'); ?>
+    <?php echo Joomla\CMS\HTML\HTMLHelper::_('form.token'); ?>
 </form>

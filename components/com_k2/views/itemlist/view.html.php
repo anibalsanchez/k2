@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,11 +21,11 @@ class K2ViewItemlist extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
-        $db = JFactory::getDbo();
-        $config = JFactory::getConfig();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
+        $db = Joomla\CMS\Factory::getDbo();
+        $config = Joomla\CMS\Factory::getConfig();
+        $user = Joomla\CMS\Factory::getUser();
         $view = JRequest::getCmd('view');
         $task = JRequest::getCmd('task');
         $limitstart = JRequest::getInt('limitstart', 0);
@@ -33,8 +33,8 @@ class K2ViewItemlist extends K2View
         $moduleID = JRequest::getInt('moduleID');
 
         $params = K2HelperUtilities::getParams('com_k2');
-        $cache = JFactory::getCache('com_k2_extended');
-        JTable::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+        $cache = Joomla\CMS\Factory::getCache('com_k2_extended');
+        Joomla\CMS\Table\Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
 
         $itemlistModel = $this->getModel('itemlist');
         $itemModel = $this->getModel('item');
@@ -45,8 +45,8 @@ class K2ViewItemlist extends K2View
         $menuActive = $menu->getActive();
 
         // Important URLs
-        $currentAbsoluteUrl = JUri::getInstance()->toString();
-        $currentRelativeUrl = JUri::root(true).str_replace(substr(JUri::root(), 0, -1), '', $currentAbsoluteUrl);
+        $currentAbsoluteUrl = Joomla\CMS\Uri\Uri::getInstance()->toString();
+        $currentRelativeUrl = Joomla\CMS\Uri\Uri::root(true).str_replace(substr(Joomla\CMS\Uri\Uri::root(), 0, -1), '', $currentAbsoluteUrl);
         /*
         $currentMenuItemUrl = '';
         if (!is_null($menuActive) && isset($menuActive->link)) {
@@ -59,7 +59,7 @@ class K2ViewItemlist extends K2View
         */
 
         // Dates
-        $date = JFactory::getDate();
+        $date = Joomla\CMS\Factory::getDate();
         $now = (K2_JVERSION == '15') ? $date->toMySQL() : $date->toSql();
         $this->assignRef('now', $now);
 
@@ -67,18 +67,17 @@ class K2ViewItemlist extends K2View
         $this->assignRef('nullDate', $nullDate);
 
         // Import plugins
-        JPluginHelper::importPlugin('content');
-        JPluginHelper::importPlugin('k2');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
+        Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
         // --- Feed Output [start] ---
-        if ($document->getType() == 'feed') {
-            if ($moduleID) {
-                $result = $itemlistModel->getModuleItems($moduleID);
-                $title = $result->title;
-                $items = $result->items;
-            }
+        if ($document->getType() == 'feed' && $moduleID) {
+            $result = $itemlistModel->getModuleItems($moduleID);
+            $title = $result->title;
+            $items = $result->items;
         }
+
         // --- Feed Output [finish] ---
 
         // --- JSON Output [start] ---
@@ -87,9 +86,10 @@ class K2ViewItemlist extends K2View
             $document->setMimeEncoding('application/json');
             $document->setType('json');
         }
+
         if ($document->getType() == 'json') {
             // Prepare JSON output
-            $uri = JURI::getInstance();
+            $uri = Joomla\CMS\Uri\Uri::getInstance();
             $response = new stdClass();
             $response->site = new stdClass();
             $response->site->url = $uri->toString(['scheme', 'host', 'port']);
@@ -103,6 +103,7 @@ class K2ViewItemlist extends K2View
                 $prefix = 'cat';
             }
         }
+
         // --- JSON Output [finish] ---
 
         // Get data based on task
@@ -112,45 +113,44 @@ class K2ViewItemlist extends K2View
                     // Get category
                     $id = JRequest::getInt('id');
 
-                    $category = JTable::getInstance('K2Category', 'Table');
+                    $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                     $category->load($id);
 
                     // State check
                     if (!$category->published || $category->trash) {
-                        JError::raiseError(404, JText::_('K2_CATEGORY_NOT_FOUND'));
+                        JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_CATEGORY_NOT_FOUND'));
                     }
 
                     // Access check
                     if (K2_JVERSION != '15') {
                         if (!in_array($category->access, $user->getAuthorisedViewLevels())) {
                             if ($user->guest) {
-                                $uri = JFactory::getURI();
+                                $uri = Joomla\CMS\Factory::getURI();
                                 $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
-                                $app->enqueueMessage(JText::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
-                                $app->redirect(JRoute::_($url, false));
+                                $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
+                                $app->redirect(Joomla\CMS\Router\Route::_($url, false));
                             } else {
-                                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                                JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
 
-                                return;
+                                return null;
                             }
                         }
+
                         $languageFilter = $app->getLanguageFilter();
-                        $languageTag = JFactory::getLanguage()->getTag();
+                        $languageTag = Joomla\CMS\Factory::getLanguage()->getTag();
                         if ($languageFilter && $category->language != $languageTag && $category->language != '*') { // Test logic
-                            return;
+                            return null;
                         }
-                    } else {
-                        if ($category->access > $user->get('aid', 0)) {
-                            if ($user->guest) {
-                                $uri = JFactory::getURI();
-                                $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
-                                $app->enqueueMessage(JText::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
-                                $app->redirect(JRoute::_($url, false));
-                            } else {
-                                JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+                    } elseif ($category->access > $user->get('aid', 0)) {
+                        if ($user->guest) {
+                            $uri = Joomla\CMS\Factory::getURI();
+                            $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
+                            $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
+                            $app->redirect(Joomla\CMS\Router\Route::_($url, false));
+                        } else {
+                            JError::raiseError(403, Joomla\CMS\Language\Text::_('K2_ALERTNOTAUTH'));
 
-                                return;
-                            }
+                            return null;
                         }
                     }
 
@@ -167,10 +167,11 @@ class K2ViewItemlist extends K2View
                     $category->metaAuthor = $cparams->get('catMetaAuthor');
 
                     if ($cparams->get('inheritFrom')) {
-                        $masterCategory = JTable::getInstance('K2Category', 'Table');
+                        $masterCategory = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                         $masterCategory->load($cparams->get('inheritFrom'));
                         $cparams = (class_exists('JParameter')) ? new JParameter($masterCategory->params) : new JRegistry($masterCategory->params);
                     }
+
                     $params->merge($cparams);
 
                     // Override inherited theme
@@ -179,7 +180,7 @@ class K2ViewItemlist extends K2View
                     }
 
                     // Category link
-                    $category->link = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($category->id.':'.urlencode($category->alias))));
+                    $category->link = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($category->id.':'.urlencode($category->alias))));
 
                     // Category image
                     $category->image = K2HelperUtilities::getCategoryImage($category->image, $params);
@@ -200,6 +201,7 @@ class K2ViewItemlist extends K2View
                             $limitstart,
                         ]);
                     }
+
                     $category->description = $category->text;
 
                     // Category K2 plugins
@@ -228,16 +230,18 @@ class K2ViewItemlist extends K2View
                     $subCategories = [];
                     $ordering = $params->get('subCatOrdering');
                     $children = $itemlistModel->getCategoryFirstChildren($id, $ordering);
-                    if (count($children)) {
+                    if (count($children) > 0) {
                         foreach ($children as $child) {
                             if ($params->get('subCatTitleItemCounter')) {
                                 $child->numOfItems = $itemlistModel->countCategoryItems($child->id);
                             }
+
                             $child->image = K2HelperUtilities::getCategoryImage($child->image, $params);
                             $child->name = htmlspecialchars($child->name, ENT_QUOTES, 'utf-8');
-                            $child->link = urldecode(JRoute::_(K2HelperRoute::getCategoryRoute($child->id.':'.urlencode($child->alias))));
+                            $child->link = urldecode(Joomla\CMS\Router\Route::_(K2HelperRoute::getCategoryRoute($child->id.':'.urlencode($child->alias))));
                             $subCategories[] = $child;
                         }
+
                         $this->assignRef('subCategories', $subCategories);
                     }
 
@@ -251,11 +255,7 @@ class K2ViewItemlist extends K2View
                     $limit = $params->get('num_leading_items') + $params->get('num_primary_items') + $params->get('num_secondary_items') + $params->get('num_links');
 
                     // Set ordering
-                    if ($params->get('singleCatOrdering')) {
-                        $ordering = $params->get('singleCatOrdering');
-                    } else {
-                        $ordering = $params->get('catOrdering');
-                    }
+                    $ordering = $params->get('singleCatOrdering') ?: $params->get('catOrdering');
 
                     // Set title
                     $title = $category->name;
@@ -285,6 +285,7 @@ class K2ViewItemlist extends K2View
 
                         $response->category = $row;
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
@@ -296,21 +297,21 @@ class K2ViewItemlist extends K2View
                     if (!$tag || !$tag->id) {
                         jimport('joomla.filesystem.file');
 
-                        if (JFile::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
+                        if (Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php')) {
                             $db->setQuery('SELECT id, value FROM #__jf_content WHERE value = '.$db->quote($tag));
                             $tag = $db->loadObject();
                         }
 
-                        if (JFile::exists(JPATH_ADMINISTRATOR.'/components/com_falang/falang.php')) {
+                        if (Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_falang/falang.php')) {
                             $db->setQuery('SELECT id, value FROM #__falang_content WHERE value = '.$db->quote($tag));
                             $tag = $db->loadObject();
                         }
 
                         if (!$tag || !$tag->id) {
                             if ($document->getType() == 'feed' || $document->getType() == 'json') {
-                                $app->redirect(JUri::root());
+                                $app->redirect(Joomla\CMS\Uri\Uri::root());
                             } else {
-                                JError::raiseError(410, JText::_('K2_NOT_FOUND'));
+                                JError::raiseError(410, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
 
                                 return false;
                             }
@@ -333,6 +334,7 @@ class K2ViewItemlist extends K2View
                     if ($this->menuItemMatchesK2Entity('itemlist', 'tag', $tag->name) && !empty($page_title)) {
                         $title = $params->get('page_title');
                     }
+
                     $this->assignRef('title', $title);
 
                     // Set description
@@ -341,7 +343,7 @@ class K2ViewItemlist extends K2View
 
                     // Link
                     $link = K2HelperRoute::getTagRoute($tag->name);
-                    $link = JRoute::_($link);
+                    $link = Joomla\CMS\Router\Route::_($link);
                     $this->assignRef('link', $link);
 
                     // Set head feed link
@@ -354,17 +356,18 @@ class K2ViewItemlist extends K2View
 
                         $response->tag = $tag->name;
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
                 case 'user':
                     // Get user
                     $id = JRequest::getInt('id');
-                    $userObject = JFactory::getUser($id);
+                    $userObject = Joomla\CMS\Factory::getUser($id);
 
                     // Check user status
                     if ($userObject->block) {
-                        JError::raiseError(404, JText::_('K2_USER_NOT_FOUND'));
+                        JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_USER_NOT_FOUND'));
                     }
 
                     // Get K2 user profile
@@ -386,6 +389,7 @@ class K2ViewItemlist extends K2View
                         $userObject->event->K2UserDisplay = trim(implode("\n", $results));
                         $userObject->profile->url = htmlspecialchars($userObject->profile->url, ENT_QUOTES, 'utf-8');
                     }
+
                     $this->assignRef('user', $userObject);
 
                     // Set layout
@@ -402,7 +406,7 @@ class K2ViewItemlist extends K2View
 
                     // Link
                     $link = K2HelperRoute::getUserRoute($id);
-                    $link = JRoute::_($link);
+                    $link = Joomla\CMS\Router\Route::_($link);
                     $this->assignRef('link', $link);
 
                     // Set head feed link
@@ -421,10 +425,12 @@ class K2ViewItemlist extends K2View
                         if (isset($userObject->profile->plugins)) {
                             unset($userObject->profile->plugins);
                         }
+
                         $row->events = $userObject->event;
 
                         $response->user = $row;
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
@@ -442,6 +448,7 @@ class K2ViewItemlist extends K2View
                     if (function_exists('date_default_timezone_get')) {
                         $originalTimezone = date_default_timezone_get();
                     }
+
                     if (function_exists('date_default_timezone_set')) {
                         date_default_timezone_set('UTC');
                     }
@@ -454,7 +461,8 @@ class K2ViewItemlist extends K2View
                         $dateFromRequest = strtotime(JRequest::getInt('year').'-'.JRequest::getInt('month'));
                         $dateFormat = (K2_JVERSION == '15') ? '%B %Y' : 'F Y';
                     }
-                    $title = filter_var(JHTML::_('date', $dateFromRequest, $dateFormat), FILTER_SANITIZE_STRING);
+
+                    $title = filter_var(Joomla\CMS\HTML\HTMLHelper::_('date', $dateFromRequest, $dateFormat), FILTER_SANITIZE_STRING);
                     $this->assignRef('title', $title);
 
                     // Restore the original timezone
@@ -472,6 +480,7 @@ class K2ViewItemlist extends K2View
 
                         $response->date = $title;
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
@@ -488,8 +497,8 @@ class K2ViewItemlist extends K2View
 
                     // Set search form data
                     $form = new stdClass();
-                    $form->action = JRoute::_(K2HelperRoute::getSearchRoute());
-                    $form->input = ($title) ? $title : JText::_('K2_SEARCH');
+                    $form->action = Joomla\CMS\Router\Route::_(K2HelperRoute::getSearchRoute());
+                    $form->input = $title ?: Joomla\CMS\Language\Text::_('K2_SEARCH');
                     $form->attributes = '';
                     if (!$app->getCfg('sef')) {
                         $form->attributes .= '
@@ -498,6 +507,7 @@ class K2ViewItemlist extends K2View
                             <input type="hidden" name="task" value="search" />
                         ';
                     }
+
                     if ($params->get('searchMenuItemId', '')) {
                         $form->attributes .= '
                             <input type="hidden" name="Itemid" value="'.$params->get('searchMenuItemId', '').'" />
@@ -516,6 +526,7 @@ class K2ViewItemlist extends K2View
 
                         $response->search = JRequest::getVar('searchword');
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
@@ -545,6 +556,7 @@ class K2ViewItemlist extends K2View
                         // Set parameters prefix
                         $prefix = 'cat';
                     }
+
                     // --- JSON Output [finish] ---
 
                     break;
@@ -552,24 +564,28 @@ class K2ViewItemlist extends K2View
 
             // --- Feed Output [start] ---
             if ($document->getType() == 'feed') {
-                $title = JFilterOutput::ampReplace($title);
+                $title = Joomla\CMS\Filter\OutputFilter::ampReplace($title);
                 $limit = $params->get('feedLimit');
             }
+
             // --- Feed Output [finish] ---
 
             // Set a default limit (for the model) if none is found
             if (!$limit) {
                 $limit = 10;
             }
+
             // Allow Feed & JSON outputs to request more items that the preset limit
             if (in_array($document->getType(), ['feed', 'json']) && JRequest::getInt('limit')) {
                 $limit = JRequest::getInt('limit');
             }
+
             // Protect from large limit requests
             $siteItemlistLimit = (int) $params->get('siteItemlistLimit', 100);
             if ($siteItemlistLimit && $limit > $siteItemlistLimit) {
                 $limit = $siteItemlistLimit;
             }
+
             JRequest::setVar('limit', $limit);
 
             // Allow for simplified paginated results using "page"
@@ -580,11 +596,7 @@ class K2ViewItemlist extends K2View
             }
 
             // Get items
-            if (!isset($ordering)) {
-                $items = $itemlistModel->getData();
-            } else {
-                $items = $itemlistModel->getData($ordering);
-            }
+            $items = isset($ordering) ? $itemlistModel->getData($ordering) : $itemlistModel->getData();
 
             // If a user has no published items, do not display their K2 user page (in the frontend) and redirect to the homepage of the site.
             $userPageDisplay = 0;
@@ -596,23 +608,26 @@ class K2ViewItemlist extends K2View
                     if ($user->id > 0) {
                         $userPageDisplay = 1;
                     }
+
                     break;
             }
+
             if ((count($items) == 0 && $task == 'user') && $userPageDisplay == 0) {
-                $app->redirect(JUri::root());
+                $app->redirect(Joomla\CMS\Uri\Uri::root());
             }
         }
 
         if ($document->getType() != 'json') {
             // Pagination
             jimport('joomla.html.pagination');
-            $total = (count($items)) ? $itemlistModel->getTotal() : 0;
-            $pagination = new JPagination($total, $limitstart, $limit);
+            $total = (count($items) > 0) ? $itemlistModel->getTotal() : 0;
+            $jPagination = new JPagination($total, $limitstart, $limit);
         }
 
         $rowsForJSON = [];
+        $counter = count($items);
 
-        for ($i = 0; $i < count($items); $i++) {
+        for ($i = 0; $i < $counter; $i++) {
             // Ensure that all items have a group. Group-less items get assigned to the leading group
             $items[$i]->itemGroup = 'leading';
 
@@ -621,12 +636,15 @@ class K2ViewItemlist extends K2View
                 if ($i < ($params->get('num_links') + $params->get('num_leading_items') + $params->get('num_primary_items') + $params->get('num_secondary_items'))) {
                     $items[$i]->itemGroup = 'links';
                 }
+
                 if ($i < ($params->get('num_secondary_items') + $params->get('num_leading_items') + $params->get('num_primary_items'))) {
                     $items[$i]->itemGroup = 'secondary';
                 }
+
                 if ($i < ($params->get('num_primary_items') + $params->get('num_leading_items'))) {
                     $items[$i]->itemGroup = 'primary';
                 }
+
                 if ($i < $params->get('num_leading_items')) {
                     $items[$i]->itemGroup = 'leading';
                 }
@@ -657,20 +675,20 @@ class K2ViewItemlist extends K2View
                 $feedItem->author = $item->author->name;
                 if ($params->get('feedBogusEmail')) {
                     $feedItem->authorEmail = $params->get('feedBogusEmail');
+                } elseif ($app->getCfg('feed_email') == 'author') {
+                    $feedItem->authorEmail = $item->author->email;
                 } else {
-                    if ($app->getCfg('feed_email') == 'author') {
-                        $feedItem->authorEmail = $item->author->email;
-                    } else {
-                        $feedItem->authorEmail = $app->getCfg('mailfrom');
-                    }
+                    $feedItem->authorEmail = $app->getCfg('mailfrom');
                 }
-                if ($params->get('feedItemImage') && JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg')) {
+
+                if ($params->get('feedItemImage') && Joomla\CMS\Filesystem\File::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_'.$params->get('feedImgSize').'.jpg')) {
                     $feedItem->setEnclosure($item->enclosure);
                 }
 
                 // Add feed item
                 $document->addItem($feedItem);
             }
+
             // --- Feed Output [finish] ---
 
             // --- JSON Output [start] ---
@@ -689,6 +707,7 @@ class K2ViewItemlist extends K2View
                 $itemParams->set($prefix.'ItemImage', true);
                 $items[$i]->params = $itemParams->toString();
             }
+
             // --- JSON Output [finish] ---
 
             // Check if the model should use the cache for preparing the item even if the user is logged in
@@ -705,7 +724,7 @@ class K2ViewItemlist extends K2View
             if ($cacheFlag) {
                 $hits = $items[$i]->hits;
                 $items[$i]->hits = 0;
-                JTable::getInstance('K2Category', 'Table');
+                Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
                 $items[$i] = $cache->call([
                     $itemModel,
                     'prepareItem',
@@ -735,15 +754,14 @@ class K2ViewItemlist extends K2View
             if ($document->getType() == 'json') {
                 // Set default image
                 if ($task == 'date' || $task == 'search' || $task == 'tag' || $task == 'user') {
-                    $items[$i]->image = (isset($items[$i]->imageGeneric)) ? $items[$i]->imageGeneric : '';
-                } else {
-                    if (!$moduleID) {
-                        K2HelperUtilities::setDefaultImage($items[$i], $view, $params);
-                    }
+                    $items[$i]->image = $items[$i]->imageGeneric ?? '';
+                } elseif (!$moduleID) {
+                    K2HelperUtilities::setDefaultImage($items[$i], $view, $params);
                 }
 
                 $rowsForJSON[] = $itemModel->prepareJSONItem($items[$i]);
             }
+
             // --- JSON Output [finish] ---
         }
 
@@ -761,11 +779,12 @@ class K2ViewItemlist extends K2View
                 echo $json;
             }
         }
+
         // --- JSON Output [finish] ---
 
         // Add item link
         if (K2HelperPermissions::canAddItem()) {
-            $addLink = JRoute::_('index.php?option=com_k2&view=item&task=add&tmpl=component&template=system');
+            $addLink = Joomla\CMS\Router\Route::_('index.php?option=com_k2&view=item&task=add&tmpl=component&template=system');
             $this->assignRef('addLink', $addLink);
         }
 
@@ -775,22 +794,26 @@ class K2ViewItemlist extends K2View
             if (!isset($menuActive->query['task'])) {
                 $menuActive->query['task'] = '';
             }
+
             switch ($task) {
                 case 'category':
                     if ($menuActive->query['task'] != 'category' || $menuActive->query['id'] != JRequest::getInt('id')) {
                         $pathway->addItem($title, '');
                     }
+
                     break;
                 case 'user':
                     if ($menuActive->query['task'] != 'user' || $menuActive->query['id'] != JRequest::getInt('id')) {
                         $pathway->addItem($title, '');
                     }
+
                     break;
 
                 case 'tag':
                     if ($menuActive->query['task'] != 'tag' || $menuActive->query['tag'] != JRequest::getVar('tag')) {
                         $pathway->addItem($title, '');
                     }
+
                     break;
 
                 case 'search':
@@ -805,11 +828,13 @@ class K2ViewItemlist extends K2View
         if ($task == 'search') {
             $params->set('googleSearch', 0);
             $googleSearchContainerID = trim($params->get('googleSearchContainer', 'k2GoogleSearchContainer'));
-            if ($googleSearchContainerID == 'k2Container') {
+            if ($googleSearchContainerID === 'k2Container') {
                 $googleSearchContainerID = 'k2GoogleSearchContainer';
             }
+
             $params->set('googleSearchContainer', $googleSearchContainerID);
         }
+
         // --- B/C stuff [finish] ---
 
         // Head Stuff
@@ -838,9 +863,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
 
                         // Override item title with page heading (if set)
@@ -867,10 +892,8 @@ class K2ViewItemlist extends K2View
                         $metaDesc = filter_var($metaDesc, FILTER_SANITIZE_STRING);
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_description')) {
-                            $metaDesc = $params->get('menu-meta_description');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_description')) {
+                        $metaDesc = $params->get('menu-meta_description');
                     }
 
                     $metaDesc = trim($metaDesc);
@@ -883,10 +906,8 @@ class K2ViewItemlist extends K2View
                         $metaKeywords = $category->metaKeywords;
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_keywords')) {
-                            $metaKeywords = $params->get('menu-meta_keywords');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_keywords')) {
+                        $metaKeywords = $params->get('menu-meta_keywords');
                     }
 
                     $metaKeywords = trim($metaKeywords);
@@ -904,10 +925,8 @@ class K2ViewItemlist extends K2View
                         $metaAuthor = $category->metaAuthor;
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('robots')) {
-                            $metaRobots = $params->get('robots');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('robots')) {
+                        $metaRobots = $params->get('robots');
                     }
 
                     $document->setMetadata('robots', $metaRobots);
@@ -919,8 +938,8 @@ class K2ViewItemlist extends K2View
 
                     // Common for Facebook & Twitter meta tags
                     $metaImage = '';
-                    if (!empty($category->image) && strpos($category->image, 'placeholder/category.png') === false) {
-                        $metaImage = substr(JURI::root(), 0, -1).str_replace(JURI::root(true), '', $category->image);
+                    if (!empty($category->image) && !str_contains($category->image, 'placeholder/category.png')) {
+                        $metaImage = substr(Joomla\CMS\Uri\Uri::root(), 0, -1).str_replace(Joomla\CMS\Uri\Uri::root(true), '', $category->image);
                     }
 
                     // Set Facebook meta tags
@@ -941,6 +960,7 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                         if ($metaImage) {
@@ -972,9 +992,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
 
                         // Override item title with page heading (if set)
@@ -992,15 +1012,13 @@ class K2ViewItemlist extends K2View
                     $document->setTitle($metaTitle);
 
                     // Set meta description
-                    $metaDesc = JText::_('K2_TAG_VIEW_DEFAULT_METADESC').' \''.$tag->name.'\'';
+                    $metaDesc = Joomla\CMS\Language\Text::_('K2_TAG_VIEW_DEFAULT_METADESC')." '".$tag->name."'";
                     if ($document->getMetadata('description', '')) {
                         $metaDesc .= ' - '.$document->getMetadata('description');
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_description')) {
-                            $metaDesc = $params->get('menu-meta_description');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_description')) {
+                        $metaDesc = $params->get('menu-meta_description');
                     }
 
                     if (!empty($tag->description)) {
@@ -1016,10 +1034,8 @@ class K2ViewItemlist extends K2View
                         $metaKeywords .= ', '.$document->getMetadata('keywords');
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_keywords')) {
-                            $metaKeywords = $params->get('menu-meta_keywords');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_keywords')) {
+                        $metaKeywords = $params->get('menu-meta_keywords');
                     }
 
                     $metaKeywords = trim($metaKeywords);
@@ -1028,10 +1044,8 @@ class K2ViewItemlist extends K2View
                     // Set meta robots
                     $metaRobots = (K2_JVERSION != '15') ? $document->getMetadata('robots') : '';
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('robots')) {
-                            $metaRobots = $params->get('robots');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('robots')) {
+                        $metaRobots = $params->get('robots');
                     }
 
                     $document->setMetadata('robots', $metaRobots);
@@ -1050,6 +1064,7 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                     }
@@ -1076,9 +1091,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
 
                         // Override item title with page heading (if set)
@@ -1096,7 +1111,7 @@ class K2ViewItemlist extends K2View
                     $document->setTitle($metaTitle);
 
                     // Set meta description
-                    $metaDesc = JText::_('K2_USER_VIEW_DEFAULT_METADESC').' \''.$filteredUserName.'\'';
+                    $metaDesc = Joomla\CMS\Language\Text::_('K2_USER_VIEW_DEFAULT_METADESC')." '".$filteredUserName."'";
                     if ($document->getMetadata('description', '')) {
                         $metaDesc .= ' - '.$document->getMetadata('description');
                     }
@@ -1105,10 +1120,8 @@ class K2ViewItemlist extends K2View
                         $metaDesc = filter_var($userObject->profile->description, FILTER_SANITIZE_STRING);
                     }
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_description')) {
-                            $metaDesc = $params->get('menu-meta_description');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_description')) {
+                        $metaDesc = $params->get('menu-meta_description');
                     }
 
                     $metaDesc = trim($metaDesc);
@@ -1117,10 +1130,8 @@ class K2ViewItemlist extends K2View
                     // Set meta keywords
                     $metaKeywords = $document->getMetadata('keywords');
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_keywords')) {
-                            $metaKeywords = $params->get('menu-meta_keywords');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('menu-meta_keywords')) {
+                        $metaKeywords = $params->get('menu-meta_keywords');
                     }
 
                     $metaKeywords = trim($metaKeywords);
@@ -1129,10 +1140,8 @@ class K2ViewItemlist extends K2View
                     // Set meta robots & author
                     $metaRobots = (K2_JVERSION != '15') ? $document->getMetadata('robots') : '';
 
-                    if ($menuItemMatch && K2_JVERSION != '15') {
-                        if ($params->get('robots')) {
-                            $metaRobots = $params->get('robots');
-                        }
+                    if ($menuItemMatch && K2_JVERSION != '15' && $params->get('robots')) {
+                        $metaRobots = $params->get('robots');
                     }
 
                     $document->setMetadata('robots', $metaRobots);
@@ -1144,11 +1153,11 @@ class K2ViewItemlist extends K2View
 
                     // Common for Facebook & Twitter meta tags
                     $metaImage = '';
-                    if (!empty($userObject->avatar) && strpos($userObject->avatar, 'placeholder/user.png') === false) {
-                        if (strpos($userObject->avatar, 'http://') !== false || strpos($userObject->avatar, 'https://') !== false) {
+                    if (!empty($userObject->avatar) && !str_contains($userObject->avatar, 'placeholder/user.png')) {
+                        if (str_contains($userObject->avatar, 'http://') || str_contains($userObject->avatar, 'https://')) {
                             $metaImage = $userObject->avatar;
                         } else {
-                            $metaImage = substr(JURI::root(), 0, -1).str_replace(JURI::root(true), '', $userObject->avatar);
+                            $metaImage = substr(Joomla\CMS\Uri\Uri::root(), 0, -1).str_replace(Joomla\CMS\Uri\Uri::root(true), '', $userObject->avatar);
                         }
                     }
 
@@ -1170,6 +1179,7 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                         if ($metaImage) {
@@ -1193,9 +1203,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
                     }
 
@@ -1203,7 +1213,7 @@ class K2ViewItemlist extends K2View
                     $document->setTitle($metaTitle);
 
                     // Set meta description
-                    $metaDesc = ($document->getMetadata('description')) ? $document->getMetadata('description') : JText::_('K2_ITEMS_FILTERED_BY_DATE').' '.$metaTitle;
+                    $metaDesc = $document->getMetadata('description') ?: Joomla\CMS\Language\Text::_('K2_ITEMS_FILTERED_BY_DATE').' '.$metaTitle;
                     $metaDesc = trim($metaDesc);
                     $document->setDescription(K2HelperUtilities::characterLimit($metaDesc, $params->get('metaDescLimit', 150)));
 
@@ -1229,6 +1239,7 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                     }
@@ -1245,9 +1256,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
                     }
 
@@ -1255,7 +1266,7 @@ class K2ViewItemlist extends K2View
                     $document->setTitle($metaTitle);
 
                     // Set meta description
-                    $metaDesc = ($document->getMetadata('description')) ? $document->getMetadata('description') : JText::_('K2_SEARCH_RESULTS_FOR').' '.$metaTitle;
+                    $metaDesc = $document->getMetadata('description') ?: Joomla\CMS\Language\Text::_('K2_SEARCH_RESULTS_FOR').' '.$metaTitle;
                     $metaDesc = trim($metaDesc);
                     $document->setDescription(K2HelperUtilities::characterLimit($metaDesc, $params->get('metaDescLimit', 150)));
 
@@ -1281,6 +1292,7 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                     }
@@ -1295,9 +1307,9 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         // Prepend/append site name
                         if ($app->getCfg('sitename_pagetitles', 0) == 1) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $app->getCfg('sitename'), $params->get('page_title')));
                         } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
-                            $params->set('page_title', JText::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
+                            $params->set('page_title', Joomla\CMS\Language\Text::sprintf('JPAGETITLE', $params->get('page_title'), $app->getCfg('sitename')));
                         }
 
                         // B/C assignment so Joomla 2.5+ uses the 'show_page_title' parameter as Joomla 1.5 does
@@ -1310,10 +1322,8 @@ class K2ViewItemlist extends K2View
                     // Set meta description
                     $metaDesc = $document->getMetadata('description');
 
-                    if (K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_description')) {
-                            $metaDesc = $params->get('menu-meta_description');
-                        }
+                    if (K2_JVERSION != '15' && $params->get('menu-meta_description')) {
+                        $metaDesc = $params->get('menu-meta_description');
                     }
 
                     $metaDesc = trim($metaDesc);
@@ -1322,10 +1332,8 @@ class K2ViewItemlist extends K2View
                     // Set meta keywords
                     $metaKeywords = $document->getMetadata('keywords');
 
-                    if (K2_JVERSION != '15') {
-                        if ($params->get('menu-meta_keywords')) {
-                            $metaKeywords = $params->get('menu-meta_keywords');
-                        }
+                    if (K2_JVERSION != '15' && $params->get('menu-meta_keywords')) {
+                        $metaKeywords = $params->get('menu-meta_keywords');
                     }
 
                     $metaKeywords = trim($metaKeywords);
@@ -1334,10 +1342,8 @@ class K2ViewItemlist extends K2View
                     // Set meta robots
                     $metaRobots = (K2_JVERSION != '15') ? $document->getMetadata('robots') : '';
 
-                    if (K2_JVERSION != '15') {
-                        if ($params->get('robots')) {
-                            $metaRobots = $params->get('robots');
-                        }
+                    if (K2_JVERSION != '15' && $params->get('robots')) {
+                        $metaRobots = $params->get('robots');
                     }
 
                     $document->setMetadata('robots', $metaRobots);
@@ -1356,18 +1362,21 @@ class K2ViewItemlist extends K2View
                         if ($params->get('twitterUsername')) {
                             $document->setMetaData('twitter:site', '@'.$params->get('twitterUsername'));
                         }
+
                         $document->setMetaData('twitter:title', filter_var($metaTitle, FILTER_SANITIZE_STRING));
                         $document->setMetaData('twitter:description', K2HelperUtilities::characterLimit($metaDesc, 200)); // 200 chars limit for Twitter post sharing
                     }
+
                     break;
             }
 
             // Feed URLs (use the $link variable set previously)
             $feedLink = $link;
             $joiner = '?';
-            if (strpos($feedLink, '?') !== false) {
+            if (str_contains($feedLink, '?')) {
                 $joiner = '&';
             }
+
             $feedLink .= $joiner.'format=feed';
 
             /*
@@ -1379,24 +1388,25 @@ class K2ViewItemlist extends K2View
             */
 
             if ($addHeadFeedLink) {
-                if ($metaTitle) {
-                    $metaTitle = $metaTitle.' | ';
+                if ($metaTitle !== '' && $metaTitle !== '0') {
+                    $metaTitle .= ' | ';
                 }
-                $document->addHeadLink(JRoute::_($feedLink), 'alternate', 'rel', [
+
+                $document->addHeadLink(Joomla\CMS\Router\Route::_($feedLink), 'alternate', 'rel', [
                     'type' => 'application/rss+xml',
-                    'title' => $metaTitle.''.JText::_('K2_FEED'),
+                    'title' => $metaTitle.''.Joomla\CMS\Language\Text::_('K2_FEED'),
                 ]);
-                $document->addHeadLink(JRoute::_($feedLink.'&type=rss'), 'alternate', 'rel', [
+                $document->addHeadLink(Joomla\CMS\Router\Route::_($feedLink.'&type=rss'), 'alternate', 'rel', [
                     'type' => 'application/rss+xml',
                     'title' => $metaTitle.'RSS 2.0',
                 ]);
-                $document->addHeadLink(JRoute::_($feedLink.'&type=atom'), 'alternate', 'rel', [
+                $document->addHeadLink(Joomla\CMS\Router\Route::_($feedLink.'&type=atom'), 'alternate', 'rel', [
                     'type' => 'application/atom+xml',
                     'title' => $metaTitle.'Atom 1.0',
                 ]);
             }
 
-            $feedLink = JRoute::_($feedLink);
+            $feedLink = Joomla\CMS\Router\Route::_($feedLink);
             $this->assignRef('feed', $feedLink);
         }
 
@@ -1463,18 +1473,21 @@ class K2ViewItemlist extends K2View
             if ($params->get('num_leading_columns') == 0) {
                 $params->set('num_leading_columns', 1);
             }
+
             if ($params->get('num_primary_columns') == 0) {
                 $params->set('num_primary_columns', 1);
             }
+
             if ($params->get('num_secondary_columns') == 0) {
                 $params->set('num_secondary_columns', 1);
             }
+
             if ($params->get('num_links_columns') == 0) {
                 $params->set('num_links_columns', 1);
             }
 
             $this->assignRef('params', $params);
-            $this->assignRef('pagination', $pagination);
+            $this->assignRef('pagination', $jPagination);
 
             // K2 Plugins
             $dispatcher->trigger('onK2BeforeViewDisplay');
@@ -1482,15 +1495,17 @@ class K2ViewItemlist extends K2View
             // Display
             parent::display($tpl);
         }
+
+        return null;
     }
 
     public function module()
     {
-        $app = JFactory::getApplication();
-        $document = JFactory::getDocument();
+        $app = Joomla\CMS\Factory::getApplication();
+        $document = Joomla\CMS\Factory::getDocument();
 
         if ($document->getType() == 'raw') {
-            $componentParams = JComponentHelper::getParams('com_k2');
+            $componentParams = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
 
             $itemlistModel = K2Model::getInstance('Itemlist', 'K2Model');
 
@@ -1507,39 +1522,43 @@ class K2ViewItemlist extends K2View
                 }
 
                 if ($params->get('getTemplate')) {
-                    require JModuleHelper::getLayoutPath('mod_k2_content', $params->get('getTemplate').'/default');
+                    require Joomla\CMS\Helper\ModuleHelper::getLayoutPath('mod_k2_content', $params->get('getTemplate').'/default');
                 } else {
-                    require JModuleHelper::getLayoutPath($result->module, 'default');
+                    require Joomla\CMS\Helper\ModuleHelper::getLayoutPath($result->module, 'default');
                 }
             }
+
             $app->close();
         }
     }
 
     private function setCanonicalUrl($url)
     {
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $limitstart = JRequest::getInt('limitstart', 0);
         $params = K2HelperUtilities::getParams('com_k2');
         $canonicalURL = $params->get('canonicalURL', 'relative');
         if ($canonicalURL) {
             if ($limitstart) {
                 $joiner = '?';
-                if (strpos($url, '?') !== false) {
+                if (str_contains($url, '?')) {
                     $joiner = '&';
                 }
+
                 $url = $url.''.$joiner.'start='.$limitstart;
             }
+
             if ($canonicalURL == 'absolute') {
-                $url = substr(str_replace(JUri::root(true), '', JUri::root(false)), 0, -1).$url;
+                $url = substr(str_replace(Joomla\CMS\Uri\Uri::root(true), '', Joomla\CMS\Uri\Uri::root(false)), 0, -1).$url;
             }
+
             $document->addHeadLink($url, 'canonical', 'rel');
         }
     }
 
     private function menuItemMatchesK2Entity($view, $task, $identifier)
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
 
         // Menu
         $menu = $app->getMenu();
@@ -1553,15 +1572,11 @@ class K2ViewItemlist extends K2View
                 if (is_object($menuActive) && isset($menuActive->query['view']) && $menuActive->query['view'] == $view && isset($menuActive->query['task']) && $menuActive->query['task'] == $task && isset($menuActive->query['tag']) && $menuActive->query['tag'] == $identifier) {
                     $matched = true;
                 }
-            } else {
-                if (is_object($menuActive) && isset($menuActive->query['view']) && $menuActive->query['view'] == $view && isset($menuActive->query['task']) && $menuActive->query['task'] == $task && isset($menuActive->query['id']) && $menuActive->query['id'] == $identifier) {
-                    $matched = true;
-                }
-            }
-        } else {
-            if (is_object($menuActive) && isset($menuActive->query['view']) && $menuActive->query['view'] == $view && isset($menuActive->query['id']) && $menuActive->query['id'] == $identifier) {
+            } elseif (is_object($menuActive) && isset($menuActive->query['view']) && $menuActive->query['view'] == $view && isset($menuActive->query['task']) && $menuActive->query['task'] == $task && isset($menuActive->query['id']) && $menuActive->query['id'] == $identifier) {
                 $matched = true;
             }
+        } elseif (is_object($menuActive) && isset($menuActive->query['view']) && $menuActive->query['view'] == $view && isset($menuActive->query['id']) && $menuActive->query['id'] == $identifier) {
+            $matched = true;
         }
 
         return $matched;

@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.view');
 
@@ -21,12 +21,12 @@ class K2ViewUserGroups extends K2View
 {
     public function display($tpl = null)
     {
-        $app = JFactory::getApplication();
-        $user = JFactory::getUser();
+        $app = Joomla\CMS\Factory::getApplication();
+        $user = Joomla\CMS\Factory::getUser();
         $option = JRequest::getCmd('option');
         $view = JRequest::getCmd('view');
 
-        $params = JComponentHelper::getParams('com_k2');
+        $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         $this->assignRef('params', $params);
 
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
@@ -40,13 +40,14 @@ class K2ViewUserGroups extends K2View
             $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
+
         $userGroups = $model->getData();
 
         $this->assignRef('rows', $userGroups);
 
         jimport('joomla.html.pagination');
-        $pageNav = new JPagination($total, $limitstart, $limit);
-        $this->assignRef('page', $pageNav);
+        $jPagination = new JPagination($total, $limitstart, $limit);
+        $this->assignRef('page', $jPagination);
 
         $lists = [];
 
@@ -56,16 +57,16 @@ class K2ViewUserGroups extends K2View
         $this->assignRef('lists', $lists);
 
         // Toolbar
-        JToolBarHelper::title(JText::_('K2_USER_GROUPS'), 'k2.png');
+        Joomla\CMS\Toolbar\ToolbarHelper::title(Joomla\CMS\Language\Text::_('K2_USER_GROUPS'), 'k2.png');
 
-        JToolBarHelper::addNew();
-        JToolBarHelper::editList();
-        JToolBarHelper::deleteList('', 'remove', 'K2_DELETE');
+        Joomla\CMS\Toolbar\ToolbarHelper::addNew();
+        Joomla\CMS\Toolbar\ToolbarHelper::editList();
+        Joomla\CMS\Toolbar\ToolbarHelper::deleteList('', 'remove', 'K2_DELETE');
 
         if (K2_JVERSION != '15') {
-            JToolBarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
+            Joomla\CMS\Toolbar\ToolbarHelper::preferences('com_k2', '(window.innerHeight) * 0.9', '(window.innerWidth) * 0.7', 'K2_SETTINGS');
         } else {
-            $toolbar = JToolBar::getInstance('toolbar');
+            $toolbar = Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
             $toolbar->appendButton('Popup', 'config', 'K2_SETTINGS', 'index.php?option=com_k2&view=settings', '(window.innerWidth) * 0.7', '(window.innerHeight) * 0.9');
         }
 
@@ -73,11 +74,11 @@ class K2ViewUserGroups extends K2View
         K2HelperHTML::subMenu();
 
         // JS
-        $document = JFactory::getDocument();
+        $document = Joomla\CMS\Factory::getDocument();
         $document->addScriptDeclaration("
             Joomla.submitbutton = function(pressbutton) {
                 if (pressbutton == 'remove') {
-                    if (confirm('".JText::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_GROUPS', true)."')) {
+                    if (confirm('".Joomla\CMS\Language\Text::_('K2_ARE_YOU_SURE_YOU_WANT_TO_DELETE_SELECTED_GROUPS', true)."')) {
                         submitform(pressbutton);
                     }
                 } else {

@@ -7,7 +7,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 // Define default image size (do not change)
 K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
@@ -28,7 +28,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemDateCreated')): ?>
         <!-- Date created -->
         <span class="catItemDateCreated">
-            <?php echo JHTML::_('date', $this->item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
+            <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $this->item->created, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
         </span>
         <?php endif; ?>
 
@@ -39,7 +39,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
             <!-- Item edit link -->
             <span class="catItemEditLink">
                 <a data-k2-modal="edit" href="<?php echo $this->item->editLink; ?>">
-                    <?php echo JText::_('K2_EDIT_ITEM'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_EDIT_ITEM'); ?>
                 </a>
             </span>
             <?php endif; ?>
@@ -56,7 +56,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
             <!-- Featured flag -->
             <span>
                 <sup>
-                    <?php echo JText::_('K2_FEATURED'); ?>
+                    <?php echo Joomla\CMS\Language\Text::_('K2_FEATURED'); ?>
                 </sup>
             </span>
             <?php endif; ?>
@@ -66,7 +66,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemAuthor')): ?>
         <!-- Item Author -->
         <span class="catItemAuthor">
-            <?php echo (!empty($this->item->author->profile->gender)) ? K2HelperUtilities::writtenBy($this->item->author->profile->gender) : ''; ?>
+            <?php echo (empty($this->item->author->profile->gender)) ? '' : K2HelperUtilities::writtenBy($this->item->author->profile->gender); ?>
             <?php if (isset($this->item->author->link) && $this->item->author->link): ?>
             <a rel="author" href="<?php echo $this->item->author->link; ?>"><?php echo $this->item->author->name; ?></a>
             <?php else: ?>
@@ -85,15 +85,15 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
     <?php if ($this->item->params->get('catItemRating')): ?>
     <!-- Item Rating -->
     <div class="catItemRatingBlock">
-        <span><?php echo JText::_('K2_RATE_THIS_ITEM'); ?></span>
+        <span><?php echo Joomla\CMS\Language\Text::_('K2_RATE_THIS_ITEM'); ?></span>
         <div class="itemRatingForm">
             <ul class="itemRatingList">
                 <li class="itemCurrentRating" id="itemCurrentRating<?php echo $this->item->id; ?>" style="width:<?php echo $this->item->votingPercentage; ?>%;"></li>
-                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo JText::_('K2_1_STAR_OUT_OF_5'); ?>" class="one-star">1</a></li>
-                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo JText::_('K2_2_STARS_OUT_OF_5'); ?>" class="two-stars">2</a></li>
-                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo JText::_('K2_3_STARS_OUT_OF_5'); ?>" class="three-stars">3</a></li>
-                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo JText::_('K2_4_STARS_OUT_OF_5'); ?>" class="four-stars">4</a></li>
-                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo JText::_('K2_5_STARS_OUT_OF_5'); ?>" class="five-stars">5</a></li>
+                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_1_STAR_OUT_OF_5'); ?>" class="one-star">1</a></li>
+                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_2_STARS_OUT_OF_5'); ?>" class="two-stars">2</a></li>
+                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_3_STARS_OUT_OF_5'); ?>" class="three-stars">3</a></li>
+                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_4_STARS_OUT_OF_5'); ?>" class="four-stars">4</a></li>
+                <li><a href="#" data-id="<?php echo $this->item->id; ?>" title="<?php echo Joomla\CMS\Language\Text::_('K2_5_STARS_OUT_OF_5'); ?>" class="five-stars">5</a></li>
             </ul>
             <div id="itemRatingLog<?php echo $this->item->id; ?>" class="itemRatingLog"><?php echo $this->item->numOfvotes; ?></div>
             <div class="clr"></div>
@@ -141,11 +141,11 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemExtraFields') && isset($this->item->extra_fields) && count($this->item->extra_fields)): ?>
         <!-- Item extra fields -->
         <div class="catItemExtraFields">
-            <h4><?php echo JText::_('K2_ADDITIONAL_INFO'); ?></h4>
+            <h4><?php echo Joomla\CMS\Language\Text::_('K2_ADDITIONAL_INFO'); ?></h4>
             <ul>
                 <?php foreach ($this->item->extra_fields as $key => $extraField): ?>
                 <?php if ($extraField->value != ''): ?>
-                <li class="<?php echo ($key % 2) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
+                <li class="<?php echo ($key % 2 !== 0) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
                     <?php if ($extraField->type == 'header'): ?>
                     <h4 class="catItemExtraFieldsHeader"><?php echo $extraField->name; ?></h4>
                     <?php else: ?>
@@ -180,7 +180,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <!-- Item Hits -->
         <div class="catItemHitsBlock">
             <span class="catItemHits">
-                <?php echo JText::_('K2_READ'); ?> <b><?php echo $this->item->hits; ?></b> <?php echo JText::_('K2_TIMES'); ?>
+                <?php echo Joomla\CMS\Language\Text::_('K2_READ'); ?> <b><?php echo $this->item->hits; ?></b> <?php echo Joomla\CMS\Language\Text::_('K2_TIMES'); ?>
             </span>
         </div>
         <?php endif; ?>
@@ -188,7 +188,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemCategory')): ?>
         <!-- Item category name -->
         <div class="catItemCategory">
-            <span><?php echo JText::_('K2_PUBLISHED_IN'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_PUBLISHED_IN'); ?></span>
             <a href="<?php echo $this->item->category->link; ?>"><?php echo $this->item->category->name; ?></a>
         </div>
         <?php endif; ?>
@@ -196,7 +196,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemTags') && isset($this->item->tags) && count($this->item->tags)): ?>
         <!-- Item tags -->
         <div class="catItemTagsBlock">
-            <span><?php echo JText::_('K2_TAGGED_UNDER'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_TAGGED_UNDER'); ?></span>
             <ul class="catItemTags">
                 <?php foreach ($this->item->tags as $tag): ?>
                 <li><a href="<?php echo $tag->link; ?>"><?php echo $tag->name; ?></a></li>
@@ -209,7 +209,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php if ($this->item->params->get('catItemAttachments') && isset($this->item->attachments) && count($this->item->attachments)): ?>
         <!-- Item attachments -->
         <div class="catItemAttachmentsBlock">
-            <span><?php echo JText::_('K2_DOWNLOAD_ATTACHMENTS'); ?></span>
+            <span><?php echo Joomla\CMS\Language\Text::_('K2_DOWNLOAD_ATTACHMENTS'); ?></span>
             <ul class="catItemAttachments">
                 <?php foreach ($this->item->attachments as $attachment): ?>
                 <li>
@@ -217,7 +217,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
                         <?php echo $attachment->title; ?>
                     </a>
                     <?php if ($this->item->params->get('catItemAttachmentsCounter')): ?>
-                    <span>(<?php echo $attachment->hits; ?> <?php echo ($attachment->hits == 1) ? JText::_('K2_DOWNLOAD') : JText::_('K2_DOWNLOADS'); ?>)</span>
+                    <span>(<?php echo $attachment->hits; ?> <?php echo ($attachment->hits == 1) ? Joomla\CMS\Language\Text::_('K2_DOWNLOAD') : Joomla\CMS\Language\Text::_('K2_DOWNLOADS'); ?>)</span>
                     <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
@@ -234,7 +234,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
     <?php if ($this->item->params->get('catItemVideo') && !empty($this->item->video)): ?>
     <!-- Item video -->
     <div class="catItemVideoBlock">
-        <h3><?php echo JText::_('K2_RELATED_VIDEO'); ?></h3>
+        <h3><?php echo Joomla\CMS\Language\Text::_('K2_RELATED_VIDEO'); ?></h3>
         <?php if ($this->item->videoType == 'embedded'): ?>
         <div class="catItemVideoEmbedded">
             <?php echo $this->item->video; ?>
@@ -248,7 +248,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
     <?php if ($this->item->params->get('catItemImageGallery') && !empty($this->item->gallery)): ?>
     <!-- Item image gallery -->
     <div class="catItemImageGallery">
-        <h4><?php echo JText::_('K2_IMAGE_GALLERY'); ?></h4>
+        <h4><?php echo Joomla\CMS\Language\Text::_('K2_IMAGE_GALLERY'); ?></h4>
         <?php echo $this->item->gallery; ?>
     </div>
     <?php endif; ?>
@@ -264,11 +264,11 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
         <?php else: ?>
         <?php if ($this->item->numOfComments > 0): ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">
-            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments > 1) ? JText::_('K2_COMMENTS') : JText::_('K2_COMMENT'); ?>
+            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments > 1) ? Joomla\CMS\Language\Text::_('K2_COMMENTS') : Joomla\CMS\Language\Text::_('K2_COMMENT'); ?>
         </a>
         <?php else: ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">
-            <?php echo JText::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_BE_THE_FIRST_TO_COMMENT'); ?>
         </a>
         <?php endif; ?>
         <?php endif; ?>
@@ -279,7 +279,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
     <!-- Item "read more..." link -->
     <div class="catItemReadMore">
         <a class="k2ReadMore" href="<?php echo $this->item->link; ?>">
-            <?php echo JText::_('K2_READ_MORE'); ?>
+            <?php echo Joomla\CMS\Language\Text::_('K2_READ_MORE'); ?>
         </a>
     </div>
     <?php endif; ?>
@@ -290,7 +290,7 @@ K2HelperUtilities::setDefaultImage($this->item, 'itemlist', $this->params);
     <!-- Item date modified -->
     <?php if ($this->item->modified != $this->nullDate && $this->item->modified != $this->item->created): ?>
     <span class="catItemDateModified">
-        <?php echo JText::_('K2_LAST_MODIFIED_ON'); ?> <?php echo JHTML::_('date', $this->item->modified, JText::_('K2_DATE_FORMAT_LC2')); ?>
+        <?php echo Joomla\CMS\Language\Text::_('K2_LAST_MODIFIED_ON'); ?> <?php echo Joomla\CMS\HTML\HTMLHelper::_('date', $this->item->modified, Joomla\CMS\Language\Text::_('K2_DATE_FORMAT_LC2')); ?>
     </span>
     <?php endif; ?>
     <?php endif; ?>

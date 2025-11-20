@@ -13,6 +13,6 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
-require 'view.html.php';
+require __DIR__.'/view.html.php';

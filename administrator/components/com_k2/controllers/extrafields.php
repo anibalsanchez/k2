@@ -13,7 +13,7 @@
  */
 
 // no direct access
-defined('_JEXEC') or die;
+defined('_JEXEC') || die;
 
 jimport('joomla.application.component.controller');
 
@@ -27,62 +27,66 @@ class K2ControllerExtraFields extends K2Controller
 
     public function publish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->publish();
     }
 
     public function unpublish()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->unpublish();
     }
 
     public function saveorder()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->saveorder();
-        $document = JFactory::getDocument();
+
+        $document = Joomla\CMS\Factory::getDocument();
         if ($document->getType() == 'raw') {
             echo '1';
 
             return $this;
         }
-        $this->setRedirect('index.php?option=com_k2&view=extrafields', JText::_('K2_NEW_ORDERING_SAVED'));
+
+        $this->setRedirect('index.php?option=com_k2&view=extrafields', Joomla\CMS\Language\Text::_('K2_NEW_ORDERING_SAVED'));
+
+        return null;
     }
 
     public function orderup()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->orderup();
     }
 
     public function orderdown()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->orderdown();
     }
 
     public function remove()
     {
-        JRequest::checkToken() or jexit('Invalid Token');
+        JRequest::checkToken() || jexit('Invalid Token');
         $model = $this->getModel('extraFields');
         $model->remove();
     }
 
     public function add()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $app->redirect('index.php?option=com_k2&view=extrafield');
     }
 
     public function edit()
     {
-        $app = JFactory::getApplication();
+        $app = Joomla\CMS\Factory::getApplication();
         $cid = JRequest::getVar('cid');
         $app->redirect('index.php?option=com_k2&view=extrafield&cid='.$cid[0]);
     }
