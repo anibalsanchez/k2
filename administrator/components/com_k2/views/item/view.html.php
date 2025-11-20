@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -33,14 +38,14 @@ class K2ViewItem extends K2View
         JHTML::_('behavior.modal');
 
         K2Model::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/models');
-        $model = K2Model::getInstance('Item', 'K2Model', array('table_path' => JPATH_COMPONENT_ADMINISTRATOR.'/tables'));
+        $model = K2Model::getInstance('Item', 'K2Model', ['table_path' => JPATH_COMPONENT_ADMINISTRATOR.'/tables']);
         $item = $model->getData();
-        JFilterOutput::objectHTMLSafe($item, ENT_QUOTES, array(
+        JFilterOutput::objectHTMLSafe($item, ENT_QUOTES, [
             'video',
             'params',
             'plugins',
-            'metadata'
-        ));
+            'metadata',
+        ]);
 
         // Permissions check for frontend editing
         if ($app->isSite()) {
@@ -57,7 +62,7 @@ class K2ViewItem extends K2View
             $this->assignRef('permissions', $K2Permissions->permissions);
 
             // Build permissions message
-            $permissionsLabels = array();
+            $permissionsLabels = [];
             if ($this->permissions->get('add')) {
                 $permissionsLabels[] = JText::_('K2_ADD_ITEMS');
             }
@@ -98,7 +103,7 @@ class K2ViewItem extends K2View
             $item->publish_up = $item->created;
         }
 
-        $lists = array();
+        $lists = [];
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
             $dateFormat = 'Y-m-d H:i:s';
         } else {
@@ -112,7 +117,7 @@ class K2ViewItem extends K2View
 
         $created = JHTML::_('date', $item->created, $dateFormat);
         $publishUp = JHTML::_('date', $item->publish_up, $dateFormat);
-        if ((int)$item->publish_down) {
+        if ((int) $item->publish_down) {
             $publishDown = JHTML::_('date', $item->publish_down, $dateFormat);
         } else {
             $publishDown = '';
@@ -137,9 +142,9 @@ class K2ViewItem extends K2View
         // Editors
         $wysiwyg = JFactory::getEditor();
         $onSave = '';
-        if ($params->get("mergeEditors")) {
+        if ($params->get('mergeEditors')) {
             if (JString::strlen($item->fulltext) > 1) {
-                $textValue = $item->introtext."<hr id=\"system-readmore\" />".$item->fulltext;
+                $textValue = $item->introtext.'<hr id="system-readmore" />'.$item->fulltext;
             } else {
                 $textValue = $item->introtext;
             }
@@ -149,9 +154,9 @@ class K2ViewItem extends K2View
                 $onSave = $wysiwyg->save('text');
             }
         } else {
-            $introtext = $wysiwyg->display('introtext', $item->introtext, '100%', '300px', '', '', array('readmore'));
+            $introtext = $wysiwyg->display('introtext', $item->introtext, '100%', '300px', '', '', ['readmore']);
             $this->assignRef('introtext', $introtext);
-            $fulltext = $wysiwyg->display('fulltext', $item->fulltext, '100%', '600px', '', '', array('readmore'));
+            $fulltext = $wysiwyg->display('fulltext', $item->fulltext, '100%', '600px', '', '', ['readmore']);
             $this->assignRef('fulltext', $fulltext);
             if (K2_JVERSION == '30') {
                 $onSave = $wysiwyg->save('introtext');
@@ -162,7 +167,7 @@ class K2ViewItem extends K2View
         // Publishing
         $lists['published'] = JHTML::_('select.booleanlist', 'published', 'class="inputbox"', $item->published);
         $lists['featured'] = JHTML::_('select.booleanlist', 'featured', 'class="inputbox"', $item->featured);
-        $lists['access'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'access', $item->access, '', false) : str_replace('size="3"', "", JHTML::_('list.accesslevel', $item));
+        $lists['access'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'access', $item->access, '', false) : str_replace('size="3"', '', JHTML::_('list.accesslevel', $item));
 
         $query = "SELECT ordering AS value, title AS text FROM #__k2_items WHERE catid={$item->catid}";
         $lists['ordering'] = version_compare(JVERSION, '3.0', 'ge') ? null : JHTML::_('list.specificordering', $item, $item->id, $query);
@@ -201,7 +206,7 @@ class K2ViewItem extends K2View
         $lists['remoteVideoType'] = ($remoteVideo) ? preg_replace('%\{([a-z0-9-_]*)\}.*\{/[a-z0-9-_]*\}%i', '\1', $item->video) : '';
 
         $providers = $model->getVideoProviders();
-        $providersOptions = array();
+        $providersOptions = [];
         if (count($providers)) {
             foreach ($providers as $provider) {
                 $providersOptions[] = JHTML::_('select.option', $provider, ucfirst($provider));
@@ -243,18 +248,18 @@ class K2ViewItem extends K2View
         $params->set('galleries_rootfolder', 'media/k2/galleries');
         $item->text = $item->gallery;
         if (K2_JVERSION == '15') {
-            $dispatcher->trigger('onPrepareContent', array(
+            $dispatcher->trigger('onPrepareContent', [
                 &$item,
                 &$params,
-                null
-            ));
+                null,
+            ]);
         } else {
-            $dispatcher->trigger('onContentPrepare', array(
+            $dispatcher->trigger('onContentPrepare', [
                 'com_k2.'.$view,
                 &$item,
                 &$params,
-                null
-            ));
+                null,
+            ]);
         }
         $item->gallery = $item->text;
 
@@ -263,7 +268,7 @@ class K2ViewItem extends K2View
             $params->set('vfolder', 'media/k2/videos');
             $params->set('afolder', 'media/k2/audio');
             if (JString::strpos($item->video, 'remote}')) {
-                preg_match("#}(.*?){/#s", $item->video, $matches);
+                preg_match('#}(.*?){/#s', $item->video, $matches);
                 if (JString::substr($matches[1], 0, 7) != 'http://' || JString::substr($matches[1], 0, 8) != 'https://') {
                     $item->video = str_replace($matches[1], JURI::root().$matches[1], $item->video);
                 }
@@ -271,18 +276,18 @@ class K2ViewItem extends K2View
             $item->text = $item->video;
 
             if (K2_JVERSION == '15') {
-                $dispatcher->trigger('onPrepareContent', array(
+                $dispatcher->trigger('onPrepareContent', [
                     &$item,
                     &$params,
-                    null
-                ));
+                    null,
+                ]);
             } else {
-                $dispatcher->trigger('onContentPrepare', array(
+                $dispatcher->trigger('onContentPrepare', [
                     'com_k2.'.$view,
                     &$item,
                     &$params,
-                    null
-                ));
+                    null,
+                ]);
             }
 
             $item->video = $item->text;
@@ -333,7 +338,7 @@ class K2ViewItem extends K2View
         if ($category->id) {
             $extraFields = $extraFieldModel->getExtraFieldsByGroup($category->extraFieldsGroup);
         } else {
-            $extraFields = array();
+            $extraFields = [];
         }
 
         for ($i = 0; $i < count($extraFields); $i++) {
@@ -348,8 +353,8 @@ class K2ViewItem extends K2View
                 $item->ratingSum = 0;
                 $item->ratingCount = 0;
             } else {
-                $item->ratingSum = (int)$rating->rating_sum;
-                $item->ratingCount = (int)$rating->rating_count;
+                $item->ratingSum = (int) $rating->rating_sum;
+                $item->ratingCount = (int) $rating->rating_count;
             }
         } else {
             $item->attachments = null;
@@ -389,7 +394,7 @@ class K2ViewItem extends K2View
             'noindex, nofollow' => JText::_('K2_METADATA_ROBOTS_NOINDEX_NOFOLLOW')
         );
         */
-        $metaRobotsOptions = array();
+        $metaRobotsOptions = [];
         $metaRobotsOptions[] = JHTML::_('select.option', '', JText::_('K2_USE_GLOBAL'));
         $metaRobotsOptions[] = JHTML::_('select.option', 'index, follow', JText::_('K2_METADATA_ROBOTS_INDEX_FOLLOW'));
         $metaRobotsOptions[] = JHTML::_('select.option', 'index, nofollow', JText::_('K2_METADATA_ROBOTS_INDEX_NOFOLLOW'));
@@ -401,71 +406,71 @@ class K2ViewItem extends K2View
         $date = JFactory::getDate($item->modified);
         $timestamp = '?t='.$date->toUnix();
 
-        if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5("Image".$item->id).'_Generic.jpg')) {
-            $item->thumb = JURI::root().'media/k2/items/cache/'.md5("Image".$item->id).'_Generic.jpg'.$timestamp;
+        if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_Generic.jpg')) {
+            $item->thumb = JURI::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_Generic.jpg'.$timestamp;
         }
-        if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5("Image".$item->id).'_XL.jpg')) {
-            $item->image = JURI::root().'media/k2/items/cache/'.md5("Image".$item->id).'_XL.jpg'.$timestamp;
+        if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$item->id).'_XL.jpg')) {
+            $item->image = JURI::root().'media/k2/items/cache/'.md5('Image'.$item->id).'_XL.jpg'.$timestamp;
         }
 
         // Plugin Events
         JPluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
 
-        $K2PluginsItemContent = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemContent = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'content'
-        ));
+            'content',
+        ]);
         $this->assignRef('K2PluginsItemContent', $K2PluginsItemContent);
 
-        $K2PluginsItemImage = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemImage = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'image'
-        ));
+            'image',
+        ]);
         $this->assignRef('K2PluginsItemImage', $K2PluginsItemImage);
 
-        $K2PluginsItemGallery = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemGallery = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'gallery'
-        ));
+            'gallery',
+        ]);
         $this->assignRef('K2PluginsItemGallery', $K2PluginsItemGallery);
 
-        $K2PluginsItemVideo = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemVideo = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'video'
-        ));
+            'video',
+        ]);
         $this->assignRef('K2PluginsItemVideo', $K2PluginsItemVideo);
 
-        $K2PluginsItemExtraFields = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemExtraFields = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'extra-fields'
-        ));
+            'extra-fields',
+        ]);
         $this->assignRef('K2PluginsItemExtraFields', $K2PluginsItemExtraFields);
 
-        $K2PluginsItemAttachments = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemAttachments = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'attachments'
-        ));
+            'attachments',
+        ]);
         $this->assignRef('K2PluginsItemAttachments', $K2PluginsItemAttachments);
 
-        $K2PluginsItemOther = $dispatcher->trigger('onRenderAdminForm', array(
+        $K2PluginsItemOther = $dispatcher->trigger('onRenderAdminForm', [
             &$item,
             'item',
-            'other'
-        ));
+            'other',
+        ]);
         $this->assignRef('K2PluginsItemOther', $K2PluginsItemOther);
 
         // Parameters
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
             jimport('joomla.form.form');
             $form = JForm::getInstance('itemForm', JPATH_COMPONENT_ADMINISTRATOR.'/models/item.xml');
-            $values = array('params' => json_decode($item->params));
+            $values = ['params' => json_decode($item->params)];
             $form->bind($values);
         } else {
             $form = new JParameter('', JPATH_COMPONENT_ADMINISTRATOR.'/models/item.xml');
@@ -544,13 +549,13 @@ class K2ViewItem extends K2View
             };
 
             /* Tab offset */
-            var K2ActiveMediaTab = ".$options['startOffset'].";
+            var K2ActiveMediaTab = ".$options['startOffset'].';
 
             /* WYSIWYG Editors */
             function onK2EditorSave() {
-                ".$onSave."
+                '.$onSave.'
             }
-        ");
+        ');
 
         // For SIGPro
         if (JPluginHelper::isEnabled('k2', 'jw_sigpro')) {

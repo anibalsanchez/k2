@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -39,9 +38,10 @@ defined('_JEXEC') or die;
             <tbody>
                 <?php if (isset($this->rows) && count($this->rows) > 0): ?>
                 <?php foreach ($this->rows as $key => $row): ?>
-                <tr class="row<?php echo($key%2); ?>">
-                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $key+1; ?></td>
-                    <td class="k2ui-center"><?php $row->checked_out = 0; echo @JHTML::_('grid.checkedout', $row, $key); ?></td>
+                <tr class="row<?php echo $key % 2; ?>">
+                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $key + 1; ?></td>
+                    <td class="k2ui-center"><?php $row->checked_out = 0;
+                    echo @JHTML::_('grid.checkedout', $row, $key); ?></td>
                     <td><a href="<?php echo JRoute::_('index.php?option=com_k2&view=usergroup&cid='.$row->id); ?>"><?php echo $row->name; ?></a></td>
                     <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->numOfUsers; ?></td>
                     <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->id; ?></td>

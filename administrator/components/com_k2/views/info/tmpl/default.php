@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -167,11 +166,20 @@ defined('_JEXEC') or die;
                                     </tr>
                                     <tr>
                                         <td><strong><?php echo JText::_('K2_GD_IMAGE_LIBRARY'); ?></strong></td>
-                                        <td><?php if ($this->gd_check) { $gdinfo=gd_info(); echo $gdinfo["GD Version"]; } else echo JText::_('K2_DISABLED'); ?></td>
+                                        <td><?php if ($this->gd_check) {
+                                            $gdinfo = gd_info();
+                                            echo $gdinfo['GD Version'];
+                                        } else {
+                                            echo JText::_('K2_DISABLED');
+                                        } ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong><?php echo JText::_('K2_MULTIBYTE_STRING_SUPPORT'); ?></strong></td>
-                                        <td><?php if ($this->mb_check) echo JText::_('K2_ENABLED'); else echo JText::_('K2_DISABLED'); ?></td>
+                                        <td><?php if ($this->mb_check) {
+                                            echo JText::_('K2_ENABLED');
+                                        } else {
+                                            echo JText::_('K2_DISABLED');
+                                        } ?></td>
                                     </tr>
                                     <tr>
                                         <td><strong><?php echo JText::_('K2_UPLOAD_LIMIT'); ?></strong></td>
@@ -401,7 +409,7 @@ defined('_JEXEC') or die;
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    <?php if (version_compare(JVERSION,'2.5.0','ge')): ?>
+                                    <?php if (version_compare(JVERSION, '2.5.0', 'ge')): ?>
                                     <tr>
                                         <td><strong>Finder - K2</strong></td>
                                         <td>

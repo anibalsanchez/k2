@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -21,6 +26,7 @@ class K2ModelTag extends K2Model
         $cid = JRequest::getVar('cid');
         $row = JTable::getInstance('K2Tag', 'Table');
         $row->load($cid);
+
         return $row;
     }
 
@@ -41,7 +47,7 @@ class K2ModelTag extends K2Model
         $isNew = ($row->id) ? false : true;
 
         // Trigger K2 plugins
-        $dispatcher->trigger('onBeforeK2Save', array(&$row, $isNew));
+        $dispatcher->trigger('onBeforeK2Save', [&$row, $isNew]);
 
         if (!$row->check()) {
             $app->enqueueMessage($row->getError(), 'error');
@@ -57,7 +63,7 @@ class K2ModelTag extends K2Model
         $cache->clean();
 
         // Trigger K2 plugins
-        $dispatcher->trigger('onAfterK2Save', array(&$row, $isNew));
+        $dispatcher->trigger('onAfterK2Save', [&$row, $isNew]);
 
         switch (JRequest::getCmd('task')) {
             case 'apply':
@@ -102,7 +108,7 @@ class K2ModelTag extends K2Model
         }
 
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_tags WHERE name=".$db->Quote($tag);
+        $query = 'SELECT COUNT(*) FROM #__k2_tags WHERE name='.$db->Quote($tag);
         $db->setQuery($query);
         $result = $db->loadResult();
 
@@ -141,11 +147,11 @@ class K2ModelTag extends K2Model
         }
 
         if ($id) {
-            $query = "SELECT id,name FROM #__k2_tags WHERE name LIKE ".$word;
+            $query = 'SELECT id,name FROM #__k2_tags WHERE name LIKE '.$word;
             $db->setQuery($query);
             $result = $db->loadObjectList();
         } else {
-            $query = "SELECT name FROM #__k2_tags WHERE name LIKE ".$word;
+            $query = 'SELECT name FROM #__k2_tags WHERE name LIKE '.$word;
             $db->setQuery($query);
             $result = (K2_JVERSION == '30') ? $db->loadColumn() : $db->loadResultArray();
         }

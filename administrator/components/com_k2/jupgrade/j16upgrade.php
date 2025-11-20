@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -44,7 +49,7 @@ class jUpgradeComponentK2 extends jUpgrade
      * Returning false will force jUpgrade to call this function again,
      * which allows you to continue import by reading $this->state before continuing.
      *
-     * @return  boolean Ready (true/false)
+     * @return  bool Ready (true/false)
      * @since   1.6.4
      * @throws  Exception
      */
@@ -69,6 +74,7 @@ class jUpgradeComponentK2 extends jUpgrade
             $row['params'] = $this->convertParams($row['params']);
         }
         $this->setDestinationData($rows);
+
         return true;
     }
 
@@ -89,6 +95,7 @@ class jUpgradeComponentK2 extends jUpgrade
             $row['plugins'] = $this->convertParams($row['plugins']);
         }
         $this->setDestinationData($rows);
+
         return true;
     }
 }

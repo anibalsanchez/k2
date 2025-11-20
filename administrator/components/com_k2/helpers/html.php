@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -26,7 +31,7 @@ class K2HelperHTML
         $user = JFactory::getUser();
         $view = JRequest::getCmd('view');
 
-        $editForms = array('item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup');
+        $editForms = ['item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup'];
 
         $sidebarMenu = '';
 
@@ -164,7 +169,7 @@ class K2HelperHTML
         $view = JRequest::getCmd('view');
         $context = JRequest::getCmd('context');
 
-        $editForms = array('item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup', 'media');
+        $editForms = ['item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup', 'media'];
 
         $mobileMenu = '';
 
@@ -225,13 +230,14 @@ class K2HelperHTML
         JSubMenuHelper::addEntry(JText::_('K2_INFORMATION'), 'index.php?option=com_k2&view=info', $view == 'info');
     }
 
-    public static function stateToggler(&$row, $key, $property = 'published', $tasks = array('publish', 'unpublish'), $labels = array('K2_PUBLISH', 'K2_UNPUBLISH'))
+    public static function stateToggler(&$row, $key, $property = 'published', $tasks = ['publish', 'unpublish'], $labels = ['K2_PUBLISH', 'K2_UNPUBLISH'])
     {
         $task = $row->$property ? $tasks[1] : $tasks[0];
         $action = $row->$property ? JText::_($labels[1]) : JText::_($labels[0]);
         $class = 'k2Toggler';
         $status = $row->$property ? 'k2Active' : 'k2Inactive';
         $href = '<a class="'.$class.' '.$status.'" href="javascript:void(0);" onclick="return listItemTask(\'cb'.$key.'\',\''.$task.'\')" title="'.$action.'">'.$action.'</a>';
+
         return $href;
     }
 
@@ -408,7 +414,7 @@ class K2HelperHTML
                 $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js');
 
                 // Fancybox
-                if (in_array($view, array('item', 'items', 'category', 'categories', 'user', 'users'))) {
+                if (in_array($view, ['item', 'items', 'category', 'categories', 'user', 'users'])) {
                     $document->addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css');
                     $document->addScript('https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js');
                 }

@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -30,9 +35,11 @@ if (K2_JVERSION == '15') {
                 }
                 return $this->fetchElementValue($this->name, $this->value, $this->element, $this->options['control']);
                 */
-                $controls = (!empty($this->options['control'])) ? $this->options['control'] : array();
+                $controls = (!empty($this->options['control'])) ? $this->options['control'] : [];
+
                 return $this->fetchElement($this->name, $this->value, $this->element, $controls);
             }
+
             public function getLabel()
             {
                 /*
@@ -41,12 +48,15 @@ if (K2_JVERSION == '15') {
                 }
                 */
                 if (method_exists($this, 'fetchTooltip')) { // BC
-                    $controls = (!empty($this->options['control'])) ? $this->options['control'] : array();
+                    $controls = (!empty($this->options['control'])) ? $this->options['control'] : [];
+
                     return $this->fetchTooltip($this->element['label'], $this->description, $this->element, $controls, $this->element['name'] = '');
                 }
+
                 return parent::getLabel();
             }
-            public function render($layoutId, $data = array())
+
+            public function render($layoutId, $data = [])
             {
                 return $this->getInput();
             }
@@ -64,11 +74,13 @@ if (K2_JVERSION == '15') {
                 */
                 return $this->fetchElement($this->name, $this->value, $this->element, $this->options['control']);
             }
+
             public function getLabel()
             {
                 if (method_exists($this, 'fetchTooltip')) { // BC
                     return $this->fetchTooltip($this->element['label'], $this->description, $this->element, $this->options['control'], $this->element['name'] = '');
                 }
+
                 /*
                 if (method_exists($this, 'fetchElementName')) {
                     return $this->fetchElementName($this->element['label'], $this->description, $this->element, $this->options['control'], $this->element['name'] = '');
@@ -76,6 +88,7 @@ if (K2_JVERSION == '15') {
                 */
                 return parent::getLabel();
             }
+
             public function render()
             {
                 return $this->getInput();

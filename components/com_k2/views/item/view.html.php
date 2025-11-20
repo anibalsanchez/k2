@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -91,11 +96,11 @@ class K2ViewItem extends K2View
         if (isset($item->author) && is_object($item->author->profile) && isset($item->author->profile->id)) {
             JPluginHelper::importPlugin('k2');
             $dispatcher = JDispatcher::getInstance();
-            $results = $dispatcher->trigger('onK2UserDisplay', array(
+            $results = $dispatcher->trigger('onK2UserDisplay', [
                 &$item->author->profile,
                 &$params,
-                $limitstart
-            ));
+                $limitstart,
+            ]);
             $item->event->K2UserDisplay = trim(implode("\n", $results));
             $item->author->profile->url = htmlspecialchars($item->author->profile->url, ENT_QUOTES, 'UTF-8');
         }
@@ -113,6 +118,7 @@ class K2ViewItem extends K2View
                     $app->redirect(JRoute::_($url, false));
                 } else {
                     JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+
                     return;
                 }
             }
@@ -125,6 +131,7 @@ class K2ViewItem extends K2View
                     $app->redirect(JRoute::_($url, false));
                 } else {
                     JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
+
                     return;
                 }
             }
@@ -168,22 +175,21 @@ class K2ViewItem extends K2View
                 // Trigger comments events
                 JPluginHelper::importPlugin('k2');
                 $dispatcher = JDispatcher::getInstance();
-                $results = $dispatcher->trigger('onK2CommentsCounter', array(
+                $results = $dispatcher->trigger('onK2CommentsCounter', [
                     &$item,
                     &$params,
-                    $limitstart
-                ));
+                    $limitstart,
+                ]);
                 $item->event->K2CommentsCounter = trim(implode("\n", $results));
-                $results = $dispatcher->trigger('onK2CommentsBlock', array(
+                $results = $dispatcher->trigger('onK2CommentsBlock', [
                     &$item,
                     &$params,
-                    $limitstart
-                ));
+                    $limitstart,
+                ]);
                 $item->event->K2CommentsBlock = trim(implode("\n", $results));
 
                 // Load K2 native comments system only if there are no plugins overriding it
                 if (empty($item->event->K2CommentsCounter) && empty($item->event->K2CommentsBlock)) {
-
                     // Load reCaptcha
                     if (!JRequest::getInt('print') && ($item->params->get('comments') == '1' || ($item->params->get('comments') == '2' && K2HelperPermissions::canAddComment($item->catid)))) {
                         if ($params->get('recaptcha') && ($user->guest || $params->get('recaptchaForRegistered', 1))) {
@@ -230,9 +236,9 @@ class K2ViewItem extends K2View
                         $comments[$i]->commentText = nl2br($comments[$i]->commentText);
 
                         // Convert URLs to links properly
-                        $comments[$i]->commentText = preg_replace("/([^\w\/])(www\.[a-z0-9\-]+\.[a-z0-9\-]+)/i", "$1http://$2", $comments[$i]->commentText);
-                        $comments[$i]->commentText = preg_replace("/([\w]+:\/\/[\w\-?&;#~=\.\/\@]+[\w\/])/i", "<a target=\"_blank\" rel=\"nofollow\" href=\"$1\">$1</A>", $comments[$i]->commentText);
-                        $comments[$i]->commentText = preg_replace("/([\w\-?&;#~=\.\/]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?))/i", "<a href=\"mailto:$1\">$1</A>", $comments[$i]->commentText);
+                        $comments[$i]->commentText = preg_replace("/([^\w\/])(www\.[a-z0-9\-]+\.[a-z0-9\-]+)/i", '$1http://$2', $comments[$i]->commentText);
+                        $comments[$i]->commentText = preg_replace("/([\w]+:\/\/[\w\-?&;#~=\.\/\@]+[\w\/])/i", '<a target="_blank" rel="nofollow" href="$1">$1</A>', $comments[$i]->commentText);
+                        $comments[$i]->commentText = preg_replace("/([\w\-?&;#~=\.\/]+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?))/i", '<a href="mailto:$1">$1</A>', $comments[$i]->commentText);
 
                         $comments[$i]->userImage = K2HelperUtilities::getAvatar($comments[$i]->userID, $comments[$i]->commentEmail, $params->get('commenterImgWidth'));
                         if ($comments[$i]->userID > 0) {
@@ -306,20 +312,20 @@ class K2ViewItem extends K2View
                 $imageTimestamp = '';
                 $dateModified = ((int) $previousItem->modified) ? $previousItem->modified : '';
                 if ($params->get('imageTimestamp', 1) && $dateModified) {
-                    $imageTimestamp = '?t='.strftime("%Y%m%d_%H%M%S", strtotime($dateModified));
+                    $imageTimestamp = '?t='.strftime('%Y%m%d_%H%M%S', strtotime($dateModified));
                 }
 
-                $imageFilenamePrefix = md5("Image".$previousItem->id);
+                $imageFilenamePrefix = md5('Image'.$previousItem->id);
                 $imagePathPrefix = JUri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
 
                 // Check if the "generic" variant exists
                 if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
                     $item->previousImageGeneric = $imagePathPrefix.'_Generic.jpg'.$imageTimestamp;
-                    $item->previousImageXSmall  = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
-                    $item->previousImageSmall   = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
-                    $item->previousImageMedium  = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
-                    $item->previousImageLarge   = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
-                    $item->previousImageXLarge  = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
+                    $item->previousImageXSmall = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
+                    $item->previousImageSmall = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
+                    $item->previousImageMedium = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
+                    $item->previousImageLarge = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
+                    $item->previousImageXLarge = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
 
                     $item->previousImageProperties = new stdClass();
                     $item->previousImageProperties->filenamePrefix = $imageFilenamePrefix;
@@ -347,20 +353,20 @@ class K2ViewItem extends K2View
                 $imageTimestamp = '';
                 $dateModified = ((int) $nextItem->modified) ? $nextItem->modified : '';
                 if ($params->get('imageTimestamp', 1) && $dateModified) {
-                    $imageTimestamp = '?t='.strftime("%Y%m%d_%H%M%S", strtotime($dateModified));
+                    $imageTimestamp = '?t='.strftime('%Y%m%d_%H%M%S', strtotime($dateModified));
                 }
 
-                $imageFilenamePrefix = md5("Image".$nextItem->id);
+                $imageFilenamePrefix = md5('Image'.$nextItem->id);
                 $imagePathPrefix = JUri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
 
                 // Check if the "generic" variant exists
                 if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
                     $item->nextImageGeneric = $imagePathPrefix.'_Generic.jpg'.$imageTimestamp;
-                    $item->nextImageXSmall  = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
-                    $item->nextImageSmall   = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
-                    $item->nextImageMedium  = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
-                    $item->nextImageLarge   = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
-                    $item->nextImageXLarge  = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
+                    $item->nextImageXSmall = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
+                    $item->nextImageSmall = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
+                    $item->nextImageMedium = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
+                    $item->nextImageLarge = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
+                    $item->nextImageXLarge = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
 
                     $item->nextImageProperties = new stdClass();
                     $item->nextImageProperties->filenamePrefix = $imageFilenamePrefix;
@@ -402,11 +408,11 @@ class K2ViewItem extends K2View
 
         // Email link
         if (K2_JVERSION != '15') {
-            require_once(JPATH_SITE.'/components/com_mailto/helpers/mailto.php');
+            require_once JPATH_SITE.'/components/com_mailto/helpers/mailto.php';
             $template = $app->getTemplate();
             $item->emailLink = JRoute::_('index.php?option=com_mailto&tmpl=component&template='.$template.'&link='.MailToHelper::addLink($item->absoluteURL));
         } else {
-            require_once(JPATH_SITE.'/components/com_mailto/helpers/mailto.php');
+            require_once JPATH_SITE.'/components/com_mailto/helpers/mailto.php';
             $item->emailLink = JRoute::_('index.php?option=com_mailto&tmpl=component&link='.MailToHelper::addLink($item->absoluteURL));
         }
 
@@ -433,7 +439,7 @@ class K2ViewItem extends K2View
 
             // Site
             $response->site = new stdClass();
-            $response->site->url = $uri->toString(array('scheme', 'host', 'port'));
+            $response->site->url = $uri->toString(['scheme', 'host', 'port']);
             $response->site->name = (K2_JVERSION == '30') ? $config->get('sitename') : $config->getValue('config.sitename');
             $response->item = $row;
 
@@ -454,7 +460,7 @@ class K2ViewItem extends K2View
         JResponse::allowCache(true);
 
         $itemCreatedOrModifiedDate = ((int) $item->modified) ? $item->modified : $item->created;
-        $itemCreatedOrModifiedDate = strftime("%a, %d %b %Y %H:%M:%S GMT", strtotime($itemCreatedOrModifiedDate));
+        $itemCreatedOrModifiedDate = strftime('%a, %d %b %Y %H:%M:%S GMT', strtotime($itemCreatedOrModifiedDate));
 
         // Last-Modified HTTP header
         JResponse::setHeader('Last-Modified', $itemCreatedOrModifiedDate);
@@ -519,7 +525,7 @@ class K2ViewItem extends K2View
             if ($item->metadesc) {
                 $metaDesc = filter_var($item->metadesc, FILTER_SANITIZE_STRING);
             } else {
-                $metaDesc = preg_replace("#{(.*?)}(.*?){/(.*?)}#s", '', $itemTextBeforePlugins);
+                $metaDesc = preg_replace('#{(.*?)}(.*?){/(.*?)}#s', '', $itemTextBeforePlugins);
                 $metaDesc = filter_var($metaDesc, FILTER_SANITIZE_STRING);
             }
 
@@ -539,7 +545,7 @@ class K2ViewItem extends K2View
                 $metaKeywords = $item->metakey;
             } else {
                 if (isset($item->tags) && count($item->tags)) {
-                    $tmp = array();
+                    $tmp = [];
                     foreach ($item->tags as $tag) {
                         $tmp[] = $tag->name;
                     }
@@ -602,7 +608,7 @@ class K2ViewItem extends K2View
                 $facebookImage = 'image'.$params->get('facebookImage', 'Medium');
                 if ($item->$facebookImage) {
                     $basename = basename($item->$facebookImage);
-                    if (strpos($basename, '?t=')!==false) {
+                    if (strpos($basename, '?t=') !== false) {
                         $tmpBasename = explode('?t=', $basename);
                         $basenameWithNoTimestamp = $tmpBasename[0];
                     } else {
@@ -627,7 +633,7 @@ class K2ViewItem extends K2View
                 $twitterImage = 'image'.$params->get('twitterImage', 'Medium');
                 if ($item->$twitterImage) {
                     $basename = basename($item->$twitterImage);
-                    if (strpos($basename, '?t=')!==false) {
+                    if (strpos($basename, '?t=') !== false) {
                         $tmpBasename = explode('?t=', $basename);
                         $basenameWithNoTimestamp = $tmpBasename[0];
                     } else {
@@ -651,7 +657,7 @@ class K2ViewItem extends K2View
                 // Cleanups
                 $sdStrSearch = ['&amp;', '&nbsp;', '&quot;', '&#039;', '&apos;', '&lt;', '&gt;', '{K2Splitter}', '\\'];
                 $sdStrReplace = ['&', ' ', '"', '\'', '\'', '<', '>', ' ', ''];
-                $sdPregSearch = ["#<script(.*?)</script>#is", "/\r|\n|\t/", "/\s\s+/"];
+                $sdPregSearch = ['#<script(.*?)</script>#is', "/\r|\n|\t/", "/\s\s+/"];
                 $sdPregReplace = [' ', ' ', ' '];
                 $allowedTags = '<script>';
 
@@ -773,9 +779,9 @@ class K2ViewItem extends K2View
     {
         if (substr($relUrl, 0, 4) != 'http') {
             return substr(JURI::root(), 0, -1).str_replace(JURI::root(true), '', $relUrl);
-        } else {
-            return $relUrl;
         }
+
+        return $relUrl;
     }
 
     private function filterHTML($str)
@@ -830,12 +836,12 @@ class K2ViewItem extends K2View
     {
         if (K2_JVERSION != '15') {
             return JHtml::_('date', $dateString, 'c');
-        } else {
-            $config = JFactory::getConfig();
-            $timezone = $config->getValue('config.offset');
-            $date = new JDate($dateString);
-            $date->setOffset($timezone);
-            return $date->toISO8601(true);
         }
+        $config = JFactory::getConfig();
+        $timezone = $config->getValue('config.offset');
+        $date = new JDate($dateString);
+        $date->setOffset($timezone);
+
+        return $date->toISO8601(true);
     }
 }

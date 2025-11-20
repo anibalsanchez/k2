@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -15,55 +20,59 @@ class modK2StatsHelper
     public static function getLatestItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT i.*, v.name AS author
+        $query = 'SELECT i.*, v.name AS author
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
             LEFT JOIN #__users AS v ON v.id = i.created_by
             WHERE i.trash = 0 AND c.trash = 0
-            ORDER BY i.id DESC";
+            ORDER BY i.id DESC';
         if (K2_JVERSION != '15') {
             $query = str_ireplace('#__groups', '#__viewlevels', $query);
             $query = str_ireplace('g.name', 'g.title', $query);
         }
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
     public static function getPopularItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT i.*, v.name AS author
+        $query = 'SELECT i.*, v.name AS author
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
             LEFT JOIN #__users AS v ON v.id = i.created_by
             WHERE i.trash = 0 AND c.trash = 0
-            ORDER BY i.hits DESC";
+            ORDER BY i.hits DESC';
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
     public static function getMostCommentedItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT i.*, v.name AS author, (SELECT COUNT(*) FROM #__k2_comments WHERE itemID = i.id) AS numOfComments
+        $query = 'SELECT i.*, v.name AS author, (SELECT COUNT(*) FROM #__k2_comments WHERE itemID = i.id) AS numOfComments
             FROM #__k2_items AS i
             LEFT JOIN #__k2_categories AS c ON c.id = i.catid
             LEFT JOIN #__users AS v ON v.id = i.created_by
             WHERE i.trash = 0 AND c.trash = 0
-            ORDER BY numOfComments DESC";
+            ORDER BY numOfComments DESC';
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
     public static function getLatestComments()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT * FROM #__k2_comments ORDER BY commentDate DESC";
+        $query = 'SELECT * FROM #__k2_comments ORDER BY commentDate DESC';
         $db->setQuery($query, 0, 10);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
@@ -80,96 +89,107 @@ class modK2StatsHelper
         $statistics->numOfUsers = self::countUsers();
         $statistics->numOfUserGroups = self::countUserGroups();
         $statistics->numOfTags = self::countTags();
+
         return $statistics;
     }
 
     public static function countItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_items";
+        $query = 'SELECT COUNT(*) FROM #__k2_items';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countDraftItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_items WHERE published=0 AND trash=0";
+        $query = 'SELECT COUNT(*) FROM #__k2_items WHERE published=0 AND trash=0';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countFeaturedItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_items WHERE featured=1";
+        $query = 'SELECT COUNT(*) FROM #__k2_items WHERE featured=1';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countTrashedItems()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_items WHERE trash=1";
+        $query = 'SELECT COUNT(*) FROM #__k2_items WHERE trash=1';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countComments()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_comments";
+        $query = 'SELECT COUNT(*) FROM #__k2_comments';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countCategories()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_categories";
+        $query = 'SELECT COUNT(*) FROM #__k2_categories';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countTrashedCategories()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_categories WHERE trash=1";
+        $query = 'SELECT COUNT(*) FROM #__k2_categories WHERE trash=1';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countUsers()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_users";
+        $query = 'SELECT COUNT(*) FROM #__k2_users';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countUserGroups()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_user_groups";
+        $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public static function countTags()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_tags";
+        $query = 'SELECT COUNT(*) FROM #__k2_tags';
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 }

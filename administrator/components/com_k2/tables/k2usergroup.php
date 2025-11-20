@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -14,40 +19,40 @@ require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
 class TableK2UserGroup extends K2Table
 {
+    public $id = null;
 
-    var $id = null;
-    var $name = null;
-    var $permissions = null;
+    public $name = null;
 
-    function __construct(&$db)
+    public $permissions = null;
+
+    public function __construct(&$db)
     {
-
         parent::__construct('#__k2_user_groups', 'id', $db);
     }
 
-    function check()
+    public function check()
     {
-		$this->name = JString::trim($this->name);
-        if ($this->name == '')
-        {
+        $this->name = JString::trim($this->name);
+        if ($this->name == '') {
             $this->setError(JText::_('K2_GROUP_CANNOT_BE_EMPTY'));
+
             return false;
         }
+
         return true;
     }
 
-    function bind($array, $ignore = '')
+    public function bind($array, $ignore = '')
     {
-
-        if (key_exists('params', $array) && is_array($array['params']))
-        {
+        if (key_exists('params', $array) && is_array($array['params'])) {
             $registry = new JRegistry();
             $registry->loadArray($array['params']);
-            if (JRequest::getVar('categories') == 'all' || JRequest::getVar('categories') == 'none')
+            if (JRequest::getVar('categories') == 'all' || JRequest::getVar('categories') == 'none') {
                 $registry->set('categories', JRequest::getVar('categories'));
+            }
             $array['permissions'] = $registry->toString();
         }
+
         return parent::bind($array, $ignore);
     }
-
 }

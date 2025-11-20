@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -14,7 +19,7 @@ jimport('joomla.application.component.controller');
 
 class K2ControllerItem extends K2Controller
 {
-    public function display($cachable = false, $urlparams = array())
+    public function display($cachable = false, $urlparams = [])
     {
         $model = $this->getModel('itemlist');
         $document = JFactory::getDocument();
@@ -58,9 +63,9 @@ class K2ControllerItem extends K2Controller
                         \$K2('#commentURL').val('".htmlspecialchars($profile->url, ENT_QUOTES, 'UTF-8')."').attr('disabled', 'disabled');
                     ";
                 }
-                $script .= "
+                $script .= '
                     });
-                ";
+                ';
                 $document->addScriptDeclaration($script);
             }
         }
@@ -114,6 +119,7 @@ class K2ControllerItem extends K2Controller
     public function cancel()
     {
         $this->setRedirect(JURI::root(true));
+
         return false;
     }
 
@@ -124,23 +130,23 @@ class K2ControllerItem extends K2Controller
         JRequest::setVar('tmpl', 'component');
         $language = JFactory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php');
-        $model = new K2ModelItem;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
+        $model = new K2ModelItem();
         $model->save(true);
         $app->close();
     }
 
     public function deleteAttachment()
     {
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php');
-        $model = new K2ModelItem;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
+        $model = new K2ModelItem();
         $model->deleteAttachment();
     }
 
     public function tag()
     {
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/tag.php');
-        $model = new K2ModelTag;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/tag.php';
+        $model = new K2ModelTag();
         $model->addTag();
     }
 
@@ -150,15 +156,15 @@ class K2ControllerItem extends K2Controller
         if ($user->guest) {
             JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
         }
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/tag.php');
-        $model = new K2ModelTag;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/tag.php';
+        $model = new K2ModelTag();
         $model->tags();
     }
 
     public function download()
     {
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php');
-        $model = new K2ModelItem;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
+        $model = new K2ModelItem();
         $model->download();
     }
 
@@ -170,12 +176,12 @@ class K2ControllerItem extends K2Controller
         $app = JFactory::getApplication();
         $id = JRequest::getInt('id', null);
 
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/category.php');
-        $categoryModel = new K2ModelCategory;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/category.php';
+        $categoryModel = new K2ModelCategory();
         $category = $categoryModel->getData();
 
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/extrafield.php');
-        $extraFieldModel = new K2ModelExtraField;
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/extrafield.php';
+        $extraFieldModel = new K2ModelExtraField();
         $extraFields = $extraFieldModel->getExtraFieldsByGroup($category->extraFieldsGroup);
 
         if (!empty($extraFields) && count($extraFields)) {
@@ -249,10 +255,10 @@ class K2ControllerItem extends K2Controller
     {
         JRequest::checkToken() or jexit('Invalid Token');
         JRequest::setVar('tmpl', 'component');
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php');
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
         $language = JFactory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $model = new K2ModelItem;
+        $model = new K2ModelItem();
         $model->resetHits();
     }
 
@@ -260,10 +266,10 @@ class K2ControllerItem extends K2Controller
     {
         JRequest::checkToken() or jexit('Invalid Token');
         JRequest::setVar('tmpl', 'component');
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php');
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/item.php';
         $language = JFactory::getLanguage();
         $language->load('com_k2', JPATH_ADMINISTRATOR);
-        $model = new K2ModelItem;
+        $model = new K2ModelItem();
         $model->resetRating();
     }
 
@@ -303,7 +309,7 @@ class K2ControllerItem extends K2Controller
         if ($user->guest) {
             JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
         }
-        require_once(JPATH_COMPONENT_ADMINISTRATOR.'/controllers/media.php');
+        require_once JPATH_COMPONENT_ADMINISTRATOR.'/controllers/media.php';
         $controller = new K2ControllerMedia();
         $controller->connector();
     }

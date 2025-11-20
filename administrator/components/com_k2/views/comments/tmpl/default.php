@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -15,7 +14,7 @@ $context = JRequest::getCmd('context');
 
 ?>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 <!-- Frontend Comments Moderation (Modal View) -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -83,19 +82,19 @@ $context = JRequest::getCmd('context');
                             <input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" />
                         </th>
                         <th>
-                            <?php echo JHTML::_('grid.sort', 'K2_COMMENT', 'c.commentText', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_COMMENT', 'c.commentText', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-center">
-                            <?php echo JHTML::_('grid.sort', 'K2_PUBLISHED', 'c.published', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_PUBLISHED', 'c.published', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_NAME', 'c.userName', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_NAME', 'c.userName', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-center k2ui-nowrap">
-                            <?php echo JHTML::_('grid.sort', 'K2_EMAIL', 'c.commentEmail', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_EMAIL', 'c.commentEmail', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_URL', 'c.commentURL', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_URL', 'c.commentURL', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-center k2ui-hide-on-mobile">
                             IP
@@ -104,19 +103,19 @@ $context = JRequest::getCmd('context');
                             <?php echo JText::_('K2_FLAG_AS_SPAMMER'); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_ITEM', 'i.title', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_ITEM', 'i.title', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_CATEGORY', 'cat.name', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_CATEGORY', 'cat.name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
                             <?php echo JText::_('K2_AUTHOR'); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_DATE', 'c.commentDate', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_DATE', 'c.commentDate', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                         <th class="k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('grid.sort', 'K2_ID', 'c.id', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+                            <?php echo JHTML::_('grid.sort', 'K2_ID', 'c.id', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                         </th>
                     </tr>
                 </thead>
@@ -137,12 +136,13 @@ $context = JRequest::getCmd('context');
                 <tbody>
                     <?php if (isset($this->rows) && count($this->rows) > 0): ?>
                     <?php foreach ($this->rows as $key=>$row): ?>
-                    <tr class="row<?php echo ($key%2); ?>">
+                    <tr class="row<?php echo $key % 2; ?>">
                         <td class="k2ui-center k2ui-hide-on-mobile">
-                            <?php echo $key+1; ?>
+                            <?php echo $key + 1; ?>
                         </td>
                         <td class="k2ui-center">
-                            <?php $row->checked_out = 0; echo @JHTML::_('grid.checkedout', $row, $key ); ?>
+                            <?php $row->checked_out = 0;
+                        echo @JHTML::_('grid.checkedout', $row, $key); ?>
                         </td>
                         <td id="k2Comment<?php echo $row->id; ?>">
                             <div class="commentText"><?php echo $row->commentText; ?></div>
@@ -163,7 +163,7 @@ $context = JRequest::getCmd('context');
                         </td>
                         <td class="k2ui-hide-on-mobile">
                             <?php if ($app->isAdmin() && $row->userID): ?>
-                            <a href="<?php echo $this->userEditLink.$row->userID;?>"><?php echo $row->userName; ?></a>
+                            <a href="<?php echo $this->userEditLink.$row->userID; ?>"><?php echo $row->userName; ?></a>
                             <?php else: ?>
                             <?php echo $row->userName; ?>
                             <?php endif; ?>
@@ -191,17 +191,18 @@ $context = JRequest::getCmd('context');
                             <?php endif; ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
-                            <?php $itemURL = K2HelperRoute::getItemRoute($row->itemID.':'.urlencode($row->itemAlias),$row->catid.':'.urlencode($row->catAlias)); ?>
+                            <?php $itemURL = K2HelperRoute::getItemRoute($row->itemID.':'.urlencode($row->itemAlias), $row->catid.':'.urlencode($row->catAlias)); ?>
                             <a target="_blank" href="<?php echo ($app->isSite()) ? JRoute::_($itemURL) : JURI::root().$itemURL; ?>"><?php echo $row->title; ?></a>
                         </td>
                         <td class="k2ui-hide-on-mobile">
                             <?php echo $row->catName; ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
-                            <?php $user = JFactory::getUser($row->created_by); echo $user->name; ?>
+                            <?php $user = JFactory::getUser($row->created_by);
+                        echo $user->name; ?>
                         </td>
                         <td class="k2ui-center k2ui-nowrap k2ui-hide-on-mobile">
-                            <?php echo JHTML::_('date', $row->commentDate , $this->dateFormat); ?>
+                            <?php echo JHTML::_('date', $row->commentDate, $this->dateFormat); ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
                             <?php echo $row->id; ?>
@@ -230,7 +231,7 @@ $context = JRequest::getCmd('context');
         <input type="hidden" name="isSite" value="<?php echo (int) $app->isSite(); ?>" />
         <input type="hidden" name="option" value="com_k2" />
         <input type="hidden" name="view" value="<?php echo JRequest::getCmd('view'); ?>" />
-        <?php if ($context == "modalselector"): ?>
+        <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />
         <?php if ($app->isSite()): ?>
@@ -240,6 +241,6 @@ $context = JRequest::getCmd('context');
         <?php echo JHTML::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 </div>
 <?php endif; ?>

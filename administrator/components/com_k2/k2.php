@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -21,16 +26,16 @@ $context = JRequest::getCmd('context');
 
 if (K2_JVERSION == '15') {
     if (
-        ($params->get('lockTags') && $user->gid<=23 && ($view=='tags' || $view=='tag')) ||
+        ($params->get('lockTags') && $user->gid <= 23 && ($view == 'tags' || $view == 'tag')) ||
         ($user->gid <= 23) && (
-            $view=='extrafield' ||
-            $view=='extrafields' ||
-            $view=='extrafieldsgroup' ||
-            $view=='extrafieldsgroups' ||
-            $view=='user' ||
-            ($view=='users' && $context != 'modalselector') ||
-            $view=='usergroup' ||
-            $view=='usergroups'
+            $view == 'extrafield' ||
+            $view == 'extrafields' ||
+            $view == 'extrafieldsgroup' ||
+            $view == 'extrafieldsgroups' ||
+            $view == 'user' ||
+            ($view == 'users' && $context != 'modalselector') ||
+            $view == 'usergroup' ||
+            $view == 'usergroups'
         )
     ) {
         JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
@@ -47,16 +52,16 @@ if (K2_JVERSION == '15') {
     }
 
     if (
-        ($params->get('lockTags') && !$user->authorise('core.admin', 'com_k2') && ($view=='tags' || $view=='tag')) ||
+        ($params->get('lockTags') && !$user->authorise('core.admin', 'com_k2') && ($view == 'tags' || $view == 'tag')) ||
         (!$user->authorise('core.admin', 'com_k2')) && (
-            $view=='extrafield' ||
-            $view=='extrafields' ||
-            $view=='extrafieldsgroup' ||
-            $view=='extrafieldsgroups' ||
-            $view=='user' ||
-            ($view=='users' && $context != 'modalselector') ||
-            $view=='usergroup' ||
-            $view=='usergroups'
+            $view == 'extrafield' ||
+            $view == 'extrafields' ||
+            $view == 'extrafieldsgroup' ||
+            $view == 'extrafieldsgroups' ||
+            $view == 'user' ||
+            ($view == 'users' && $context != 'modalselector') ||
+            $view == 'usergroup' ||
+            $view == 'usergroups'
         )
     ) {
         JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
@@ -80,14 +85,14 @@ if (K2_JVERSION == '15') {
     $k2CSSContainerClass = '';
 }
 
-if (JRequest::getCmd('context') == "modalselector" || ($view == 'media' && $tmpl == 'component') || $view == 'settings') {
+if (JRequest::getCmd('context') == 'modalselector' || ($view == 'media' && $tmpl == 'component') || $view == 'settings') {
     $k2CSSContainerClass .= ' inModalSelector';
     $k2FooterClass = 'inModalSelector';
 } else {
     $k2FooterClass = '';
 }
 
-$editForms = array('item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup');
+$editForms = ['item', 'category', 'tag', 'user', 'usergroup', 'extrafield', 'extrafieldsgroup'];
 if (in_array($view, $editForms)) {
     $k2CSSContainerClass .= ' isEditForm';
 }
@@ -145,7 +150,7 @@ JLoader::register('K2View', JPATH_COMPONENT.'/views/view.php');
 JLoader::register('K2Model', JPATH_COMPONENT.'/models/model.php');
 
 $controller = strtolower($view);
-require_once(JPATH_COMPONENT.'/controllers/'.$controller.'.php');
+require_once JPATH_COMPONENT.'/controllers/'.$controller.'.php';
 $classname = 'K2Controller'.ucfirst($controller);
 $controller = new $classname();
 $controller->registerTask('saveAndNew', 'save');

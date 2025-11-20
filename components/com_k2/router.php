@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -16,7 +21,7 @@ if ($params->get('k2Sef')) {
     function k2BuildRoute(&$query)
     {
         // Initialize
-        $segments = array();
+        $segments = [];
 
         // Get params
         $params = JComponentHelper::getParams('com_k2');
@@ -98,7 +103,7 @@ if ($params->get('k2Sef')) {
             // Enabled category prefix for items
             if ($params->get('k2SefLabelItem')) {
                 // Tasks available for an item
-                $itemTasks = array('edit', 'download');
+                $itemTasks = ['edit', 'download'];
 
                 // If it's a task pick the next key
                 if (in_array($segments[1], $itemTasks)) {
@@ -201,7 +206,7 @@ if ($params->get('k2Sef')) {
                         $catid = (!empty($parts[0])) ? (int) $parts[0] : '';
                         $slug = (!empty($parts[1])) ? $parts[1] : '';
 
-                        $slugs = array();
+                        $slugs = [];
                         $categories = getCategoryPath($catid);
                         if (count($categories)) {
                             foreach ($categories as $category) {
@@ -263,7 +268,7 @@ if ($params->get('k2Sef')) {
     function k2ParseRoute($segments)
     {
         // Initialize
-        $vars = array();
+        $vars = [];
 
         $params = JComponentHelper::getParams('com_k2');
 
@@ -275,7 +280,7 @@ if ($params->get('k2Sef')) {
         $lastSegmentParts = explode('-', $lastSegment);
         $request_url = implode('/', $request_url_parts);
 
-        $reservedViews = array('item', 'itemlist', 'media', 'users', 'comments', 'latest');
+        $reservedViews = ['item', 'itemlist', 'media', 'users', 'comments', 'latest'];
         $categoryPath = '';
         if (!in_array($request_url_parts[0], $reservedViews)) {
             // Category view
@@ -495,30 +500,32 @@ if ($params->get('k2Sef')) {
         if ($result = $db->loadObject()) {
             $category = $result;
         }
+
         return $category;
     }
 
-    function getCategoryPath($id, $path = array())
+    function getCategoryPath($id, $path = [])
     {
         $category = getCategoryProps($id);
         if ($category->parent) {
             $path[] = [
                 'id' => $id,
-                'alias' => $category->alias
+                'alias' => $category->alias,
             ];
+
             return getCategoryPath($category->parent, $path);
-        } else {
-            $path[] = [
-                'id' => $id,
-                'alias' => $category->alias
-            ];
         }
+        $path[] = [
+            'id' => $id,
+            'alias' => $category->alias,
+        ];
+
         return array_reverse($path);
     }
 } else {
     function K2BuildRoute(&$query)
     {
-        $segments = array();
+        $segments = [];
         $app = JFactory::getApplication();
         $menu = $app->getMenu();
         if (empty($query['Itemid'])) {
@@ -553,7 +560,7 @@ if ($params->get('k2Sef')) {
             unset($query['view']);
         }
 
-        if (@ isset($query['task'])) {
+        if (@isset($query['task'])) {
             $task = $query['task'];
             $segments[] = $task;
             unset($query['task']);
@@ -606,7 +613,7 @@ if ($params->get('k2Sef')) {
 
     function K2ParseRoute($segments)
     {
-        $vars = array();
+        $vars = [];
         $vars['view'] = $segments[0];
         if (!isset($segments[1])) {
             $segments[1] = '';

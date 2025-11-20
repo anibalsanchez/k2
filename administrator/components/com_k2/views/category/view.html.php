@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -25,7 +30,7 @@ class K2ViewCategory extends K2View
         if (K2_JVERSION == '15') {
             JFilterOutput::objectHTMLSafe($category);
         } else {
-            JFilterOutput::objectHTMLSafe($category, ENT_QUOTES, array('params', 'plugins'));
+            JFilterOutput::objectHTMLSafe($category, ENT_QUOTES, ['params', 'plugins']);
         }
         if (!$category->id) {
             $category->published = 1;
@@ -34,7 +39,7 @@ class K2ViewCategory extends K2View
 
         // Editor
         $wysiwyg = JFactory::getEditor();
-        $editor = $wysiwyg->display('description', $category->description, '100%', '250px', '', '', array('pagebreak', 'readmore'));
+        $editor = $wysiwyg->display('description', $category->description, '100%', '250px', '', '', ['pagebreak', 'readmore']);
         $this->assignRef('editor', $editor);
         $onSave = '';
         if (K2_JVERSION == '30') {
@@ -53,15 +58,15 @@ class K2ViewCategory extends K2View
                 if (\$K2.trim(\$K2('#name').val()) == '') {
                     alert('".JText::_('K2_A_CATEGORY_MUST_AT_LEAST_HAVE_A_TITLE', true)."');
                 } else {
-                    ".$onSave."
+                    ".$onSave.'
                     submitform(pressbutton);
                 }
             };
-        ");
+        ');
 
-        $lists = array();
+        $lists = [];
         $lists['published'] = JHTML::_('select.booleanlist', 'published', 'class="inputbox"', $category->published);
-        $lists['access'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'access', $category->access, '', false) : str_replace('size="3"', "", JHTML::_('list.accesslevel', $category));
+        $lists['access'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'access', $category->access, '', false) : str_replace('size="3"', '', JHTML::_('list.accesslevel', $category));
         $query = 'SELECT ordering AS value, name AS text FROM #__k2_categories ORDER BY ordering';
         $lists['ordering'] = version_compare(JVERSION, '3.0', 'ge') ? null : JHTML::_('list.specificordering', $category, $category->id, $query);
         $categories[] = JHTML::_('select.option', '0', JText::_('K2_NONE_ONSELECTLISTS'));
@@ -86,7 +91,7 @@ class K2ViewCategory extends K2View
         // Plugin Events
         JPluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
-        $K2Plugins = $dispatcher->trigger('onRenderAdminForm', array(&$category, 'category'));
+        $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [&$category, 'category']);
         $this->assignRef('K2Plugins', $K2Plugins);
 
         // Parameters
@@ -96,7 +101,7 @@ class K2ViewCategory extends K2View
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
             jimport('joomla.form.form');
             $form = JForm::getInstance('categoryForm', JPATH_COMPONENT_ADMINISTRATOR.'/models/category.xml');
-            $values = array('params' => json_decode($category->params));
+            $values = ['params' => json_decode($category->params)];
             $form->bind($values);
             $inheritFrom = (isset($values['params']->inheritFrom)) ? $values['params']->inheritFrom : 0;
         } else {

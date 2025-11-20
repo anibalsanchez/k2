@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -18,7 +17,11 @@ defined('_JEXEC') or die;
 
 ?>
 
-<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2SearchBlock<?php if ($params->get('moduleclass_sfx')) echo ' '.$params->get('moduleclass_sfx'); if ($params->get('liveSearch')) echo ' k2LiveSearchBlock'; ?>">
+<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2SearchBlock<?php if ($params->get('moduleclass_sfx')) {
+    echo ' '.$params->get('moduleclass_sfx');
+} if ($params->get('liveSearch')) {
+    echo ' k2LiveSearchBlock';
+} ?>">
     <form action="<?php echo $action; ?>" method="get" autocomplete="off" class="k2SearchBlockForm">
         <input type="text" value="<?php echo $text; ?>" name="searchword" class="inputbox" onblur="if (this.value=='') this.value='<?php echo $text; ?>';" onfocus="if (this.value=='<?php echo $text; ?>') this.value='';" />
 
@@ -47,7 +50,7 @@ defined('_JEXEC') or die;
         <?php endif; ?>
 
         <?php if ($searchItemId): ?>
-        <input type="hidden" name="Itemid" value="<?php echo $searchItemId;?>" />
+        <input type="hidden" name="Itemid" value="<?php echo $searchItemId; ?>" />
         <?php endif; ?>
     </form>
 

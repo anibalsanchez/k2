@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -23,7 +28,7 @@ if (K2_JVERSION != '15') {
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR);
 }
 
-require_once(dirname(__FILE__).'/helper.php');
+require_once dirname(__FILE__).'/helper.php';
 
 if ($params->get('latestItems', 1)) {
     $latestItems = modK2StatsHelper::getLatestItems();
@@ -41,4 +46,4 @@ if ($params->get('statistics', 1)) {
     $statistics = modK2StatsHelper::getStatistics();
 }
 
-require(JModuleHelper::getLayoutPath('mod_k2_stats'));
+require JModuleHelper::getLayoutPath('mod_k2_stats');

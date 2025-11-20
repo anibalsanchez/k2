@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -89,7 +94,7 @@ class K2ViewComments extends K2View
         $comments = $model->getData();
 
         if ($limitstart > $total - $limit) {
-            $limitstart = max(0, (int)(ceil($total / $limit) - 1) * $limit);
+            $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
 
@@ -99,7 +104,7 @@ class K2ViewComments extends K2View
             $comment->commenterLastVisitIP = null;
             if ($comment->userID) {
                 $db = JFactory::getDbo();
-                $db->setQuery("SELECT ip FROM #__k2_users WHERE userID = ".$comment->userID);
+                $db->setQuery('SELECT ip FROM #__k2_users WHERE userID = '.$comment->userID);
                 $comment->commenterLastVisitIP = $db->loadResult();
 
                 $commenter = JFactory::getUser($comment->userID);
@@ -134,11 +139,11 @@ class K2ViewComments extends K2View
         $pageNav = new JPagination($total, $limitstart, $limit);
         $this->assignRef('page', $pageNav);
 
-        $lists = array();
+        $lists = [];
 
         // Detect exact search phrase using double quotes in search string
-        if (substr($search, 0, 1)=='"' && substr($search, -1)=='"') {
-            $lists['search'] = "\"".trim(str_replace('"', '', $search))."\"";
+        if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
+            $lists['search'] = '"'.trim(str_replace('"', '', $search)).'"';
         } else {
             $lists['search'] = trim(str_replace('"', '', $search));
         }
@@ -161,7 +166,7 @@ class K2ViewComments extends K2View
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/items.php';
         $itemsModel = K2Model::getInstance('Items', 'K2Model');
         $authors = $itemsModel->getItemsAuthors();
-        $options = array();
+        $options = [];
         $options[] = JHTML::_('select.option', 0, JText::_('K2_NO_USER'));
         foreach ($authors as $author) {
             $name = $author->name;

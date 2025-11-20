@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -20,7 +25,6 @@ if (!defined('K2_PLUGIN_API')) {
 
 class K2Plugin extends JPlugin
 {
-
     /**
      * Below we list all available BACKEND events, to trigger K2 plugins and generate additional fields in the item, category and user forms.
      */
@@ -44,8 +48,8 @@ class K2Plugin extends JPlugin
             $fields = $form->render('plugins', $path);
         } else {
             jimport('joomla.form.form');
-            $form = JForm::getInstance('plg_k2_'.$this->pluginName.'_'.$path, $manifest, array(), true, 'fields[@group="'.$path.'"]');
-            $values = array();
+            $form = JForm::getInstance('plg_k2_'.$this->pluginName.'_'.$path, $manifest, [], true, 'fields[@group="'.$path.'"]');
+            $values = [];
             if ($item->plugins) {
                 foreach (json_decode($item->plugins) as $name => $value) {
                     $count = 1;
@@ -73,9 +77,10 @@ class K2Plugin extends JPlugin
             }
         }
         if ($fields) {
-            $plugin = new stdClass;
+            $plugin = new stdClass();
             $plugin->name = $this->pluginNameHumanReadable;
             $plugin->fields = $fields;
+
             return $plugin;
         }
     }

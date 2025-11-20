@@ -1,18 +1,22 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_SITE.'/components/com_k2/helpers/route.php');
-require_once(JPATH_SITE.'/components/com_k2/helpers/utilities.php');
+require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
+require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
 
 class modK2CommentsHelper
 {
@@ -57,17 +61,17 @@ class modK2CommentsHelper
         if (K2_JVERSION != '15') {
             if ($app->getLanguageFilter()) {
                 $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).", ".$db->Quote('*');
+                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
             }
         }
 
-        $query = "SELECT c.*, i.catid, i.title, i.alias, category.alias AS catalias, category.name AS categoryname
+        $query = 'SELECT c.*, i.catid, i.title, i.alias, category.alias AS catalias, category.name AS categoryname
             FROM #__k2_comments AS c
             LEFT JOIN #__k2_items AS i ON i.id = c.itemID
             LEFT JOIN #__k2_categories AS category ON category.id = i.catid
             WHERE i.published = 1
-                AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                AND (i.publish_up = '.$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                 AND i.trash = 0
                 AND i.access {$aclCheck}
                 AND category.published = 1
@@ -78,15 +82,15 @@ class modK2CommentsHelper
         if ($params->get('catfilter') && !is_null($cid)) {
             if ($params->get('catFilterInclusion', 'include') == 'include') {
                 if (is_array($cid)) {
-                    $query .= " AND i.catid IN(".implode(',', $cid).")";
+                    $query .= ' AND i.catid IN('.implode(',', $cid).')';
                 } else {
-                    $query .= " AND i.catid = ".(int)$cid;
+                    $query .= ' AND i.catid = '.(int) $cid;
                 }
             } else {
                 if (is_array($cid)) {
-                    $query .= " AND i.catid NOT IN(".implode(',', $cid).")";
+                    $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
                 } else {
-                    $query .= " AND i.catid != ".(int)$cid;
+                    $query .= ' AND i.catid != '.(int) $cid;
                 }
             }
         }
@@ -95,18 +99,17 @@ class modK2CommentsHelper
             $query .= " AND i.language IN ({$languageFilter}) AND category.language IN ({$languageFilter})";
         }
 
-        $query .= " ORDER BY c.id DESC";
+        $query .= ' ORDER BY c.id DESC';
 
         $db->setQuery($query, 0, $limit);
         $rows = $db->loadObjectList();
 
         $pattern = "@\b(https?://)?(([0-9a-zA-Z_!~*'().&=+$%-]+:)?[0-9a-zA-Z_!~*'().&=+$%-]+\@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-zA-Z_!~*'()-]+\.)*([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\.[a-zA-Z]{2,6})(:[0-9]{1,4})?((/[0-9a-zA-Z_!~*'().;?:\@&=+$,%#-]+)*/?)@";
 
-        $comments = array();
+        $comments = [];
 
         if (count($rows)) {
             foreach ($rows as $row) {
-
                 // Relative comment date
                 if ($params->get('commentDateFormat') == 'relative') {
                     $created = new JDate($row->commentDate);
@@ -179,23 +182,22 @@ class modK2CommentsHelper
 
         $limit = $params->get('commenters_limit', '5');
 
-        $query = "SELECT COUNT(id) as counter, userName, userID, commentEmail
+        $query = 'SELECT COUNT(id) as counter, userName, userID, commentEmail
         	FROM #__k2_comments
         	WHERE userID > 0
         		AND published = 1
         	GROUP BY userID
-        	ORDER BY counter DESC";
+        	ORDER BY counter DESC';
         $db->setQuery($query, 0, $limit);
         $rows = $db->loadObjectList();
 
         $pattern = "@\b(https?://)?(([0-9a-zA-Z_!~*'().&=+$%-]+:)?[0-9a-zA-Z_!~*'().&=+$%-]+\@)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-zA-Z_!~*'()-]+\.)*([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]\.[a-zA-Z]{2,6})(:[0-9]{1,4})?((/[0-9a-zA-Z_!~*'().;?:\@&=+$,%#-]+)*/?)@";
 
-        $commenters = array();
+        $commenters = [];
 
         if (count($rows)) {
             foreach ($rows as $row) {
                 if ($row->counter > 0) {
-
                     // User link
                     $row->link = JRoute::_(K2HelperRoute::getUserRoute($row->userID));
 
@@ -212,7 +214,7 @@ class modK2CommentsHelper
 
                     // User's last comment
                     if ($params->get('commenterLatestComment')) {
-                        $query = "SELECT * FROM #__k2_comments WHERE userID = ".(int)$row->userID." AND published = 1 ORDER BY commentDate DESC";
+                        $query = 'SELECT * FROM #__k2_comments WHERE userID = '.(int) $row->userID.' AND published = 1 ORDER BY commentDate DESC';
 
                         $db->setQuery($query, 0, 1);
                         $comment = $db->loadObject();

@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -22,7 +21,9 @@ defined('_JEXEC') or die;
 </div>
 <?php endif; ?>
 
-<div id="k2QuickIcons<?php if (K2_JVERSION=='15') echo '15'; ?>" <?php if (!$modLogo): ?> class="k2NoLogo" <?php endif; ?>>
+<div id="k2QuickIcons<?php if (K2_JVERSION == '15') {
+    echo '15';
+} ?>" <?php if (!$modLogo): ?> class="k2NoLogo" <?php endif; ?>>
     <div class="icon-wrapper">
         <div class="icon">
             <a href="<?php echo JRoute::_('index.php?option=com_k2&amp;view=item'); ?>">
@@ -71,7 +72,7 @@ defined('_JEXEC') or die;
             </a>
         </div>
     </div>
-    <?php if (!$componentParams->get('lockTags') || $user->gid>23): ?>
+    <?php if (!$componentParams->get('lockTags') || $user->gid > 23): ?>
     <div class="icon-wrapper">
         <div class="icon">
             <a href="<?php echo JRoute::_('index.php?option=com_k2&amp;view=tags'); ?>">
@@ -89,7 +90,7 @@ defined('_JEXEC') or die;
             </a>
         </div>
     </div>
-    <?php if ($user->gid>23): ?>
+    <?php if ($user->gid > 23): ?>
     <div class="icon-wrapper">
         <div class="icon">
             <a href="<?php echo JRoute::_('index.php?option=com_k2&amp;view=extrafields'); ?>">
@@ -123,7 +124,7 @@ defined('_JEXEC') or die;
             </a>
         </div>
     </div>
-    <?php if ($user->gid>23): ?>
+    <?php if ($user->gid > 23): ?>
     <div class="icon-wrapper">
         <div class="icon">
             <a data-k2-modal="iframe" target="_blank" href="https://getk2.org/extend/">

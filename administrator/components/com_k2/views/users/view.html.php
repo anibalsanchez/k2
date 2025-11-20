@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -45,7 +50,7 @@ class K2ViewUsers extends K2View
         $model = K2Model::getInstance('Users', 'K2Model');
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
-            $limitstart = max(0, (int)(ceil($total / $limit) - 1) * $limit);
+            $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
         $users = $model->getData();
@@ -53,13 +58,13 @@ class K2ViewUsers extends K2View
             $users[$i]->loggedin = $model->checkLogin($users[$i]->id);
             $users[$i]->profileID = $model->hasProfile($users[$i]->id);
             if ($users[$i]->profileID) {
-                $db->setQuery("SELECT ip FROM #__k2_users WHERE id = ".$users[$i]->profileID);
+                $db->setQuery('SELECT ip FROM #__k2_users WHERE id = '.$users[$i]->profileID);
                 $users[$i]->ip = $db->loadResult();
             } else {
                 $users[$i]->ip = '';
             }
 
-            if ($users[$i]->lastvisitDate == "0000-00-00 00:00:00") {
+            if ($users[$i]->lastvisitDate == '0000-00-00 00:00:00') {
                 $users[$i]->lvisit = false;
             } else {
                 $users[$i]->lvisit = $users[$i]->lastvisitDate;
@@ -78,11 +83,11 @@ class K2ViewUsers extends K2View
                     $users[$i]->blockStatus = strip_tags($users[$i]->blockStatus, '<img>');
                 }
             } else {
-                $states = array(1 => array('', 'K2_LOGGED_IN', 'K2_LOGGED_IN', 'K2_LOGGED_IN', false, 'publish', 'publish'), 0 => array('', 'K2_NOT_LOGGED_IN', 'K2_NOT_LOGGED_IN', 'K2_NOT_LOGGED_IN', false, 'unpublish', 'unpublish'), );
+                $states = [1 => ['', 'K2_LOGGED_IN', 'K2_LOGGED_IN', 'K2_LOGGED_IN', false, 'publish', 'publish'], 0 => ['', 'K2_NOT_LOGGED_IN', 'K2_NOT_LOGGED_IN', 'K2_NOT_LOGGED_IN', false, 'unpublish', 'unpublish']];
                 $users[$i]->loggedInStatus = JHtml::_('jgrid.state', $states, $users[$i]->loggedin, $i, '', false);
-                $states = array(
-                0 => array('disable', 'K2_ENABLED', 'K2_DISABLE', 'K2_ENABLED', false, 'publish', 'publish'),
-                1 => array('enable', 'K2_DISABLED', 'K2_ENABLE', 'K2_DISABLED', false, 'unpublish', 'unpublish'));
+                $states = [
+                    0 => ['disable', 'K2_ENABLED', 'K2_DISABLE', 'K2_ENABLED', false, 'publish', 'publish'],
+                    1 => ['enable', 'K2_DISABLED', 'K2_ENABLE', 'K2_DISABLED', false, 'unpublish', 'unpublish']];
                 $users[$i]->blockStatus = JHtml::_('jgrid.state', $states, $users[$i]->block, $i, '', $context != 'modalselector');
             }
         }
@@ -93,7 +98,7 @@ class K2ViewUsers extends K2View
         $pageNav = new JPagination($total, $limitstart, $limit);
         $this->assignRef('page', $pageNav);
 
-        $lists = array();
+        $lists = [];
         $lists['search'] = $search;
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;
@@ -217,7 +222,7 @@ class K2ViewUsers extends K2View
         $this->assignRef('rows', $rows);
 
         $model = $this->getModel('users');
-        $lists = array();
+        $lists = [];
         $userGroups = $model->getUserGroups();
         $groups[] = JHTML::_('select.option', '', JText::_('K2_DO_NOT_CHANGE'));
         foreach ($userGroups as $userGroup) {

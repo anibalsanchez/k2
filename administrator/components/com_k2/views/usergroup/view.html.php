@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -35,15 +40,15 @@ class K2ViewUserGroup extends K2View
         } else {
             jimport('joomla.form.form');
             $form = JForm::getInstance('permissions', JPATH_COMPONENT_ADMINISTRATOR.'/models/usergroup.xml');
-            $values = array('params' => json_decode($userGroup->permissions));
+            $values = ['params' => json_decode($userGroup->permissions)];
             $form->bind($values);
-            $inheritance = isset($values['params']->inheritance) ? $values['params']->inheritance : 0;
-            $appliedCategories = isset($values['params']->categories) ? $values['params']->categories : '';
+            $inheritance = $values['params']->inheritance ?? 0;
+            $appliedCategories = $values['params']->categories ?? '';
         }
         $this->assignRef('form', $form);
         $this->assignRef('categories', $appliedCategories);
 
-        $lists = array();
+        $lists = [];
         require_once JPATH_ADMINISTRATOR.'/components/com_k2/models/categories.php';
         $categoriesModel = K2Model::getInstance('Categories', 'K2Model');
         $categories = $categoriesModel->categoriesTree(null, true);

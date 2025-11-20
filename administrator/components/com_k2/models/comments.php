@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -36,15 +41,15 @@ class K2ModelComments extends K2Model
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\"\.\@\-_]/u', '', $search));
 
-        $queryStart = "/* Backend / K2 / Comments */ SELECT c.*, i.title , i.catid, i.alias AS itemAlias, i.created_by, cat.alias AS catAlias, cat.name as catName";
+        $queryStart = '/* Backend / K2 / Comments */ SELECT c.*, i.title , i.catid, i.alias AS itemAlias, i.created_by, cat.alias AS catAlias, cat.name as catName';
 
-        $query = " FROM #__k2_comments AS c
+        $query = ' FROM #__k2_comments AS c
 			LEFT JOIN #__k2_items AS i ON c.itemID = i.id
 			LEFT JOIN #__k2_categories AS cat ON cat.id = i.catid
 			LEFT JOIN #__k2_users AS u ON c.userID = u.userID
-			WHERE c.id > 0";
+			WHERE c.id > 0';
 
-        if ($filter_state > - 1) {
+        if ($filter_state > -1) {
             $query .= " AND c.published = {$filter_state}";
         }
 
@@ -57,7 +62,6 @@ class K2ModelComments extends K2Model
         }
 
         if ($search) {
-
             // Detect exact search phrase using double quotes in search string
             if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
                 $exact = true;
@@ -74,29 +78,29 @@ class K2ModelComments extends K2Model
             // Full phrase or set of words
             if (strpos($escaped, ' ') !== false && !$exact) {
                 $escaped = explode(' ', $escaped);
-                $quoted = array();
-                foreach($escaped as $key => $escapedWord) {
+                $quoted = [];
+                foreach ($escaped as $key => $escapedWord) {
                     $quoted[] = $db->Quote('%'.$escapedWord.'%', false);
                 }
                 if ($params->get('adminSearch') == 'full') {
                     $searchPerTerm = [];
-                    $query .= " AND (";
-                    foreach($quoted as $quotedWord) {
-                        $query .= "
-							LOWER(c.commentText) LIKE ".$quotedWord." OR
-							LOWER(c.userName) LIKE ".$quotedWord." OR
-							LOWER(c.commentEmail) LIKE ".$quotedWord." OR
-							LOWER(c.commentURL) LIKE ".$quotedWord." OR
-							LOWER(i.title) LIKE ".$quotedWord." OR
-							LOWER(u.userName) LIKE ".$quotedWord." OR
-							LOWER(u.ip) LIKE ".$quotedWord."
- 						";
+                    $query .= ' AND (';
+                    foreach ($quoted as $quotedWord) {
+                        $query .= '
+							LOWER(c.commentText) LIKE '.$quotedWord.' OR
+							LOWER(c.userName) LIKE '.$quotedWord.' OR
+							LOWER(c.commentEmail) LIKE '.$quotedWord.' OR
+							LOWER(c.commentURL) LIKE '.$quotedWord.' OR
+							LOWER(i.title) LIKE '.$quotedWord.' OR
+							LOWER(u.userName) LIKE '.$quotedWord.' OR
+							LOWER(u.ip) LIKE '.$quotedWord.'
+ 						';
                     }
                     $query .= implode(' OR ', $searchPerTerm);
-                    $query .= ")";
+                    $query .= ')';
                 } else {
-                    foreach($quoted as $quotedWord) {
-                        $query .= " AND LOWER(c.commentText) LIKE ".$quotedWord;
+                    foreach ($quoted as $quotedWord) {
+                        $query .= ' AND LOWER(c.commentText) LIKE '.$quotedWord;
                     }
                 }
             }
@@ -104,23 +108,23 @@ class K2ModelComments extends K2Model
             else {
                 $quoted = $db->Quote('%'.$escaped.'%', false);
                 if ($params->get('adminSearch') == 'full') {
-                    $query .= " AND (
-						LOWER(c.commentText) LIKE ".$quoted." OR
-						LOWER(c.userName) LIKE ".$quoted." OR
-						LOWER(c.commentEmail) LIKE ".$quoted." OR
-						LOWER(c.commentURL) LIKE ".$quoted." OR
-						LOWER(i.title) LIKE ".$quoted." OR
-						LOWER(u.userName) LIKE ".$quoted." OR
-						LOWER(u.ip) LIKE ".$quoted."
-					)";
+                    $query .= ' AND (
+						LOWER(c.commentText) LIKE '.$quoted.' OR
+						LOWER(c.userName) LIKE '.$quoted.' OR
+						LOWER(c.commentEmail) LIKE '.$quoted.' OR
+						LOWER(c.commentURL) LIKE '.$quoted.' OR
+						LOWER(i.title) LIKE '.$quoted.' OR
+						LOWER(u.userName) LIKE '.$quoted.' OR
+						LOWER(u.ip) LIKE '.$quoted.'
+					)';
                 } else {
-                    $query .= " AND LOWER(c.commentText) LIKE ".$quoted;
+                    $query .= ' AND LOWER(c.commentText) LIKE '.$quoted;
                 }
             }
         }
 
         if (!$filter_order) {
-            $filter_order = "c.commentDate";
+            $filter_order = 'c.commentDate';
         }
         $queryEnd = " ORDER BY {$filter_order} {$filter_order_Dir}";
 
@@ -132,7 +136,7 @@ class K2ModelComments extends K2Model
 
         // --- Row counter ---
         if (count($rows)) {
-            $countQuery = "/* Backend / K2 / Comments Count */ SELECT COUNT(*)".$query;
+            $countQuery = '/* Backend / K2 / Comments Count */ SELECT COUNT(*)'.$query;
             $db->setQuery($countQuery);
             $this->getTotal = $db->loadResult();
         }
@@ -174,7 +178,7 @@ class K2ModelComments extends K2Model
             echo 'true';
             $app->close();
         }
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -202,7 +206,7 @@ class K2ModelComments extends K2Model
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -238,7 +242,7 @@ class K2ModelComments extends K2Model
             $app->close();
         }
         $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -258,12 +262,12 @@ class K2ModelComments extends K2Model
             $db->setQuery($query);
             $ids = K2_JVERSION == '30' ? $db->loadColumn() : $db->loadResultArray();
             if (count($ids)) {
-                $query = "DELETE FROM #__k2_comments WHERE id IN(".implode(',', $ids).")";
+                $query = 'DELETE FROM #__k2_comments WHERE id IN('.implode(',', $ids).')';
                 $db->setQuery($query);
                 $db->query();
             }
         } else {
-            $query = "DELETE FROM #__k2_comments WHERE published=0";
+            $query = 'DELETE FROM #__k2_comments WHERE published=0';
             $db->setQuery($query);
             $db->query();
         }
@@ -271,7 +275,7 @@ class K2ModelComments extends K2Model
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
         $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=comments&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=comments');
@@ -315,20 +319,24 @@ class K2ModelComments extends K2Model
         $row->load($id);
         if (!$row->published) {
             $this->setError(JText::_('K2_COMMENT_NOT_FOUND'));
+
             return false;
         }
         if (empty($name)) {
             $this->setError(JText::_('K2_PLEASE_TYPE_YOUR_NAME'));
+
             return false;
         }
         if (empty($reportReason)) {
             $this->setError(JText::_('K2_PLEASE_TYPE_THE_REPORT_REASON'));
+
             return false;
         }
         if (($params->get('antispam') == 'recaptcha' || $params->get('antispam') == 'both') && $user->guest) {
             require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
             if (!K2HelperUtilities::verifyRecaptcha()) {
                 $this->setError(JText::_('K2_COULD_NOT_VERIFY_THAT_YOU_ARE_NOT_A_ROBOT'));
+
                 return false;
             }
         }
@@ -338,11 +346,11 @@ class K2ModelComments extends K2Model
         $senderEmail = $app->getCfg('mailfrom');
         $senderName = $app->getCfg('fromname');
 
-        $mail->setSender(array($senderEmail, $senderName));
+        $mail->setSender([$senderEmail, $senderName]);
         $mail->setSubject(JText::_('K2_COMMENT_REPORT'));
         $mail->IsHTML(true);
 
-        switch(substr(strtoupper(PHP_OS), 0, 3)) {
+        switch (substr(strtoupper(PHP_OS), 0, 3)) {
             case 'WIN':
                 $mail->LE = "\r\n";
                 break;
@@ -355,11 +363,11 @@ class K2ModelComments extends K2Model
         }
 
         // K2 embedded email template (to do: move to separate HTML template/override)
-        $body = "
-        <strong>".JText::_('K2_NAME')."</strong>: ".$name." <br/>
-        <strong>".JText::_('K2_REPORT_REASON')."</strong>: ".$reportReason." <br/>
-        <strong>".JText::_('K2_COMMENT')."</strong>: ".nl2br($row->commentText)." <br/>
-        ";
+        $body = '
+        <strong>'.JText::_('K2_NAME').'</strong>: '.$name.' <br/>
+        <strong>'.JText::_('K2_REPORT_REASON').'</strong>: '.$reportReason.' <br/>
+        <strong>'.JText::_('K2_COMMENT').'</strong>: '.nl2br($row->commentText).' <br/>
+        ';
 
         $mail->setBody($body);
         $mail->ClearAddresses();

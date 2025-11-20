@@ -1,11 +1,15 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -84,7 +88,7 @@ class plgUserK2 extends JPlugin
             $row->url = JString::str_ireplace('\'', '', $row->url);
             $row->set('description', JRequest::getVar('description', '', 'post', 'string', 4));
             if ($params->get('xssFiltering')) {
-                $filter = new JFilterInput(array(), array(), 1, 1, 0);
+                $filter = new JFilterInput([], [], 1, 1, 0);
                 $row->description = $filter->clean($row->description);
             }
             $row->store();
@@ -92,14 +96,13 @@ class plgUserK2 extends JPlugin
             $file = JRequest::get('files');
 
             if (isset($file['image']) && $file['image']['error'] == 0 && !JRequest::getBool('del_image')) {
-
                 require_once JPATH_SITE.'/media/k2/assets/vendors/verot/class.upload.php/src/class.upload.php';
                 $savepath = JPATH_ROOT.'/media/k2/users/';
 
                 try {
-                    $handle = new \Verot\Upload\Upload($file['image']);
-                    $handle->allowed = array('image/*');
-                    $handle->forbidden = array('image/bmp', 'image/tiff');
+                    $handle = new Verot\Upload\Upload($file['image']);
+                    $handle->allowed = ['image/*'];
+                    $handle->forbidden = ['image/bmp', 'image/tiff'];
 
                     if ($handle->uploaded) {
                         $handle->file_auto_rename = false;
@@ -117,10 +120,10 @@ class plgUserK2 extends JPlugin
                             $handle->clean();
                             $image = $handle->file_dst_name;
                         } else {
-                            throw new \RuntimeException($handle->error);
+                            throw new RuntimeException($handle->error);
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $app->enqueueMessage(JText::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
                 }
             }
@@ -162,7 +165,7 @@ class plgUserK2 extends JPlugin
         if ($app->isSite()) {
             // Get the user id
             $db = JFactory::getDbo();
-            $db->setQuery("SELECT id FROM #__users WHERE username = ".$db->Quote($user['username']));
+            $db->setQuery('SELECT id FROM #__users WHERE username = '.$db->Quote($user['username']));
             $id = $db->loadResult();
 
             // If K2 profiles are enabled assign non-existing K2 users to the default K2 group. Update user info for existing K2 users.
@@ -184,9 +187,10 @@ class plgUserK2 extends JPlugin
 
             // Set the Cookie domain for user based on K2 parameters
             if ($params->get('cookieDomain') && $id) {
-                setcookie("userID", $id, 0, '/', $params->get('cookieDomain'), 0);
+                setcookie('userID', $id, 0, '/', $params->get('cookieDomain'), 0);
             }
         }
+
         return true;
     }
 
@@ -195,8 +199,9 @@ class plgUserK2 extends JPlugin
         $params = JComponentHelper::getParams('com_k2');
         $app = JFactory::getApplication();
         if ($app->isSite() && $params->get('cookieDomain')) {
-            setcookie("userID", "", time() - 3600, '/', $params->get('cookieDomain'), 0);
+            setcookie('userID', '', time() - 3600, '/', $params->get('cookieDomain'), 0);
         }
+
         return true;
     }
 
@@ -234,6 +239,7 @@ class plgUserK2 extends JPlugin
         $query = "SELECT id FROM #__k2_users WHERE userID={$id}";
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
@@ -255,7 +261,7 @@ class plgUserK2 extends JPlugin
                 $response = json_decode($response);
                 if ($response->ip->appears || $response->email->appears || $response->username->appears) {
                     $db = JFactory::getDbo();
-                    $db->setQuery("UPDATE #__users SET block = 1 WHERE id = ".$user['id']);
+                    $db->setQuery('UPDATE #__users SET block = 1 WHERE id = '.$user['id']);
                     $db->query();
                     $user['notes'] = JText::_('K2_POSSIBLE_SPAMMER_DETECTED_BY_STOPFORUMSPAM');
                 }

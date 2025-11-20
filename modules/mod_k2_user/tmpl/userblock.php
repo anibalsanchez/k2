@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -12,7 +11,9 @@ defined('_JEXEC') or die;
 
 ?>
 
-<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2UserBlock<?php if ($params->get('moduleclass_sfx')) echo ' '.$params->get('moduleclass_sfx'); ?>">
+<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2UserBlock<?php if ($params->get('moduleclass_sfx')) {
+    echo ' '.$params->get('moduleclass_sfx');
+} ?>">
     <?php if ($userGreetingText): ?>
     <p class="ubGreeting"><?php echo $userGreetingText; ?></p>
     <?php endif; ?>
@@ -24,7 +25,11 @@ defined('_JEXEC') or die;
         </a>
         <?php endif; ?>
         <span class="ubName"><?php echo $user->name; ?></span>
-        <span class="ubCommentsCount"><?php echo JText::_('K2_YOU_HAVE'); ?> <b><?php echo $user->numOfComments; ?></b> <?php if ($user->numOfComments==1) echo JText::_('K2_PUBLISHED_COMMENT'); else echo JText::_('K2_PUBLISHED_COMMENTS'); ?></span>
+        <span class="ubCommentsCount"><?php echo JText::_('K2_YOU_HAVE'); ?> <b><?php echo $user->numOfComments; ?></b> <?php if ($user->numOfComments == 1) {
+            echo JText::_('K2_PUBLISHED_COMMENT');
+        } else {
+            echo JText::_('K2_PUBLISHED_COMMENTS');
+        } ?></span>
         <div class="clr"></div>
     </div>
 
@@ -48,25 +53,28 @@ defined('_JEXEC') or die;
     </ul>
 
     <ul class="k2UserBlockRenderedMenu">
-        <?php $level = 1; foreach($menu as $key => $link): $level++; ?>
+        <?php $level = 1;
+foreach ($menu as $key => $link): $level++; ?>
         <li class="linkItemId<?php echo $link->id; ?>">
-            <?php if ($link->type=='url' && $link->browserNav==0): ?>
+            <?php if ($link->type == 'url' && $link->browserNav == 0): ?>
             <a href="<?php echo $link->route; ?>"><?php echo $link->name; ?></a>
-            <?php elseif (strpos($link->link,'option=com_k2&view=item&layout=itemform') || $link->browserNav==2): ?>
+            <?php elseif (strpos($link->link, 'option=com_k2&view=item&layout=itemform') || $link->browserNav == 2): ?>
             <a data-k2-modal="edit" href="<?php echo $link->route; ?>"><?php echo $link->name; ?></a>
             <?php else: ?>
-            <a href="<?php echo $link->route; ?>" <?php if ($link->browserNav==1) echo ' target="_blank"'; ?>><?php echo $link->name; ?></a>
+            <a href="<?php echo $link->route; ?>" <?php if ($link->browserNav == 1) {
+                echo ' target="_blank"';
+            } ?>><?php echo $link->name; ?></a>
             <?php endif; ?>
 
-            <?php if (isset($menu[$key+1]) && $menu[$key]->level < $menu[$key+1]->level): ?>
+            <?php if (isset($menu[$key + 1]) && $menu[$key]->level < $menu[$key + 1]->level): ?>
             <ul>
             <?php endif; ?>
 
-            <?php if (isset($menu[$key+1]) && $menu[$key]->level > $menu[$key+1]->level): ?>
-            <?php echo str_repeat('</li></ul>', $menu[$key]->level - $menu[$key+1]->level); ?>
+            <?php if (isset($menu[$key + 1]) && $menu[$key]->level > $menu[$key + 1]->level): ?>
+            <?php echo str_repeat('</li></ul>', $menu[$key]->level - $menu[$key + 1]->level); ?>
             <?php endif; ?>
 
-        <?php if (isset($menu[$key+1]) && $menu[$key]->level == $menu[$key+1]->level): ?>
+        <?php if (isset($menu[$key + 1]) && $menu[$key]->level == $menu[$key + 1]->level): ?>
         </li>
         <?php endif; ?>
         <?php endforeach; ?>

@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -51,22 +56,22 @@ class K2ViewLatest extends K2View
             // Categories
             $categoryIDs = $params->get('categoryIDs');
             if (is_string($categoryIDs) && !empty($categoryIDs)) {
-                $categoryIDs = array();
+                $categoryIDs = [];
                 $categoryIDs[] = $params->get('categoryIDs');
             }
-            $categories = array();
+            $categories = [];
             JTable::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
             if (is_array($categoryIDs)) {
                 foreach ($categoryIDs as $categoryID) {
                     $category = JTable::getInstance('K2Category', 'Table');
                     $category->load($categoryID);
-                    $category->event = new stdClass;
+                    $category->event = new stdClass();
                     $languageCheck = true;
                     if (K2_JVERSION != '15') {
                         $accessCheck = in_array($category->access, $user->getAuthorisedViewLevels());
                         if ($app->getLanguageFilter()) {
                             $languageTag = JFactory::getLanguage()->getTag();
-                            $languageCheck = in_array($category->language, array($languageTag, '*'));
+                            $languageCheck = in_array($category->language, [$languageTag, '*']);
                         }
                     } else {
                         $accessCheck = $category->access <= $user->get('aid', 0);
@@ -89,18 +94,18 @@ class K2ViewLatest extends K2View
                         $category->text = $category->description;
 
                         if (K2_JVERSION != '15') {
-                            $dispatcher->trigger('onContentPrepare', array('com_k2.category', &$category, &$params, $limitstart));
+                            $dispatcher->trigger('onContentPrepare', ['com_k2.category', &$category, &$params, $limitstart]);
                         } else {
-                            $dispatcher->trigger('onPrepareContent', array(&$category, &$params, $limitstart));
+                            $dispatcher->trigger('onPrepareContent', [&$category, &$params, $limitstart]);
                         }
                         $category->description = $category->text;
 
                         // Category K2 plugins
                         $category->event->K2CategoryDisplay = '';
-                        $results = $dispatcher->trigger('onK2CategoryDisplay', array(&$category, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2CategoryDisplay', [&$category, &$params, $limitstart]);
                         $category->event->K2CategoryDisplay = trim(implode("\n", $results));
                         $category->text = $category->description;
-                        $dispatcher->trigger('onK2PrepareContent', array(&$category, &$params, $limitstart));
+                        $dispatcher->trigger('onK2PrepareContent', [&$category, &$params, $limitstart]);
                         $category->description = $category->text;
 
                         // Category link
@@ -125,16 +130,16 @@ class K2ViewLatest extends K2View
                             for ($i = 0; $i < count($category->items); $i++) {
                                 $hits = $category->items[$i]->hits;
                                 $category->items[$i]->hits = 0;
-                                $category->items[$i] = $cache->call(array($itemModel, 'prepareItem'), $category->items[$i], 'latest', '');
+                                $category->items[$i] = $cache->call([$itemModel, 'prepareItem'], $category->items[$i], 'latest', '');
                                 $category->items[$i]->hits = $hits;
                                 $category->items[$i] = $itemModel->execPlugins($category->items[$i], 'latest', '');
 
                                 // Trigger comments counter event
-                                $results = $dispatcher->trigger('onK2CommentsCounter', array(&$category->items[$i], &$params, $limitstart));
+                                $results = $dispatcher->trigger('onK2CommentsCounter', [&$category->items[$i], &$params, $limitstart]);
                                 $category->items[$i]->event->K2CommentsCounter = trim(implode("\n", $results));
                             }
                         } else {
-                            $category->items = array();
+                            $category->items = [];
                         }
                         $categories[] = $category;
                     }
@@ -146,16 +151,16 @@ class K2ViewLatest extends K2View
             // Users
             $usersIDs = $params->get('userIDs');
             if (is_string($usersIDs) && !empty($usersIDs)) {
-                $usersIDs = array();
+                $usersIDs = [];
                 $usersIDs[] = $params->get('userIDs');
             }
 
-            $users = array();
+            $users = [];
             if (is_array($usersIDs)) {
                 foreach ($usersIDs as $userID) {
                     $userObject = JFactory::getUser($userID);
                     if (!$userObject->block) {
-                        $userObject->event = new stdClass;
+                        $userObject->event = new stdClass();
 
                         // User profile
                         $userObject->profile = $model->getUserProfile($userID);
@@ -166,7 +171,7 @@ class K2ViewLatest extends K2View
                         // User K2 plugins
                         $userObject->event->K2UserDisplay = '';
                         if (is_object($userObject->profile) && $userObject->profile->id > 0) {
-                            $results = $dispatcher->trigger('onK2UserDisplay', array(&$userObject->profile, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onK2UserDisplay', [&$userObject->profile, &$params, $limitstart]);
                             $userObject->event->K2UserDisplay = trim(implode("\n", $results));
                             $userObject->profile->url = htmlspecialchars($userObject->profile->url, ENT_QUOTES, 'utf-8');
                         }
@@ -181,18 +186,18 @@ class K2ViewLatest extends K2View
                             for ($i = 0; $i < count($userObject->items); $i++) {
                                 $hits = $userObject->items[$i]->hits;
                                 $userObject->items[$i]->hits = 0;
-                                $userObject->items[$i] = $cache->call(array($itemModel, 'prepareItem'), $userObject->items[$i], 'latest', '');
+                                $userObject->items[$i] = $cache->call([$itemModel, 'prepareItem'], $userObject->items[$i], 'latest', '');
                                 $userObject->items[$i]->hits = $hits;
 
                                 // Plugins
                                 $userObject->items[$i] = $itemModel->execPlugins($userObject->items[$i], 'latest', '');
 
                                 // Trigger comments counter event
-                                $results = $dispatcher->trigger('onK2CommentsCounter', array(&$userObject->items[$i], &$params, $limitstart));
+                                $results = $dispatcher->trigger('onK2CommentsCounter', [&$userObject->items[$i], &$params, $limitstart]);
                                 $userObject->items[$i]->event->K2CommentsCounter = trim(implode("\n", $results));
                             }
                         } else {
-                            $userObject->items = array();
+                            $userObject->items = [];
                         }
                         $users[] = $userObject;
                     }

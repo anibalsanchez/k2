@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -14,24 +19,31 @@ require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 
 class TableK2Comment extends K2Table
 {
+    public $id = null;
 
-    var $id = null;
-    var $itemID = null;
-    var $userID = null;
-    var $userName = null;
-    var $commentDate = null;
-    var $commentText = null;
-    var $commentEmail = null;
-    var $commentURL = null;
-    var $published = null;
+    public $itemID = null;
 
-    function __construct(&$db)
+    public $userID = null;
+
+    public $userName = null;
+
+    public $commentDate = null;
+
+    public $commentText = null;
+
+    public $commentEmail = null;
+
+    public $commentURL = null;
+
+    public $published = null;
+
+    public function __construct(&$db)
     {
         parent::__construct('#__k2_comments', 'id', $db);
     }
-    function check()
-    {
-		$this->commentText = JString::trim($this->commentText);
-    }
 
+    public function check()
+    {
+        $this->commentText = JString::trim($this->commentText);
+    }
 }

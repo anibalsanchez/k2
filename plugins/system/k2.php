@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -87,9 +92,9 @@ class plgSystemK2 extends JPlugin
         if ($app->isAdmin() && $params->get('gatherStatistics', 1)) {
             $option = JRequest::getCmd('option');
             $view = JRequest::getCmd('view');
-            $viewsToRun = array('items', 'categories', 'tags', 'comments', 'users', 'usergroups', 'extrafields', 'extrafieldsgroups', '');
+            $viewsToRun = ['items', 'categories', 'tags', 'comments', 'users', 'usergroups', 'extrafields', 'extrafieldsgroups', ''];
             if ($option == 'com_k2' && in_array($view, $viewsToRun)) {
-                require_once(JPATH_ADMINISTRATOR.'/components/com_k2/helpers/stats.php');
+                require_once JPATH_ADMINISTRATOR.'/components/com_k2/helpers/stats.php';
                 if (K2HelperStats::shouldLog()) {
                     K2HelperStats::getScripts();
                 }
@@ -97,7 +102,7 @@ class plgSystemK2 extends JPlugin
         }
 
         // --- JoomFish integration [start] ---
-        if ((int)K2_JVERSION < 25) {
+        if ((int) K2_JVERSION < 25) {
             $option = JRequest::getCmd('option');
             $task = JRequest::getCmd('task');
             $type = JRequest::getCmd('catid');
@@ -113,7 +118,7 @@ class plgSystemK2 extends JPlugin
             if (($task == 'translate.apply' || $task == 'translate.save') && $type == 'k2_items') {
                 $language_id = JRequest::getInt('select_language_id');
                 $reference_id = JRequest::getInt('reference_id');
-                $objects = array();
+                $objects = [];
                 $variables = JRequest::get('post');
 
                 foreach ($variables as $key => $value) {
@@ -141,11 +146,11 @@ class plgSystemK2 extends JPlugin
                 $result = $db->loadResult();
 
                 if ($result > 0) {
-                    $query = "UPDATE #__jf_content SET value=".$db->Quote($extra_fields)." WHERE reference_field = 'extra_fields' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_items'";
+                    $query = 'UPDATE #__jf_content SET value='.$db->Quote($extra_fields)." WHERE reference_field = 'extra_fields' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_items'";
                     $db->setQuery($query);
                     $db->query();
                 } else {
-                    $modified = date("Y-m-d H:i:s");
+                    $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = "INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, {$language_id}, {$reference_id}, 'k2_items', 'extra_fields', ".$db->Quote($extra_fields).", '','', ".$db->Quote($modified).", {$modified_by}, {$published} )";
@@ -158,11 +163,11 @@ class plgSystemK2 extends JPlugin
                 $result = $db->loadResult();
 
                 if ($result > 0) {
-                    $query = "UPDATE #__jf_content SET value=".$db->Quote($extra_fields_search)." WHERE reference_field = 'extra_fields_search' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_items'";
+                    $query = 'UPDATE #__jf_content SET value='.$db->Quote($extra_fields_search)." WHERE reference_field = 'extra_fields_search' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_items'";
                     $db->setQuery($query);
                     $db->query();
                 } else {
-                    $modified = date("Y-m-d H:i:s");
+                    $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = "INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, {$language_id}, {$reference_id}, 'k2_items', 'extra_fields_search', ".$db->Quote($extra_fields_search).", '','', ".$db->Quote($modified).", {$modified_by}, {$published} )";
@@ -190,7 +195,7 @@ class plgSystemK2 extends JPlugin
                 $category->load($category_id);
                 $group = $category->extraFieldsGroup;
                 $db = JFactory::getDbo();
-                $query = "SELECT * FROM #__k2_extra_fields WHERE `group`=".$db->Quote($group)." AND published=1 ORDER BY ordering";
+                $query = 'SELECT * FROM #__k2_extra_fields WHERE `group`='.$db->Quote($group).' AND published=1 ORDER BY ordering';
                 $db->setQuery($query);
                 $extraFields = $db->loadObjectList();
 
@@ -235,7 +240,7 @@ class plgSystemK2 extends JPlugin
                 $reference_id = JRequest::getInt('reference_id');
                 $extraFieldType = JRequest::getVar('extraFieldType');
 
-                $objects = array();
+                $objects = [];
                 $values = JRequest::getVar('option_value');
                 $names = JRequest::getVar('option_name');
                 $target = JRequest::getVar('option_target');
@@ -271,11 +276,11 @@ class plgSystemK2 extends JPlugin
                 $result = $db->loadResult();
 
                 if ($result > 0) {
-                    $query = "UPDATE #__jf_content SET value=".$db->Quote($value)." WHERE reference_field = 'value' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_extra_fields'";
+                    $query = 'UPDATE #__jf_content SET value='.$db->Quote($value)." WHERE reference_field = 'value' AND language_id = {$language_id} AND reference_id = {$reference_id} AND reference_table='k2_extra_fields'";
                     $db->setQuery($query);
                     $db->query();
                 } else {
-                    $modified = date("Y-m-d H:i:s");
+                    $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = "INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, {$language_id}, {$reference_id}, 'k2_extra_fields', 'value', ".$db->Quote($value).", '','', ".$db->Quote($modified).", {$modified_by}, {$published} )";
@@ -365,7 +370,6 @@ class plgSystemK2 extends JPlugin
         }
         // --- JoomFish integration [finish] ---
 
-        return;
     }
 
     public function onAfterRoute()
@@ -451,10 +455,10 @@ class plgSystemK2 extends JPlugin
                 $app->close();
             }
             if (K2_JVERSION != '15') {
-                require_once(JPATH_SITE.'/components/com_users/controller.php');
+                require_once JPATH_SITE.'/components/com_users/controller.php';
                 $controller = new UsersController();
             } else {
-                require_once(JPATH_SITE.'/components/com_user/controller.php');
+                require_once JPATH_SITE.'/components/com_user/controller.php';
                 $controller = new UserController();
             }
 
@@ -486,7 +490,7 @@ class plgSystemK2 extends JPlugin
             }
             $view->assignRef('editor', $editor);
 
-            $lists = array();
+            $lists = [];
             $genderOptions[] = JHTML::_('select.option', 'n', JText::_('K2_NOT_SPECIFIED'));
             $genderOptions[] = JHTML::_('select.option', 'm', JText::_('K2_MALE'));
             $genderOptions[] = JHTML::_('select.option', 'f', JText::_('K2_FEMALE'));
@@ -496,10 +500,10 @@ class plgSystemK2 extends JPlugin
             $view->assignRef('K2Params', $params);
             $view->assignRef('recaptchaClass', $recaptchaClass);
 
-            $K2Plugins = $dispatcher->trigger('onRenderAdminForm', array(
+            $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [
                 &$K2User,
-                'user'
-            ));
+                'user',
+            ]);
             $view->assignRef('K2Plugins', $K2Plugins);
 
             $view->assignRef('K2User', $K2User);
@@ -543,10 +547,10 @@ class plgSystemK2 extends JPlugin
             }
 
             if (K2_JVERSION != '15') {
-                require_once(JPATH_SITE.'/components/com_users/controller.php');
+                require_once JPATH_SITE.'/components/com_users/controller.php';
                 $controller = new UsersController();
             } else {
-                require_once(JPATH_SITE.'/components/com_user/controller.php');
+                require_once JPATH_SITE.'/components/com_user/controller.php';
                 $controller = new UserController();
             }
 
@@ -574,10 +578,10 @@ class plgSystemK2 extends JPlugin
             if (K2_JVERSION == '15') {
                 JFilterOutput::objectHTMLSafe($K2User);
             } else {
-                JFilterOutput::objectHTMLSafe($K2User, ENT_QUOTES, array(
+                JFilterOutput::objectHTMLSafe($K2User, ENT_QUOTES, [
                     'params',
-                    'plugins'
-                ));
+                    'plugins',
+                ]);
             }
 
             if ($params->get('K2ProfileEditor')) {
@@ -588,7 +592,7 @@ class plgSystemK2 extends JPlugin
             }
             $view->assignRef('editor', $editor);
 
-            $lists = array();
+            $lists = [];
             $genderOptions[] = JHTML::_('select.option', 'n', JText::_('K2_NOT_SPECIFIED'));
             $genderOptions[] = JHTML::_('select.option', 'm', JText::_('K2_MALE'));
             $genderOptions[] = JHTML::_('select.option', 'f', JText::_('K2_FEMALE'));
@@ -596,10 +600,10 @@ class plgSystemK2 extends JPlugin
 
             $view->assignRef('lists', $lists);
 
-            $K2Plugins = $dispatcher->trigger('onRenderAdminForm', array(
+            $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [
                 &$K2User,
-                'user'
-            ));
+                'user',
+            ]);
             $view->assignRef('K2Plugins', $K2Plugins);
 
             $view->assignRef('K2User', $K2User);
@@ -677,8 +681,8 @@ class plgSystemK2 extends JPlugin
             if ($user->guest) {
                 if ($caching) {
                     JResponse::allowCache(true);
-                    JResponse::setHeader('Cache-Control', 'public, max-age='.$cacheTTL.', stale-while-revalidate='.($cacheTTL*2).', stale-if-error='.($cacheTTL*5), true);
-                    JResponse::setHeader('Expires', gmdate('D, d M Y H:i:s', time()+$cacheTTL).' GMT', true);
+                    JResponse::setHeader('Cache-Control', 'public, max-age='.$cacheTTL.', stale-while-revalidate='.($cacheTTL * 2).', stale-if-error='.($cacheTTL * 5), true);
+                    JResponse::setHeader('Expires', gmdate('D, d M Y H:i:s', time() + $cacheTTL).' GMT', true);
                     JResponse::setHeader('Pragma', 'public', true);
                 }
                 JResponse::setHeader('X-Logged-In', 'False', true);
@@ -703,20 +707,20 @@ class plgSystemK2 extends JPlugin
 
             // OpenGraph meta tags
             if ($params->get('facebookMetatags', 1)) {
-                $searches = array(
+                $searches = [
                     '<meta name="og:url"',
                     '<meta name="og:title"',
                     '<meta name="og:type"',
                     '<meta name="og:image"',
-                    '<meta name="og:description"'
-                );
-                $replacements = array(
+                    '<meta name="og:description"',
+                ];
+                $replacements = [
                     '<meta property="og:url"',
                     '<meta property="og:title"',
                     '<meta property="og:type"',
                     '<meta property="og:image"',
-                    '<meta property="og:description"'
-                );
+                    '<meta property="og:description"',
+                ];
                 if (strpos($response, 'http://ogp.me/ns#') === false) {
                     $searches[] = '<html ';
                     $searches[] = '<html>';
@@ -728,8 +732,6 @@ class plgSystemK2 extends JPlugin
             }
         }
     }
-
-
 
     /* ============================================ */
     /* ============= Helper Functions ============= */
@@ -757,6 +759,7 @@ class plgSystemK2 extends JPlugin
                 }
             }
         }
+
         return $value;
     }
 

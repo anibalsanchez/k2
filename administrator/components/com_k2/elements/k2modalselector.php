@@ -1,17 +1,21 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php');
+require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
 class K2ElementK2modalselector extends K2Element
 {
@@ -51,7 +55,7 @@ class K2ElementK2modalselector extends K2Element
         if (!$value) {
             $value = '';
         }
-        $saved = array();
+        $saved = [];
         if (is_string($value) && !empty($value)) {
             $saved[] = $value;
         }
@@ -91,8 +95,8 @@ class K2ElementK2modalselector extends K2Element
                     $entryName = $row->title;
                     $entryValue = $row->id;
                     $entryDate = '<br /><b>'.JHTML::_('date', $row->created, $dateFormat).'</b>';
-                    if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5("Image".$row->id).'_XS.jpg')) {
-                        $entryImage = '<img src="'.JURI::root(true).'/media/k2/items/cache/'.md5("Image".$row->id).'_XS.jpg" />';
+                    if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$row->id).'_XS.jpg')) {
+                        $entryImage = '<img src="'.JURI::root(true).'/media/k2/items/cache/'.md5('Image'.$row->id).'_XS.jpg" />';
                     } else {
                         $entryImage = '<img src="'.JURI::root(true).'/media/k2/assets/images/backend/placeholder.svg" />';
                     }
@@ -150,7 +154,7 @@ class K2ElementK2modalselector extends K2Element
                     $entryName = $row->title;
                     $entryValue = $row->id;
                 }
-                $view = "items";
+                $view = 'items';
             }
             if ($scope == 'category') {
                 if ($value) {
@@ -159,7 +163,7 @@ class K2ElementK2modalselector extends K2Element
                     $entryName = $row->name;
                     $entryValue = $row->id;
                 }
-                $view = "categories";
+                $view = 'categories';
             }
             if ($scope == 'user') {
                 if ($value) {
@@ -167,7 +171,7 @@ class K2ElementK2modalselector extends K2Element
                     $entryName = $row->name;
                     $entryValue = $row->id;
                 }
-                $view = "users";
+                $view = 'users';
             }
             if ($scope == 'tag') {
                 if ($value) {
@@ -178,7 +182,7 @@ class K2ElementK2modalselector extends K2Element
                     $entryName = $row->name;
                     $entryValue = htmlspecialchars($row->name, ENT_QUOTES, 'utf-8');
                 }
-                $view = "tags";
+                $view = 'tags';
             }
 
             $output = '

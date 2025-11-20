@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -15,18 +20,31 @@ require_once JPATH_ADMINISTRATOR.'/components/com_k2/tables/table.php';
 class TableK2Category extends K2Table
 {
     public $id = null;
+
     public $name = null;
+
     public $alias = null;
+
     public $description = null;
+
     public $parent = null;
+
     public $extraFieldsGroup = null;
+
     public $published = null;
+
     public $image = null;
+
     public $access = null;
+
     public $ordering = null;
+
     public $params = null;
+
     public $trash = null;
+
     public $plugins = null;
+
     public $language = null;
 
     public function __construct(&$db)
@@ -36,7 +54,7 @@ class TableK2Category extends K2Table
 
     public function load($oid = null, $reset = false)
     {
-        static $K2CategoriesInstances = array();
+        static $K2CategoriesInstances = [];
         if (isset($K2CategoriesInstances[$oid])) {
             return $this->bind($K2CategoriesInstances[$oid]);
         }
@@ -61,11 +79,12 @@ class TableK2Category extends K2Table
         $result = $db->loadAssoc();
         if ($result) {
             $K2CategoriesInstances[$oid] = $result;
+
             return $this->bind($K2CategoriesInstances[$oid]);
-        } else {
-            $this->setError($db->getErrorMsg());
-            return false;
         }
+        $this->setError($db->getErrorMsg());
+
+        return false;
     }
 
     public function check()
@@ -75,6 +94,7 @@ class TableK2Category extends K2Table
         $this->name = JString::trim($this->name);
         if ($this->name == '') {
             $this->setError(JText::_('K2_CATEGORY_MUST_HAVE_A_NAME'));
+
             return false;
         }
         if (empty($this->alias)) {
@@ -86,8 +106,8 @@ class TableK2Category extends K2Table
             if (JPluginHelper::isEnabled('system', 'unicodeslug') || JPluginHelper::isEnabled('system', 'jw_unicodeSlugsExtended')) {
                 $this->alias = JFilterOutput::stringURLSafe($this->alias);
             } else {
-                mb_internal_encoding("UTF-8");
-                mb_regex_encoding("UTF-8");
+                mb_internal_encoding('UTF-8');
+                mb_regex_encoding('UTF-8');
                 $this->alias = trim(mb_strtolower($this->alias));
                 $this->alias = str_replace('-', ' ', $this->alias);
                 $this->alias = str_replace('/', '-', $this->alias);
@@ -103,7 +123,7 @@ class TableK2Category extends K2Table
                 }
                 if (trim(str_replace('-', '', $this->alias)) == '') {
                     $datenow = JFactory::getDate();
-                    $this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
+                    $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
                 }
                 $this->alias = trim($this->alias, '-.');
             }
@@ -130,11 +150,11 @@ class TableK2Category extends K2Table
         }
 
         if (K2_JVERSION == '15' || $params->get('enforceSEFReplacements')) {
-            $SEFReplacements = array();
+            $SEFReplacements = [];
             $items = explode(',', $params->get('SEFReplacements'));
             foreach ($items as $item) {
                 if (!empty($item)) {
-                    @list($src, $dst) = explode('|', trim($item));
+                    @[$src, $dst] = explode('|', trim($item));
                     $SEFReplacements[trim($src)] = trim($dst);
                 }
             }
@@ -149,7 +169,7 @@ class TableK2Category extends K2Table
         if (K2_JVERSION == '15') {
             if (trim(str_replace('-', '', $this->alias)) == '') {
                 $datenow = JFactory::getDate();
-                $this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
+                $this->alias = $datenow->toFormat('%Y-%m-%d-%H-%M-%S');
             }
         }
 
@@ -157,10 +177,10 @@ class TableK2Category extends K2Table
         $params = JComponentHelper::getParams('com_k2');
         if ($params->get('k2Sef') && !$params->get('k2SefInsertCatId')) {
             $db = JFactory::getDbo();
-            $db->setQuery("SELECT id FROM #__k2_categories WHERE alias = ".$db->quote($this->alias)." AND id != ".(int)$this->id);
+            $db->setQuery('SELECT id FROM #__k2_categories WHERE alias = '.$db->quote($this->alias).' AND id != '.(int) $this->id);
             $result = count($db->loadObjectList());
             if ($result > 0) {
-                $this->alias .= '-'.((int)$result + 1);
+                $this->alias .= '-'.((int) $result + 1);
                 $app = JFactory::getApplication();
                 $app->enqueueMessage(JText::_('K2_WARNING_DUPLICATE_TITLE_ALIAS_DETECTED'), 'notice');
             }

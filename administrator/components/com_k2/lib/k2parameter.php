@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -34,8 +39,6 @@ if (K2_JVERSION == '30') {
     /**
      * Parameter handler
      *
-     * @package     Joomla.Framework
-     * @subpackage  Parameter
      * @since       1.5
      */
     class K2Parameter extends JParameter
@@ -43,7 +46,6 @@ if (K2_JVERSION == '30') {
         /**
          * optional namespace
          *
-         * @access  private
          * @var     array
          * @since   1.5
          */
@@ -52,7 +54,6 @@ if (K2_JVERSION == '30') {
         /**
          * Constructor
          *
-         * @access  protected
          * @param   string The raw params text
          * @param   string Path to the xml setup file
          * @param   string Namespace to the xml setup file
@@ -87,7 +88,6 @@ if (K2_JVERSION == '30') {
         /**
          * Get a value
          *
-         * @access  public
          * @param   string The name of the param
          * @param   mixed The default value if not found
          * @return  string
@@ -100,6 +100,7 @@ if (K2_JVERSION == '30') {
             }
             $value = $this->getValue($group.'.'.$this->namespace.$key);
             $result = (empty($value) && $value !== 0 && $value !== '0') ? $default : $value; // double-check and cleanup
+
             return $result;
         }
 
@@ -123,10 +124,11 @@ if (K2_JVERSION == '30') {
 
             // error happened
             if ($element === false) {
-                $result = array();
+                $result = [];
                 $result[0] = $node->attributes('name');
                 $result[1] = JText::_('K2_ELEMENT_NOT_DEFINED_FOR_TYPE').' = '.$type;
                 $result[5] = $result[0];
+
                 return $result;
             }
 
@@ -142,7 +144,6 @@ if (K2_JVERSION == '30') {
         /**
          * Get a registry value
          *
-         * @access  public
          * @param   string  $regpath    Registry path (e.g. joomla.content.showauthor)
          * @param   mixed   $default    Optional default value
          * @return  mixed   Value of entry or null
@@ -177,13 +178,13 @@ if (K2_JVERSION == '30') {
                     }
                 }
             }
+
             return $result;
         }
 
         /**
          * Render
          *
-         * @access  public
          * @param   string  The name of the control, or the default text area if a setup file is not found
          * @return  string  HTML
          * @since   1.5
@@ -195,7 +196,7 @@ if (K2_JVERSION == '30') {
             }
 
             $params = $this->getParams($name, $group);
-            $html = array();
+            $html = [];
             $html[] = '<table class="paramlist admintable" cellspacing="1">';
 
             if ($description = $this->_xml[$group]->attributes('description')) {
@@ -218,7 +219,7 @@ if (K2_JVERSION == '30') {
             }
 
             if (count($params) < 1) {
-                $html[] = "<tr><td colspan=\"2\"><i>".(K2_JVERSION != '15') ? JText::_('JLIB_HTML_NO_PARAMETERS_FOR_THIS_ITEM') : JText::_('There are no Parameters for this item')."</i></td></tr>";
+                $html[] = '<tr><td colspan="2"><i>'.(K2_JVERSION != '15') ? JText::_('JLIB_HTML_NO_PARAMETERS_FOR_THIS_ITEM') : JText::_('There are no Parameters for this item').'</i></td></tr>';
             }
 
             $html[] = '</table>';

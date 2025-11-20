@@ -1,18 +1,22 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_SITE.'/components/com_k2/helpers/route.php');
-require_once(JPATH_SITE.'/components/com_k2/helpers/utilities.php');
+require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
+require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
 
 class modK2ContentHelper
 {
@@ -49,7 +53,7 @@ class modK2ContentHelper
         if (K2_JVERSION != '15') {
             if ($app->getLanguageFilter()) {
                 $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).", ".$db->Quote('*');
+                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
             }
         }
 
@@ -70,8 +74,8 @@ class modK2ContentHelper
                         AND c.published = 1
                         AND c.access {$aclCheck}
                         AND c.trash = 0
-                        AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                        AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                        AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                        AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                         AND i.id IN({$ids})";
 
             if ($languageFilter) {
@@ -82,35 +86,35 @@ class modK2ContentHelper
             $db->setQuery($query);
             $items = $db->loadObjectList();
         } else {
-            $query = "/* Frontend / mod_k2_content */ SELECT i.*,";
+            $query = '/* Frontend / mod_k2_content */ SELECT i.*,';
 
             if ($ordering == 'modified') {
-                $query .= " CASE WHEN i.modified = 0 THEN i.created ELSE i.modified END AS lastChanged,";
+                $query .= ' CASE WHEN i.modified = 0 THEN i.created ELSE i.modified END AS lastChanged,';
             }
 
-            $query .= " c.name AS categoryname, c.id AS categoryid, c.alias AS categoryalias, c.params AS categoryparams";
+            $query .= ' c.name AS categoryname, c.id AS categoryid, c.alias AS categoryalias, c.params AS categoryparams';
 
             if ($ordering == 'best') {
-                $query .= ", (r.rating_sum/r.rating_count) AS rating";
+                $query .= ', (r.rating_sum/r.rating_count) AS rating';
             }
 
             if ($ordering == 'comments') {
-                $query .= ", COUNT(comments.id) AS numOfComments";
+                $query .= ', COUNT(comments.id) AS numOfComments';
             }
 
-            $query .= " FROM #__k2_items AS i INNER JOIN #__k2_categories AS c ON c.id = i.catid";
+            $query .= ' FROM #__k2_items AS i INNER JOIN #__k2_categories AS c ON c.id = i.catid';
 
             if ($ordering == 'best') {
-                $query .= " LEFT JOIN #__k2_rating AS r ON r.itemID = i.id";
+                $query .= ' LEFT JOIN #__k2_rating AS r ON r.itemID = i.id';
             }
 
             if ($ordering == 'comments') {
-                $query .= " LEFT JOIN #__k2_comments AS comments ON comments.itemID = i.id";
+                $query .= ' LEFT JOIN #__k2_comments AS comments ON comments.itemID = i.id';
             }
 
             $tagsFilter = $params->get('tags');
             if ($tagsFilter && is_array($tagsFilter) && count($tagsFilter)) {
-                $query .= " INNER JOIN #__k2_tags_xref tags_xref ON tags_xref.itemID = i.id";
+                $query .= ' INNER JOIN #__k2_tags_xref tags_xref ON tags_xref.itemID = i.id';
             }
 
             $query .= " WHERE i.published = 1
@@ -119,8 +123,8 @@ class modK2ContentHelper
                 AND c.published = 1
                 AND c.access {$aclCheck}
                 AND c.trash = 0
-                AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")";
+                AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')';
 
             if ($params->get('catfilter') && !is_null($cid)) {
                 if ($params->get('getChildren')) {
@@ -133,16 +137,16 @@ class modK2ContentHelper
                     if ($params->get('catFilterInclusion', 'include') == 'include') {
                         if (is_array($cid)) {
                             sort($cid);
-                            $query .= " AND i.catid IN(".implode(',', $cid).")";
+                            $query .= ' AND i.catid IN('.implode(',', $cid).')';
                         } else {
-                            $query .= " AND i.catid = ".(int) $cid;
+                            $query .= ' AND i.catid = '.(int) $cid;
                         }
                     } else {
                         if (is_array($cid)) {
                             sort($cid);
-                            $query .= " AND i.catid NOT IN(".implode(',', $cid).")";
+                            $query .= ' AND i.catid NOT IN('.implode(',', $cid).')';
                         } else {
-                            $query .= " AND i.catid != ".(int) $cid;
+                            $query .= ' AND i.catid != '.(int) $cid;
                         }
                     }
                 }
@@ -150,20 +154,20 @@ class modK2ContentHelper
 
             $tagsFilter = $params->get('tags');
             if ($tagsFilter && is_array($tagsFilter) && count($tagsFilter)) {
-                $query .= " AND tags_xref.tagID IN(".implode(',', $tagsFilter).")";
+                $query .= ' AND tags_xref.tagID IN('.implode(',', $tagsFilter).')';
             }
 
             $usersFilter = $params->get('users');
             if ($usersFilter && is_array($usersFilter) && count($usersFilter)) {
-                $query .= " AND i.created_by IN(".implode(',', $usersFilter).") AND i.created_by_alias = ''";
+                $query .= ' AND i.created_by IN('.implode(',', $usersFilter).") AND i.created_by_alias = ''";
             }
 
             if ($params->get('FeaturedItems') == '0') {
-                $query .= " AND i.featured != 1";
+                $query .= ' AND i.featured != 1';
             }
 
             if ($params->get('FeaturedItems') == '2') {
-                $query .= " AND i.featured = 1";
+                $query .= ' AND i.featured = 1';
             }
 
             if ($params->get('videosOnly')) {
@@ -175,11 +179,10 @@ class modK2ContentHelper
             }
 
             if ($ordering == 'comments') {
-                $query .= " AND comments.published = 1";
+                $query .= ' AND comments.published = 1';
             }
 
             switch ($ordering) {
-
                 case 'date':
                     $orderby = 'i.created ASC';
                     break;
@@ -218,7 +221,7 @@ class modK2ContentHelper
                             $date = (K2_JVERSION != '15') ? $jnow->format('%Y-%m-%d').' 00:00:00' : $jnow->toFormat('%Y-%m-%d').' 00:00:00';
                             $query .= " AND i.publish_up > '{$date}'";
                         } else {
-                            $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange')." DAY)";
+                            $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange').' DAY)';
                         }
                     }
                     $orderby = 'i.hits DESC';
@@ -234,7 +237,7 @@ class modK2ContentHelper
 
                 case 'comments':
                     if ($params->get('popularityRange')) {
-                        $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange')." DAY)";
+                        $query .= " AND i.created > DATE_SUB('{$now}', INTERVAL ".$params->get('popularityRange').' DAY)';
                     }
                     $orderby = 'numOfComments DESC';
                     break;
@@ -276,7 +279,6 @@ class modK2ContentHelper
 
         if (count($items)) {
             foreach ($items as $item) {
-
                 // Item (read more...) link
                 $item->link = urldecode(JRoute::_(K2HelperRoute::getItemRoute($item->id.':'.urlencode($item->alias), $item->catid.':'.urlencode($item->categoryalias))));
 
@@ -290,7 +292,7 @@ class modK2ContentHelper
 
                 // Manipulate tag rendering in the feed URL
                 if (JRequest::getCmd('format') == 'feed') {
-                    $tagsForFeed = array();
+                    $tagsForFeed = [];
                     $tags = $model->getItemTags($item->id);
                     if (is_array($tags) && count($tags)) {
                         foreach ($tags as $tag) {
@@ -339,20 +341,20 @@ class modK2ContentHelper
                     $imageTimestamp = '';
                     $dateModified = ((int) $item->modified) ? $item->modified : '';
                     if ($componentParams->get('imageTimestamp', 1) && $dateModified) {
-                        $imageTimestamp = '?t='.strftime("%Y%m%d_%H%M%S", strtotime($dateModified));
+                        $imageTimestamp = '?t='.strftime('%Y%m%d_%H%M%S', strtotime($dateModified));
                     }
 
-                    $imageFilenamePrefix = md5("Image".$item->id);
+                    $imageFilenamePrefix = md5('Image'.$item->id);
                     $imagePathPrefix = JUri::base(true).'/media/k2/items/cache/'.$imageFilenamePrefix;
 
                     // Check if the "generic" variant exists
                     if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.$imageFilenamePrefix.'_Generic.jpg')) {
                         $item->imageGeneric = $imagePathPrefix.'_Generic.jpg'.$imageTimestamp;
-                        $item->imageXSmall  = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
-                        $item->imageSmall   = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
-                        $item->imageMedium  = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
-                        $item->imageLarge   = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
-                        $item->imageXLarge  = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
+                        $item->imageXSmall = $imagePathPrefix.'_XS.jpg'.$imageTimestamp;
+                        $item->imageSmall = $imagePathPrefix.'_S.jpg'.$imageTimestamp;
+                        $item->imageMedium = $imagePathPrefix.'_M.jpg'.$imageTimestamp;
+                        $item->imageLarge = $imagePathPrefix.'_L.jpg'.$imageTimestamp;
+                        $item->imageXLarge = $imagePathPrefix.'_XL.jpg'.$imageTimestamp;
 
                         $item->imageProperties = new stdClass();
                         $item->imageProperties->filenamePrefix = $imageFilenamePrefix;
@@ -378,26 +380,26 @@ class modK2ContentHelper
                     $mediaTempText->text = $item->video;
                     if ($params->get('JPlugins', 1)) {
                         if (K2_JVERSION == '15') {
-                            $dispatcher->trigger('onPrepareContent', array(
-                            &$mediaTempText,
-                            &$params,
-                            $limitstart
-                        ));
+                            $dispatcher->trigger('onPrepareContent', [
+                                &$mediaTempText,
+                                &$params,
+                                $limitstart,
+                            ]);
                         } else {
-                            $dispatcher->trigger('onContentPrepare', array(
-                            'mod_k2_content.item-media',
-                            &$mediaTempText,
-                            &$params,
-                            $limitstart
-                        ));
+                            $dispatcher->trigger('onContentPrepare', [
+                                'mod_k2_content.item-media',
+                                &$mediaTempText,
+                                &$params,
+                                $limitstart,
+                            ]);
                         }
                     }
                     if ($params->get('K2Plugins', 1)) {
-                        $dispatcher->trigger('onK2PrepareContent', array(
-                        &$mediaTempText,
-                        &$params,
-                        $limitstart
-                    ));
+                        $dispatcher->trigger('onK2PrepareContent', [
+                            &$mediaTempText,
+                            &$params,
+                            $limitstart,
+                        ]);
                     }
                     $item->video = $mediaTempText->text;
                 }
@@ -415,26 +417,26 @@ class modK2ContentHelper
                                 $extraFieldTempText->text = $extraField->value;
                                 if ($params->get('JPlugins', 1)) {
                                     if (K2_JVERSION == '15') {
-                                        $dispatcher->trigger('onPrepareContent', array(
+                                        $dispatcher->trigger('onPrepareContent', [
                                             &$extraFieldTempText,
                                             &$params,
-                                            $limitstart
-                                        ));
+                                            $limitstart,
+                                        ]);
                                     } else {
-                                        $dispatcher->trigger('onContentPrepare', array(
+                                        $dispatcher->trigger('onContentPrepare', [
                                             'mod_k2_content.item-extrafields',
                                             &$extraFieldTempText,
                                             &$params,
-                                            $limitstart
-                                        ));
+                                            $limitstart,
+                                        ]);
                                     }
                                 }
                                 if ($params->get('K2Plugins', 1)) {
-                                    $dispatcher->trigger('onK2PrepareContent', array(
+                                    $dispatcher->trigger('onK2PrepareContent', [
                                         &$extraFieldTempText,
                                         &$params,
-                                        $limitstart
-                                    ));
+                                        $limitstart,
+                                    ]);
                                 }
                                 $extraField->value = $extraFieldTempText->text;
                             }
@@ -470,33 +472,33 @@ class modK2ContentHelper
                             $item->event->BeforeDisplay = '';
                             $item->event->AfterDisplay = '';
 
-                            $results = $dispatcher->trigger('onContentAfterTitle', array('mod_k2_content', &$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onContentAfterTitle', ['mod_k2_content', &$item, &$params, $limitstart]);
                             $item->event->AfterDisplayTitle = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onContentBeforeDisplay', array('mod_k2_content', &$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onContentBeforeDisplay', ['mod_k2_content', &$item, &$params, $limitstart]);
                             $item->event->BeforeDisplayContent = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onContentAfterDisplay', array('mod_k2_content', &$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onContentAfterDisplay', ['mod_k2_content', &$item, &$params, $limitstart]);
                             $item->event->AfterDisplayContent = trim(implode("\n", $results));
 
-                            $dispatcher->trigger('onContentPrepare', array('mod_k2_content', &$item, &$params, $limitstart));
+                            $dispatcher->trigger('onContentPrepare', ['mod_k2_content', &$item, &$params, $limitstart]);
                         } else {
-                            $results = $dispatcher->trigger('onBeforeDisplay', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onBeforeDisplay', [&$item, &$params, $limitstart]);
                             $item->event->BeforeDisplay = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onAfterDisplay', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onAfterDisplay', [&$item, &$params, $limitstart]);
                             $item->event->AfterDisplay = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onAfterDisplayTitle', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onAfterDisplayTitle', [&$item, &$params, $limitstart]);
                             $item->event->AfterDisplayTitle = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onBeforeDisplayContent', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onBeforeDisplayContent', [&$item, &$params, $limitstart]);
                             $item->event->BeforeDisplayContent = trim(implode("\n", $results));
 
-                            $results = $dispatcher->trigger('onAfterDisplayContent', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onAfterDisplayContent', [&$item, &$params, $limitstart]);
                             $item->event->AfterDisplayContent = trim(implode("\n", $results));
 
-                            $dispatcher->trigger('onPrepareContent', array(&$item, &$params, $limitstart));
+                            $dispatcher->trigger('onPrepareContent', [&$item, &$params, $limitstart]);
                         }
                     }
 
@@ -510,25 +512,25 @@ class modK2ContentHelper
 
                     // K2 Plugins
                     if ($params->get('K2Plugins', 1)) {
-                        $results = $dispatcher->trigger('onK2BeforeDisplay', array(&$item, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2BeforeDisplay', [&$item, &$params, $limitstart]);
                         $item->event->K2BeforeDisplay = trim(implode("\n", $results));
 
-                        $results = $dispatcher->trigger('onK2AfterDisplay', array(&$item, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2AfterDisplay', [&$item, &$params, $limitstart]);
                         $item->event->K2AfterDisplay = trim(implode("\n", $results));
 
-                        $results = $dispatcher->trigger('onK2AfterDisplayTitle', array(&$item, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2AfterDisplayTitle', [&$item, &$params, $limitstart]);
                         $item->event->K2AfterDisplayTitle = trim(implode("\n", $results));
 
-                        $results = $dispatcher->trigger('onK2BeforeDisplayContent', array(&$item, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2BeforeDisplayContent', [&$item, &$params, $limitstart]);
                         $item->event->K2BeforeDisplayContent = trim(implode("\n", $results));
 
-                        $results = $dispatcher->trigger('onK2AfterDisplayContent', array(&$item, &$params, $limitstart));
+                        $results = $dispatcher->trigger('onK2AfterDisplayContent', [&$item, &$params, $limitstart]);
                         $item->event->K2AfterDisplayContent = trim(implode("\n", $results));
 
-                        $dispatcher->trigger('onK2PrepareContent', array(&$item, &$params, $limitstart));
+                        $dispatcher->trigger('onK2PrepareContent', [&$item, &$params, $limitstart]);
 
                         if ($params->get('itemCommentsCounter')) {
-                            $results = $dispatcher->trigger('onK2CommentsCounter', array(&$item, &$params, $limitstart));
+                            $results = $dispatcher->trigger('onK2CommentsCounter', [&$item, &$params, $limitstart]);
                             $item->event->K2CommentsCounter = trim(implode("\n", $results));
                         }
                     }
@@ -538,7 +540,7 @@ class modK2ContentHelper
                 $item->introtext = $item->text;
 
                 // Remove the plugin tags
-                $item->introtext = preg_replace("#{(.*?)}(.*?){/(.*?)}#s", '', $item->introtext);
+                $item->introtext = preg_replace('#{(.*?)}(.*?){/(.*?)}#s', '', $item->introtext);
 
                 // Author (user)
                 if ($params->get('itemAuthor')) {
@@ -554,7 +556,7 @@ class modK2ContentHelper
                         $author = JFactory::getUser($item->created_by);
                         $item->author = $author->name;
 
-                        $query = "SELECT `description`, `gender` FROM #__k2_users WHERE userID=".(int)$author->id;
+                        $query = 'SELECT `description`, `gender` FROM #__k2_users WHERE userID='.(int) $author->id;
                         $db->setQuery($query, 0, 1);
 
                         $result = $db->loadObject();

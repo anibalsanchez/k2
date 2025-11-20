@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -26,7 +31,7 @@ if (K2_JVERSION != '15') {
 }
 
 // JoomlaWorks reference parameters
-$mod_name = "mod_k2_quickicons";
+$mod_name = 'mod_k2_quickicons';
 $mod_copyrights_start = "\n\n<!-- JoomlaWorks \"K2 QuickIcons\" Module starts here -->\n";
 $mod_copyrights_end = "\n<!-- JoomlaWorks \"K2 QuickIcons\" Module ends here -->\n\n";
 
@@ -37,8 +42,8 @@ $user = JFactory::getUser();
 
 // Module parameters
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
-$modCSSStyling = (int)$params->get('modCSSStyling', 1);
-$modLogo = (int)$params->get('modLogo', 1);
+$modCSSStyling = (int) $params->get('modCSSStyling', 1);
+$modLogo = (int) $params->get('modLogo', 1);
 
 // Component parameters
 $componentParams = JComponentHelper::getParams('com_k2');
@@ -51,5 +56,5 @@ if ($modCSSStyling) {
 
 // Output content with template
 echo $mod_copyrights_start;
-require(JModuleHelper::getLayoutPath($mod_name, 'default'));
+require JModuleHelper::getLayoutPath($mod_name, 'default');
 echo $mod_copyrights_end;

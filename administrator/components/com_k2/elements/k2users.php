@@ -1,16 +1,21 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php');
+require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
 class K2ElementK2Users extends K2Element
 {
@@ -54,10 +59,10 @@ class K2ElementK2Users extends K2Element
 			});
 		');
 
-        $options = array();
+        $options = [];
         if (is_array($value) && count($value)) {
             $db = JFactory::getDbo();
-            $query = "SELECT id AS value, name AS text FROM #__users WHERE id IN(".implode(',', $value).")";
+            $query = 'SELECT id AS value, name AS text FROM #__users WHERE id IN('.implode(',', $value).')';
             $db->setQuery($query);
             $options = $db->loadObjectList();
         }

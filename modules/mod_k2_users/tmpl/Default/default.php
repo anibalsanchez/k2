@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -12,10 +11,15 @@ defined('_JEXEC') or die;
 
 ?>
 
-<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2UsersBlock<?php if ($params->get('moduleclass_sfx')) echo ' '.$params->get('moduleclass_sfx'); ?>">
+<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2UsersBlock<?php if ($params->get('moduleclass_sfx')) {
+    echo ' '.$params->get('moduleclass_sfx');
+} ?>">
     <ul>
-        <?php foreach($users as $key=>$user): ?>
-        <li class="<?php echo ($key%2) ? "odd" : "even"; if (count($users)==$key+1) echo ' lastItem'; ?>">
+        <?php foreach ($users as $key=>$user): ?>
+        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+            if (count($users) == $key + 1) {
+                echo ' lastItem';
+            } ?>">
             <?php if ($userAvatar && !empty($user->avatar)): ?>
             <a class="k2Avatar ubUserAvatar" rel="author" href="<?php echo $user->link; ?>" title="<?php echo K2HelperUtilities::cleanHtml($user->name); ?>">
                 <img src="<?php echo $user->avatar; ?>" alt="<?php echo K2HelperUtilities::cleanHtml($user->name); ?>" style="width:<?php echo $avatarWidth; ?>px;height:auto;" />

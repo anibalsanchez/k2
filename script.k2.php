@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -17,9 +22,9 @@ class Com_K2InstallerScript
     {
         $db = JFactory::getDbo();
 
-        $status = new stdClass;
-        $status->modules = array();
-        $status->plugins = array();
+        $status = new stdClass();
+        $status->modules = [];
+        $status->plugins = [];
 
         $src = $parent->getParent()->getPath('source');
 
@@ -31,14 +36,14 @@ class Com_K2InstallerScript
         // Install K2 modules
         $modules = $manifest->xpath('modules/module');
         foreach ($modules as $module) {
-            $name = (string)$module->attributes()->module;
-            $client = (string)$module->attributes()->client;
+            $name = (string) $module->attributes()->module;
+            $client = (string) $module->attributes()->client;
             if (is_null($client)) {
                 $client = 'site';
             }
             $path = ($client == 'administrator') ? $src.'/administrator/modules/'.$name : $src.'/modules/'.$name;
 
-            $installer = new JInstaller;
+            $installer = new JInstaller();
             $result = $installer->install($path);
             if ($result) {
                 $root = ($client == 'administrator') ? JPATH_ADMINISTRATOR : JPATH_SITE;
@@ -48,17 +53,17 @@ class Com_K2InstallerScript
                 JFile::move($root.'/modules/'.$name.'/'.$name.'.j25.xml', $root.'/modules/'.$name.'/'.$name.'.xml');
             }
 
-            $status->modules[] = array('name' => $name, 'client' => $client, 'result' => $result);
+            $status->modules[] = ['name' => $name, 'client' => $client, 'result' => $result];
 
             if ($client == 'administrator' && !$k2AlreadyInstalled) {
                 $position = (version_compare(JVERSION, '3.0', '<') && $name == 'mod_k2_quickicons') ? 'icon' : 'cpanel';
-                $db->setQuery("UPDATE #__modules SET `position`=".$db->quote($position).", `published`='1' WHERE `module`=".$db->quote($name));
+                $db->setQuery('UPDATE #__modules SET `position`='.$db->quote($position).", `published`='1' WHERE `module`=".$db->quote($name));
                 $db->query();
 
-                $db->setQuery("SELECT id FROM #__modules WHERE `module` = ".$db->quote($name));
-                $id = (int)$db->loadResult();
+                $db->setQuery('SELECT id FROM #__modules WHERE `module` = '.$db->quote($name));
+                $id = (int) $db->loadResult();
 
-                $db->setQuery("INSERT IGNORE INTO #__modules_menu (`moduleid`,`menuid`) VALUES (".$id.", 0)");
+                $db->setQuery('INSERT IGNORE INTO #__modules_menu (`moduleid`,`menuid`) VALUES ('.$id.', 0)');
                 $db->query();
             }
         }
@@ -66,14 +71,14 @@ class Com_K2InstallerScript
         // Install K2 plugins
         $plugins = $manifest->xpath('plugins/plugin');
         foreach ($plugins as $plugin) {
-            $name = (string)$plugin->attributes()->plugin;
-            $group = (string)$plugin->attributes()->group;
+            $name = (string) $plugin->attributes()->plugin;
+            $group = (string) $plugin->attributes()->group;
             $path = $src.'/plugins/'.$group;
             if (JFolder::exists($src.'/plugins/'.$group.'/'.$name)) {
                 $path = $src.'/plugins/'.$group.'/'.$name;
             }
 
-            $installer = new JInstaller;
+            $installer = new JInstaller();
             $result = $installer->install($path);
             if ($result && $group != 'finder') {
                 if (JFile::exists(JPATH_SITE.'/plugins/'.$group.'/'.$name.'/'.$name.'.xml')) {
@@ -83,12 +88,12 @@ class Com_K2InstallerScript
             }
 
             if ($group != 'finder') {
-                $query = "UPDATE #__extensions SET enabled=1 WHERE type='plugin' AND element=".$db->Quote($name)." AND folder=".$db->Quote($group);
+                $query = "UPDATE #__extensions SET enabled=1 WHERE type='plugin' AND element=".$db->Quote($name).' AND folder='.$db->Quote($group);
                 $db->setQuery($query);
                 $db->query();
             }
 
-            $status->plugins[] = array('name' => $name, 'group' => $group, 'result' => $result);
+            $status->plugins[] = ['name' => $name, 'group' => $group, 'result' => $result];
         }
 
         // Install JoomFish elements
@@ -108,12 +113,12 @@ class Com_K2InstallerScript
         }
 
         // Clean up empty entries in #__k2_users table caused by an issue in the K2 user plugin.
-        $query = "DELETE FROM #__k2_users WHERE userID = 0";
+        $query = 'DELETE FROM #__k2_users WHERE userID = 0';
         $db->setQuery($query);
         $db->query();
 
         // User groups (set first 2 user groups)
-        $query = "SELECT COUNT(*) FROM #__k2_user_groups";
+        $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
         $db->setQuery($query);
         $userGroupCount = $db->loadResult();
 
@@ -156,9 +161,9 @@ class Com_K2InstallerScript
     {
         $db = JFactory::getDbo();
 
-        $status = new stdClass;
-        $status->modules = array();
-        $status->plugins = array();
+        $status = new stdClass();
+        $status->modules = [];
+        $status->plugins = [];
 
         // Get extension manifest
         $manifest = $parent->getParent()->manifest;
@@ -166,35 +171,35 @@ class Com_K2InstallerScript
         // Remove K2 modules
         $modules = $manifest->xpath('modules/module');
         foreach ($modules as $module) {
-            $name = (string)$module->attributes()->module;
-            $client = (string)$module->attributes()->client;
+            $name = (string) $module->attributes()->module;
+            $client = (string) $module->attributes()->client;
             $db = JFactory::getDbo();
-            $query = "SELECT `extension_id` FROM `#__extensions` WHERE `type`='module' AND element = ".$db->Quote($name)."";
+            $query = "SELECT `extension_id` FROM `#__extensions` WHERE `type`='module' AND element = ".$db->Quote($name).'';
             $db->setQuery($query);
             $extensions = $db->loadColumn();
             if (count($extensions)) {
                 foreach ($extensions as $id) {
-                    $installer = new JInstaller;
+                    $installer = new JInstaller();
                     $result = $installer->uninstall('module', $id);
                 }
-                $status->modules[] = array('name' => $name, 'client' => $client, 'result' => $result);
+                $status->modules[] = ['name' => $name, 'client' => $client, 'result' => $result];
             }
         }
 
         // Remove K2 plugins
         $plugins = $manifest->xpath('plugins/plugin');
         foreach ($plugins as $plugin) {
-            $name = (string)$plugin->attributes()->plugin;
-            $group = (string)$plugin->attributes()->group;
-            $query = "SELECT `extension_id` FROM #__extensions WHERE `type`='plugin' AND element = ".$db->Quote($name)." AND folder = ".$db->Quote($group);
+            $name = (string) $plugin->attributes()->plugin;
+            $group = (string) $plugin->attributes()->group;
+            $query = "SELECT `extension_id` FROM #__extensions WHERE `type`='plugin' AND element = ".$db->Quote($name).' AND folder = '.$db->Quote($group);
             $db->setQuery($query);
             $extensions = $db->loadColumn();
             if (count($extensions)) {
                 foreach ($extensions as $id) {
-                    $installer = new JInstaller;
+                    $installer = new JInstaller();
                     $result = $installer->uninstall('plugin', $id);
                 }
-                $status->plugins[] = array('name' => $name, 'group' => $group, 'result' => $result);
+                $status->plugins[] = ['name' => $name, 'group' => $group, 'result' => $result];
             }
         }
 
@@ -221,16 +226,16 @@ class Com_K2InstallerScript
         // Categories
         $fields = $db->getTableColumns('#__k2_categories');
         if (!array_key_exists('language', $fields)) {
-            $query = "ALTER TABLE #__k2_categories ADD `language` CHAR(7) NOT NULL";
+            $query = 'ALTER TABLE #__k2_categories ADD `language` CHAR(7) NOT NULL';
             $db->setQuery($query);
             $db->query();
 
-            $query = "ALTER TABLE #__k2_categories ADD INDEX `idx_language` (`language`)";
+            $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_language` (`language`)';
             $db->setQuery($query);
             $db->query();
         }
 
-        $query = "SHOW INDEX FROM #__k2_categories";
+        $query = 'SHOW INDEX FROM #__k2_categories';
         $db->setQuery($query);
         $indexes = $db->loadObjectList();
         $indexExists = false;
@@ -240,13 +245,13 @@ class Com_K2InstallerScript
             }
         }
         if (!$indexExists) {
-            $query = "ALTER TABLE #__k2_categories ADD INDEX `idx_category` (`published`,`access`,`trash`)";
+            $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_category` (`published`,`access`,`trash`)';
             $db->setQuery($query);
             $db->query();
         }
 
         // Comments (add index for comments count)
-        $query = "SHOW INDEX FROM #__k2_comments";
+        $query = 'SHOW INDEX FROM #__k2_comments';
         $db->setQuery($query);
         $indexes = $db->loadObjectList();
         $indexExists = false;
@@ -256,7 +261,7 @@ class Com_K2InstallerScript
             }
         }
         if (!$indexExists) {
-            $query = "ALTER TABLE #__k2_comments ADD INDEX `idx_countComments` (`itemID`, `published`)";
+            $query = 'ALTER TABLE #__k2_comments ADD INDEX `idx_countComments` (`itemID`, `published`)';
             $db->setQuery($query);
             $db->query();
         }
@@ -269,31 +274,31 @@ class Com_K2InstallerScript
             $db->query();
         }
         if (!array_key_exists('language', $fields)) {
-            $query = "ALTER TABLE #__k2_items ADD `language` CHAR(7) NOT NULL";
+            $query = 'ALTER TABLE #__k2_items ADD `language` CHAR(7) NOT NULL';
             $db->setQuery($query);
             $db->query();
 
-            $query = "ALTER TABLE #__k2_items ADD INDEX (`language`)";
+            $query = 'ALTER TABLE #__k2_items ADD INDEX (`language`)';
             $db->setQuery($query);
             $db->query();
         }
         if ($fields['introtext'] == 'text') {
-            $query = "ALTER TABLE #__k2_items MODIFY `introtext` MEDIUMTEXT";
+            $query = 'ALTER TABLE #__k2_items MODIFY `introtext` MEDIUMTEXT';
             $db->setQuery($query);
             $db->query();
         }
         if ($fields['fulltext'] == 'text') {
-            $query = "ALTER TABLE #__k2_items MODIFY `fulltext` MEDIUMTEXT";
+            $query = 'ALTER TABLE #__k2_items MODIFY `fulltext` MEDIUMTEXT';
             $db->setQuery($query);
             $db->query();
         }
         if ($fields['video'] != 'text') {
-            $query = "ALTER TABLE #__k2_items MODIFY `video` TEXT";
+            $query = 'ALTER TABLE #__k2_items MODIFY `video` TEXT';
             $db->setQuery($query);
             $db->query();
         }
 
-        $query = "SHOW INDEX FROM #__k2_items";
+        $query = 'SHOW INDEX FROM #__k2_items';
         $db->setQuery($query);
         $itemIndices = $db->loadObjectList();
 
@@ -322,27 +327,27 @@ class Com_K2InstallerScript
         }
 
         if ($itemKeys_item) {
-            $query = "ALTER TABLE #__k2_items DROP INDEX `item`";
+            $query = 'ALTER TABLE #__k2_items DROP INDEX `item`';
             $db->setQuery($query);
             $db->query();
         }
         if ($itemKeys_idx_item) {
-            $query = "ALTER TABLE #__k2_items DROP INDEX `idx_item`";
+            $query = 'ALTER TABLE #__k2_items DROP INDEX `idx_item`';
             $db->setQuery($query);
             $db->query();
         }
         if (!$itemKeys_idx_items_common) {
-            $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_common` (`catid`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)";
+            $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common` (`catid`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
             $db->setQuery($query);
             $db->query();
         }
         if (!$itemKeys_idx_items_common_backend) {
-            $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_common_backend` (`trash`,`id`)";
+            $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common_backend` (`trash`,`id`)';
             $db->setQuery($query);
             $db->query();
         }
         if (!$itemKeys_idx_items_authors) {
-            $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_authors` (`created_by`,`created_by_alias`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)";
+            $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_authors` (`created_by`,`created_by_alias`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
             $db->setQuery($query);
             $db->query();
         }
@@ -350,12 +355,12 @@ class Com_K2InstallerScript
         // Tags
         $fields = $db->getTableColumns('#__k2_tags');
         if (!array_key_exists('description', $fields)) {
-            $query = "ALTER TABLE #__k2_tags ADD `description` text NOT NULL";
+            $query = 'ALTER TABLE #__k2_tags ADD `description` text NOT NULL';
             $db->setQuery($query);
             $db->query();
         }
 
-        $query = "SHOW INDEX FROM #__k2_tags_xref";
+        $query = 'SHOW INDEX FROM #__k2_tags_xref';
         $db->setQuery($query);
         $tagXrefIndices = $db->loadObjectList();
         $tagXrefKey_idx_tags_xref_common = false;
@@ -365,7 +370,7 @@ class Com_K2InstallerScript
             }
         }
         if (!$tagXrefKey_idx_tags_xref_common) {
-            $query = "ALTER TABLE #__k2_tags_xref ADD INDEX `idx_tags_xref_common` (`tagID`,`itemID`)";
+            $query = 'ALTER TABLE #__k2_tags_xref ADD INDEX `idx_tags_xref_common` (`tagID`,`itemID`)';
             $db->setQuery($query);
             $db->query();
         }
@@ -373,16 +378,16 @@ class Com_K2InstallerScript
         // Users
         $fields = $db->getTableColumns('#__k2_users');
         if (!array_key_exists('ip', $fields)) {
-            $query = "ALTER TABLE `#__k2_users`
+            $query = 'ALTER TABLE `#__k2_users`
                 ADD `ip` VARCHAR(45) NOT NULL ,
                 ADD `hostname` VARCHAR(255) NOT NULL ,
-                ADD `notes` TEXT NOT NULL";
+                ADD `notes` TEXT NOT NULL';
             $db->setQuery($query);
             $db->query();
         }
 
         // Users - add new ENUM option for "gender"
-        $query = "SELECT DISTINCT gender FROM #__k2_users";
+        $query = 'SELECT DISTINCT gender FROM #__k2_users';
         $db->setQuery($query);
         $enumOptions = $db->loadColumn();
         if (count($enumOptions) < 3) {
@@ -392,7 +397,7 @@ class Com_K2InstallerScript
         }
 
         // User groups (set first 2 user groups)
-        $query = "SELECT COUNT(*) FROM #__k2_user_groups";
+        $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
         $db->setQuery($query);
         $userGroupCount = $db->loadResult();
 
@@ -407,11 +412,11 @@ class Com_K2InstallerScript
         }
 
         // Log for updates
-        $query = "CREATE TABLE IF NOT EXISTS `#__k2_log` (
+        $query = 'CREATE TABLE IF NOT EXISTS `#__k2_log` (
                 `status` int(11) NOT NULL,
                 `response` text NOT NULL,
                 `timestamp` datetime NOT NULL
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;";
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;';
         $db->setQuery($query);
         $db->query();
 
@@ -486,10 +491,10 @@ class Com_K2InstallerScript
                     <th></th>
                 </tr>
                 <?php foreach ($status->modules as $module): ?>
-                <tr class="row<?php echo(++$rows % 2); ?>">
+                <tr class="row<?php echo ++$rows % 2; ?>">
                     <td class="key"><?php echo $module['name']; ?></td>
                     <td class="key"><?php echo ucfirst($module['client']); ?></td>
-                    <td><strong><?php echo ($module['result'])?JText::_('K2_INSTALLED'):JText::_('K2_NOT_INSTALLED'); ?></strong></td>
+                    <td><strong><?php echo ($module['result']) ? JText::_('K2_INSTALLED') : JText::_('K2_NOT_INSTALLED'); ?></strong></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>
@@ -500,10 +505,10 @@ class Com_K2InstallerScript
                     <th></th>
                 </tr>
                 <?php foreach ($status->plugins as $plugin): ?>
-                <tr class="row<?php echo(++$rows % 2); ?>">
+                <tr class="row<?php echo ++$rows % 2; ?>">
                     <td class="key"><?php echo ucfirst($plugin['name']); ?></td>
                     <td class="key"><?php echo ucfirst($plugin['group']); ?></td>
-                    <td><strong><?php echo ($plugin['result'])?JText::_('K2_INSTALLED'):JText::_('K2_NOT_INSTALLED'); ?></strong></td>
+                    <td><strong><?php echo ($plugin['result']) ? JText::_('K2_INSTALLED') : JText::_('K2_NOT_INSTALLED'); ?></strong></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>
@@ -543,10 +548,10 @@ class Com_K2InstallerScript
                     <th></th>
                 </tr>
                 <?php foreach ($status->modules as $module): ?>
-                <tr class="row<?php echo(++$rows % 2); ?>">
+                <tr class="row<?php echo ++$rows % 2; ?>">
                     <td class="key"><?php echo $module['name']; ?></td>
                     <td class="key"><?php echo ucfirst($module['client']); ?></td>
-                    <td><strong><?php echo ($module['result'])?JText::_('K2_REMOVED'):JText::_('K2_NOT_REMOVED'); ?></strong></td>
+                    <td><strong><?php echo ($module['result']) ? JText::_('K2_REMOVED') : JText::_('K2_NOT_REMOVED'); ?></strong></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>
@@ -558,10 +563,10 @@ class Com_K2InstallerScript
                     <th></th>
                 </tr>
                 <?php foreach ($status->plugins as $plugin): ?>
-                <tr class="row<?php echo(++$rows % 2); ?>">
+                <tr class="row<?php echo ++$rows % 2; ?>">
                     <td class="key"><?php echo ucfirst($plugin['name']); ?></td>
                     <td class="key"><?php echo ucfirst($plugin['group']); ?></td>
-                    <td><strong><?php echo ($plugin['result'])?JText::_('K2_REMOVED'):JText::_('K2_NOT_REMOVED'); ?></strong></td>
+                    <td><strong><?php echo ($plugin['result']) ? JText::_('K2_REMOVED') : JText::_('K2_NOT_REMOVED'); ?></strong></td>
                 </tr>
                 <?php endforeach; ?>
                 <?php endif; ?>

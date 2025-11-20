@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -89,7 +88,7 @@ $app = JFactory::getApplication();
                         <!-- Free tagging -->
                         <ul class="tags">
                             <?php if (isset($this->row->tags) && count($this->row->tags)): ?>
-                            <?php foreach($this->row->tags as $tag): ?>
+                            <?php foreach ($this->row->tags as $tag): ?>
                             <li class="tagAdded">
                                 <?php echo $tag->name; ?>
                                 <span title="<?php echo JText::_('K2_CLICK_TO_REMOVE_TAG'); ?>" class="tagRemove">&times;</span>
@@ -107,7 +106,7 @@ $app = JFactory::getApplication();
                         </p>
                         <?php else: ?>
                         <!-- Selection based tagging -->
-                        <?php if ( !$this->params->get('lockTags') || $this->user->gid>23): ?>
+                        <?php if (!$this->params->get('lockTags') || $this->user->gid > 23): ?>
                         <input type="text" name="tag" id="tag" />
                         <input type="button" id="newTagButton" class="k2Selector" value="<?php echo JText::_('K2_ADD'); ?>" />
                         <div id="tagsLog"></div>
@@ -120,7 +119,7 @@ $app = JFactory::getApplication();
                             <tr>
                                 <td id="tagListsLeft">
                                     <span><?php echo JText::_('K2_AVAILABLE_TAGS'); ?></span>
-                                    <?php echo $this->lists['tags'];  ?>
+                                    <?php echo $this->lists['tags']; ?>
                                 </td>
                                 <td id="tagListsButtons">
                                     <input type="button" id="addTagButton" class="k2Selector" value="<?php echo JText::_('K2_ADD'); ?> &raquo;" />
@@ -244,7 +243,7 @@ $app = JFactory::getApplication();
                         <?php endif; ?>
                         <?php if (count($this->K2PluginsItemContent)): ?>
                         <div class="itemPlugins itemPluginsContent">
-                            <?php foreach($this->K2PluginsItemContent as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemContent as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -309,7 +308,7 @@ $app = JFactory::getApplication();
                         </div>
                         <?php if (count($this->K2PluginsItemImage)): ?>
                         <div class="itemPlugins itemPluginsImage">
-                            <?php foreach($this->K2PluginsItemImage as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemImage as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -398,7 +397,7 @@ $app = JFactory::getApplication();
                         <?php endif; ?>
                         <?php if (count($this->K2PluginsItemGallery)): ?>
                         <div class="itemPlugins itemPluginsImageGallery">
-                            <?php foreach($this->K2PluginsItemGallery as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemGallery as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -581,7 +580,7 @@ $app = JFactory::getApplication();
 
                         <?php if (count($this->K2PluginsItemVideo)): ?>
                         <div class="itemPlugins itemPluginsMedia">
-                            <?php foreach($this->K2PluginsItemVideo as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemVideo as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -602,7 +601,7 @@ $app = JFactory::getApplication();
                         <div id="extraFieldsContainer">
                             <?php if (count($this->extraFields)): ?>
                             <div id="extraFields">
-                                <?php foreach($this->extraFields as $extraField): ?>
+                                <?php foreach ($this->extraFields as $extraField): ?>
                                 <div class="itemAdditionalField fieldIs<?php echo ucfirst($extraField->type); ?>">
                                     <?php if ($extraField->type == 'header'): ?>
                                     <h4><?php echo $extraField->name; ?></h4>
@@ -626,7 +625,7 @@ $app = JFactory::getApplication();
                         </div>
                         <?php if (count($this->K2PluginsItemExtraFields)): ?>
                         <div class="itemPlugins itemPluginsExtraFields">
-                            <?php foreach($this->K2PluginsItemExtraFields as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemExtraFields as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -654,7 +653,7 @@ $app = JFactory::getApplication();
                                     <th><?php echo JText::_('K2_DOWNLOADS'); ?></th>
                                     <th class="k2Center"><?php echo JText::_('K2_OPERATIONS'); ?></th>
                                 </tr>
-                                <?php foreach($this->row->attachments as $attachment): ?>
+                                <?php foreach ($this->row->attachments as $attachment): ?>
                                 <tr>
                                     <td class="attachment_entry"><?php echo $attachment->filename; ?></td>
                                     <td><?php echo $attachment->title; ?></td>
@@ -683,7 +682,7 @@ $app = JFactory::getApplication();
 
                         <?php if (count($this->K2PluginsItemAttachments)): ?>
                         <div class="itemPlugins itemPluginsAttachments">
-                            <?php foreach($this->K2PluginsItemAttachments as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemAttachments as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -702,7 +701,7 @@ $app = JFactory::getApplication();
                     <!-- Tab other plugins -->
                     <div class="k2TabsContent" id="k2TabPlugins">
                         <div class="itemPlugins itemPluginsPlugins">
-                            <?php foreach($this->K2PluginsItemOther as $K2Plugin): ?>
+                            <?php foreach ($this->K2PluginsItemOther as $K2Plugin): ?>
                             <?php if (!is_null($K2Plugin)): ?>
                             <div class="itemPlugin k2Plugin-<?php echo preg_replace('/[^\p{L}\p{N}_]/u', '', ucwords(strtolower($K2Plugin->name))); ?>">
                                 <h3><?php echo $K2Plugin->name; ?></h3>
@@ -746,7 +745,7 @@ $app = JFactory::getApplication();
                                 </li>
                                 <li>
                                     <span><?php echo JText::_('K2_FEATURED'); ?></span>
-                                    <span><?php echo ($this->row->featured > 0) ? JText::_('K2_YES'): JText::_('K2_NO'); ?></span>
+                                    <span><?php echo ($this->row->featured > 0) ? JText::_('K2_YES') : JText::_('K2_NO'); ?></span>
                                 </li>
                                 <li>
                                     <span><?php echo JText::_('K2_CREATED_DATE'); ?></span>
@@ -783,7 +782,7 @@ $app = JFactory::getApplication();
                             <div class="itemRating">
                                 <?php echo JText::_('K2_RATING'); ?>
                                 <?php if ($this->row->ratingCount): ?>
-                                <span><?php echo number_format(($this->row->ratingSum/$this->row->ratingCount), 2); ?>/5.00</span>
+                                <span><?php echo number_format(($this->row->ratingSum / $this->row->ratingCount), 2); ?>/5.00</span>
                                 <?php else: ?>
                                 <span>0.00/5.00</span>
                                 <?php endif; ?>
@@ -884,12 +883,14 @@ $app = JFactory::getApplication();
                     <div class="xmlParamsFields">
                         <fieldset class="panelform">
                             <ul class="adminformlist">
-                                <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
-                                <?php foreach($this->form->getFieldset('item-view-options-listings') as $field): ?>
-                                <li<?php if ($field->type=='header') echo ' class="headerElement"'; ?>>
-                                    <?php if ($field->type=='header'): ?>
+                                <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
+                                <?php foreach ($this->form->getFieldset('item-view-options-listings') as $field): ?>
+                                <li<?php if ($field->type == 'header') {
+                                    echo ' class="headerElement"';
+                                } ?>>
+                                    <?php if ($field->type == 'header'): ?>
                                     <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                                    <?php elseif ($field->type=='Spacer'): ?>
+                                    <?php elseif ($field->type == 'Spacer'): ?>
                                     <div class="paramValueSpacer">&nbsp;</div>
                                     <div class="clr"></div>
                                     <?php else: ?>
@@ -900,9 +901,11 @@ $app = JFactory::getApplication();
                                 </li>
                                 <?php endforeach; ?>
                                 <?php else: ?>
-                                <?php foreach($this->form->getParams('params', 'item-view-options-listings') as $param): ?>
-                                <li<?php if ((string)$param[1]=='' || $param[5] == '') echo ' class="headerElement"'; ?>>
-                                    <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                                <?php foreach ($this->form->getParams('params', 'item-view-options-listings') as $param): ?>
+                                <li<?php if ((string) $param[1] == '' || $param[5] == '') {
+                                    echo ' class="headerElement"';
+                                } ?>>
+                                    <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                                     <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                                     <?php else: ?>
                                     <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -920,12 +923,14 @@ $app = JFactory::getApplication();
                     <div class="xmlParamsFields">
                         <fieldset class="panelform">
                             <ul class="adminformlist">
-                                <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
-                                <?php foreach($this->form->getFieldset('item-view-options') as $field): ?>
-                                <li<?php if ($field->type=='header') echo ' class="headerElement"'; ?>>
-                                    <?php if ($field->type=='header'): ?>
+                                <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
+                                <?php foreach ($this->form->getFieldset('item-view-options') as $field): ?>
+                                <li<?php if ($field->type == 'header') {
+                                    echo ' class="headerElement"';
+                                } ?>>
+                                    <?php if ($field->type == 'header'): ?>
                                     <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                                    <?php elseif ($field->type=='Spacer'): ?>
+                                    <?php elseif ($field->type == 'Spacer'): ?>
                                     <div class="paramValueSpacer">&nbsp;</div>
                                     <div class="clr"></div>
                                     <?php else: ?>
@@ -936,9 +941,11 @@ $app = JFactory::getApplication();
                                 </li>
                                 <?php endforeach; ?>
                                 <?php else: ?>
-                                <?php foreach($this->form->getParams('params', 'item-view-options') as $param): ?>
-                                <li<?php if ((string)$param[1]=='' || $param[5] == '') echo ' class="headerElement"'; ?>>
-                                    <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                                <?php foreach ($this->form->getParams('params', 'item-view-options') as $param): ?>
+                                <li<?php if ((string) $param[1] == '' || $param[5] == '') {
+                                    echo ' class="headerElement"';
+                                } ?>>
+                                    <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                                     <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                                     <?php else: ?>
                                     <div class="paramLabel"><?php echo $param[0]; ?></div>

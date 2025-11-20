@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -14,7 +19,7 @@ jimport('joomla.application.component.controller');
 
 class K2ControllerItemlist extends K2Controller
 {
-    public function display($cachable = false, $urlparams = array())
+    public function display($cachable = false, $urlparams = [])
     {
         $model = $this->getModel('item');
         $format = JRequest::getWord('format', 'html');
@@ -65,7 +70,7 @@ class K2ControllerItemlist extends K2Controller
     // For mod_k2_tools
     public function calendar()
     {
-        require_once(JPATH_SITE.'/modules/mod_k2_tools/helper.php');
+        require_once JPATH_SITE.'/modules/mod_k2_tools/helper.php';
         $calendar = new modK2ToolsHelper();
         $calendar->calendarNavigation();
     }

@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -61,7 +60,7 @@ defined('_JEXEC') or die;
                     <?php echo $this->lists['inheritFrom']; ?>
                 </div>
                 <div class="k2ui-field-label">
-                    <label for="extraFieldsGroup"><?php echo JText::_('K2_ASSOCIATED_EXTRA_FIELDS_GROUP');  ?></label>
+                    <label for="extraFieldsGroup"><?php echo JText::_('K2_ASSOCIATED_EXTRA_FIELDS_GROUP'); ?></label>
                 </div>
                 <div class="k2ui-field-value">
                     <?php echo $this->lists['extraFieldsGroup']; ?>
@@ -130,10 +129,10 @@ defined('_JEXEC') or die;
                         $catImageTimestamp = '';
                         $catImageFile = JPATH_SITE.'/media/k2/categories/'.$this->row->image;
                         if (file_exists($catImageFile) && filemtime($catImageFile)) {
-                            $catImageTimestamp = '?t='.date("Ymd_Hi", filemtime($catImageFile));
+                            $catImageTimestamp = '?t='.date('Ymd_Hi', filemtime($catImageFile));
                         }
                         $categoryImage = JURI::root(true).'/media/k2/categories/'.$this->row->image.$catImageTimestamp;
-                    ?>
+                        ?>
                     <div class="itemAdditionalField">
                         <div class="itemAdditionalValue">
                             <label><?php echo JText::_('K2_ITEM_IMAGE_PREVIEW'); ?></label>
@@ -176,12 +175,14 @@ defined('_JEXEC') or die;
                 <h3><?php echo JText::_('K2_METADATA_INFORMATION'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('category-metadata-information') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -192,9 +193,9 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'category-metadata-information') as $param): ?>
+                        <?php foreach ($this->form->getParams('params', 'category-metadata-information') as $param): ?>
                         <li>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -224,12 +225,14 @@ defined('_JEXEC') or die;
             <h3 id="catLayoutOptions"><?php echo JText::_('K2_CATEGORY_ITEM_LAYOUT'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('category-item-layout') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -240,9 +243,11 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'category-item-layout') as $param): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                        <?php foreach ($this->form->getParams('params', 'category-item-layout') as $param): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -258,12 +263,14 @@ defined('_JEXEC') or die;
                 <h3 id="catViewOptions"><?php echo JText::_('K2_CATEGORY_VIEW_OPTIONS'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('category-view-options') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -274,9 +281,9 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'category-view-options') as $param): ?>
+                        <?php foreach ($this->form->getParams('params', 'category-view-options') as $param): ?>
                         <li>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -292,12 +299,14 @@ defined('_JEXEC') or die;
                 <h3 id="catImageOptions"><?php echo JText::_('K2_ITEM_IMAGE_OPTIONS'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('item-image-options') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -308,9 +317,9 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'item-image-options') as $param): ?>
+                        <?php foreach ($this->form->getParams('params', 'item-image-options') as $param): ?>
                         <li>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -326,12 +335,14 @@ defined('_JEXEC') or die;
                 <h3 id="catItemsOptions"><?php echo JText::_('K2_ITEM_VIEW_OPTIONS_IN_CATEGORY_LISTINGS'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('item-view-options-listings') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -342,9 +353,9 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'item-view-options-listings') as $param): ?>
+                        <?php foreach ($this->form->getParams('params', 'item-view-options-listings') as $param): ?>
                         <li>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>
@@ -360,12 +371,14 @@ defined('_JEXEC') or die;
                 <h3 id="catItemOptions"><?php echo JText::_('K2_ITEM_VIEW_OPTIONS'); ?></h3>
                 <fieldset class="panelform">
                     <ul class="adminformlist">
-                        <?php if (version_compare( JVERSION, '1.6.0', 'ge' )): ?>
+                        <?php if (version_compare(JVERSION, '1.6.0', 'ge')): ?>
                         <?php foreach ($this->form->getFieldset('item-view-options') as $field): ?>
-                        <li<?php if ($field->type=='header') echo ' class="headerElement"';?>>
-                            <?php if ($field->type=='header'): ?>
+                        <li<?php if ($field->type == 'header') {
+                            echo ' class="headerElement"';
+                        }?>>
+                            <?php if ($field->type == 'header'): ?>
                             <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                            <?php elseif ($field->type=='Spacer'): ?>
+                            <?php elseif ($field->type == 'Spacer'): ?>
                             <div class="paramValueSpacer">&nbsp;</div>
                             <div class="clr"></div>
                             <?php else: ?>
@@ -376,9 +389,9 @@ defined('_JEXEC') or die;
                         </li>
                         <?php endforeach; ?>
                         <?php else: ?>
-                        <?php foreach($this->form->getParams('params', 'item-view-options') as $param): ?>
+                        <?php foreach ($this->form->getParams('params', 'item-view-options') as $param): ?>
                         <li>
-                            <?php if ((string)$param[1]=='' || $param[5] == ''): ?>
+                            <?php if ((string) $param[1] == '' || $param[5] == ''): ?>
                             <div class="paramValueHeader"><?php echo $param[1]; ?></div>
                             <?php else: ?>
                             <div class="paramLabel"><?php echo $param[0]; ?></div>

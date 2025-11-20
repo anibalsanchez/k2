@@ -1,16 +1,21 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php');
+require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
 class K2ElementTemplate extends K2Element
 {
@@ -23,9 +28,9 @@ class K2ElementTemplate extends K2Element
         $componentFolders = JFolder::folders($componentPath);
         $db = JFactory::getDbo();
         if (K2_JVERSION != '15') {
-            $query = "SELECT template FROM #__template_styles WHERE client_id = 0 AND home = 1";
+            $query = 'SELECT template FROM #__template_styles WHERE client_id = 0 AND home = 1';
         } else {
-            $query = "SELECT template FROM #__templates_menu WHERE client_id = 0 AND menuid = 0";
+            $query = 'SELECT template FROM #__templates_menu WHERE client_id = 0 AND menuid = 0';
         }
         $db->setQuery($query);
         $defaultemplate = $db->loadResult();
@@ -45,7 +50,7 @@ class K2ElementTemplate extends K2Element
         }
 
         $exclude = 'default';
-        $options = array();
+        $options = [];
         foreach ($folders as $folder) {
             if (preg_match(chr(1).$exclude.chr(1), $folder)) {
                 continue;

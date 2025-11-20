@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -40,11 +39,11 @@ defined('_JEXEC') or die;
             <?php else: ?>
             <fieldset class="panelform">
                 <ul class="adminformlist">
-                    <?php foreach($this->form->getFieldset('user-permissions') as $field): ?>
+                    <?php foreach ($this->form->getFieldset('user-permissions') as $field): ?>
                     <li>
-                        <?php if ($field->type=='header'): ?>
+                        <?php if ($field->type == 'header'): ?>
                         <div class="paramValueHeader"><?php echo $field->input; ?></div>
-                        <?php elseif ($field->type=='Spacer'): ?>
+                        <?php elseif ($field->type == 'Spacer'): ?>
                         <div class="paramValueSpacer">&nbsp;</div>
                         <div class="clr"></div>
                         <?php else: ?>
@@ -65,11 +64,17 @@ defined('_JEXEC') or die;
                     <li>
                         <div class="paramLabel"><label><?php echo JText::_('K2_FILTER'); ?></label></div>
                         <div class="paramValue">
-                            <input id="categories-all" type="radio" name="categories" value="all" <?php if ($this->categories == 'all') echo ' checked="checked"'; ?> />
+                            <input id="categories-all" type="radio" name="categories" value="all" <?php if ($this->categories == 'all') {
+                                echo ' checked="checked"';
+                            } ?> />
                             <label for="categories-all"><?php echo JText::_('K2_ALL'); ?></label>
-                            <input id="categories-none" type="radio" name="categories" value="none" <?php if ($this->categories == 'none') echo ' checked="checked"'; ?> />
+                            <input id="categories-none" type="radio" name="categories" value="none" <?php if ($this->categories == 'none') {
+                                echo ' checked="checked"';
+                            } ?> />
                             <label for="categories-none"><?php echo JText::_('K2_NONE'); ?></label>
-                            <input id="categories-select" type="radio" name="categories" value="select" <?php if ($this->categories != 'all' && $this->categories != 'none') echo ' checked="checked"'; ?> />
+                            <input id="categories-select" type="radio" name="categories" value="select" <?php if ($this->categories != 'all' && $this->categories != 'none') {
+                                echo ' checked="checked"';
+                            } ?> />
                             <label for="categories-select"><?php echo JText::_('K2_SELECT_FROM_LIST'); ?></label>
                         </div>
                         <div class="clr"></div>

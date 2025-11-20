@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -38,7 +37,7 @@ defined('_JEXEC') or die;
     <?php if ($this->item->params->get('latestItemDateCreated')): ?>
     <!-- Date created -->
     <span class="latestItemDateCreated">
-        <?php echo JHTML::_('date', $this->item->created , JText::_('K2_DATE_FORMAT_LC2')); ?>
+        <?php echo JHTML::_('date', $this->item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
     </span>
     <?php endif; ?>
 
@@ -59,8 +58,16 @@ defined('_JEXEC') or die;
         <!-- Item Image -->
         <div class="latestItemImageBlock">
             <span class="latestItemImage">
-                <a href="<?php echo $this->item->link; ?>" title="<?php if (!empty($this->item->image_caption)) echo K2HelperUtilities::cleanHtml($this->item->image_caption); else echo K2HelperUtilities::cleanHtml($this->item->title); ?>">
-                    <img src="<?php echo $this->item->image; ?>" alt="<?php if (!empty($this->item->image_caption)) echo K2HelperUtilities::cleanHtml($this->item->image_caption); else echo K2HelperUtilities::cleanHtml($this->item->title); ?>" style="width:<?php echo $this->item->imageWidth; ?>px;height:auto;" />
+                <a href="<?php echo $this->item->link; ?>" title="<?php if (!empty($this->item->image_caption)) {
+                    echo K2HelperUtilities::cleanHtml($this->item->image_caption);
+                } else {
+                    echo K2HelperUtilities::cleanHtml($this->item->title);
+                } ?>">
+                    <img src="<?php echo $this->item->image; ?>" alt="<?php if (!empty($this->item->image_caption)) {
+                        echo K2HelperUtilities::cleanHtml($this->item->image_caption);
+                    } else {
+                        echo K2HelperUtilities::cleanHtml($this->item->title);
+                    } ?>" style="width:<?php echo $this->item->imageWidth; ?>px;height:auto;" />
                 </a>
             </span>
             <div class="clr"></div>
@@ -118,11 +125,11 @@ defined('_JEXEC') or die;
     <!-- Item video -->
     <div class="latestItemVideoBlock">
         <h3><?php echo JText::_('K2_RELATED_VIDEO'); ?></h3>
-        <span class="latestItemVideo<?php if ($this->item->videoType=='embedded'): ?> embedded<?php endif; ?>"><?php echo $this->item->video; ?></span>
+        <span class="latestItemVideo<?php if ($this->item->videoType == 'embedded'): ?> embedded<?php endif; ?>"><?php echo $this->item->video; ?></span>
     </div>
     <?php endif; ?>
 
-    <?php if ($this->item->params->get('latestItemCommentsAnchor') && ( ($this->item->params->get('comments') == '2' && !$this->user->guest) || ($this->item->params->get('comments') == '1')) ): ?>
+    <?php if ($this->item->params->get('latestItemCommentsAnchor') && (($this->item->params->get('comments') == '2' && !$this->user->guest) || ($this->item->params->get('comments') == '1'))): ?>
     <!-- Anchor link to comments below -->
     <div class="latestItemCommentsLink">
         <?php if (!empty($this->item->event->K2CommentsCounter)): ?>
@@ -131,7 +138,7 @@ defined('_JEXEC') or die;
         <?php else: ?>
         <?php if ($this->item->numOfComments > 0): ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">
-            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments>1) ? JText::_('K2_COMMENTS') : JText::_('K2_COMMENT'); ?>
+            <?php echo $this->item->numOfComments; ?> <?php echo ($this->item->numOfComments > 1) ? JText::_('K2_COMMENTS') : JText::_('K2_COMMENT'); ?>
         </a>
         <?php else: ?>
         <a href="<?php echo $this->item->link; ?>#itemCommentsAnchor">

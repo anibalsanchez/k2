@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -12,7 +11,9 @@ defined('_JEXEC') or die;
 
 ?>
 
-<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2ItemsBlock<?php if ($params->get('moduleclass_sfx')) echo ' '.$params->get('moduleclass_sfx'); ?>">
+<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2ItemsBlock<?php if ($params->get('moduleclass_sfx')) {
+    echo ' '.$params->get('moduleclass_sfx');
+} ?>">
     <?php if ($params->get('itemPreText')): ?>
     <p class="modulePretext"><?php echo $params->get('itemPreText'); ?></p>
     <?php endif; ?>
@@ -20,7 +21,10 @@ defined('_JEXEC') or die;
     <?php if (isset($items) && count($items)): ?>
     <ul>
         <?php foreach ($items as $key=>$item):  ?>
-        <li class="<?php echo ($key%2) ? "odd" : "even"; if (count($items)==$key+1) echo ' lastItem'; ?>">
+        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+            if (count($items) == $key + 1) {
+                echo ' lastItem';
+            } ?>">
             <!-- Plugins: BeforeDisplay -->
             <?php echo $item->event->BeforeDisplay; ?>
 
@@ -87,7 +91,7 @@ defined('_JEXEC') or die;
                 <ul>
                     <?php foreach ($item->extra_fields as $key => $extraField): ?>
                     <?php if ($extraField->value != ''): ?>
-                    <li class="<?php echo ($key%2) ? "odd" : "even"; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
+                    <li class="<?php echo ($key % 2) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
                         <?php if ($extraField->type == 'header'): ?>
                         <h4 class="moduleItemExtraFieldsHeader"><?php echo $extraField->name; ?></h4>
                         <?php else: ?>
@@ -154,9 +158,13 @@ defined('_JEXEC') or die;
             <!-- K2 Plugins: K2CommentsCounter -->
             <?php echo $item->event->K2CommentsCounter; ?>
             <?php else: ?>
-            <?php if ($item->numOfComments>0): ?>
+            <?php if ($item->numOfComments > 0): ?>
             <a class="moduleItemComments" href="<?php echo $item->link.'#itemCommentsAnchor'; ?>">
-                <?php echo $item->numOfComments; ?> <?php if ($item->numOfComments>1) echo JText::_('K2_COMMENTS'); else echo JText::_('K2_COMMENT'); ?>
+                <?php echo $item->numOfComments; ?> <?php if ($item->numOfComments > 1) {
+                    echo JText::_('K2_COMMENTS');
+                } else {
+                    echo JText::_('K2_COMMENT');
+                } ?>
             </a>
             <?php else: ?>
             <a class="moduleItemComments" href="<?php echo $item->link.'#itemCommentsAnchor'; ?>">

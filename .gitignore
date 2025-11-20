@@ -2,3 +2,9 @@
 /.project
 .ftpconfig
 .DS_Store
+
+.amazonq/
+.phan/
+.php-cs-fixer*
+rector.php
+

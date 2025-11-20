@@ -1,11 +1,15 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -22,6 +26,7 @@ class K2ModelCategory extends K2Model
         $cid = JRequest::getVar('cid');
         $row = JTable::getInstance('K2Category', 'Table');
         $row->load($cid);
+
         return $row;
     }
 
@@ -46,25 +51,26 @@ class K2ModelCategory extends K2Model
         $isNew = ($row->id) ? false : true;
 
         // Trigger K2 plugins
-        $result = $dispatcher->trigger('onBeforeK2Save', array(&$row, $isNew));
+        $result = $dispatcher->trigger('onBeforeK2Save', [&$row, $isNew]);
 
         if (in_array(false, $result, true)) {
             JError::raiseError(500, $row->getError());
+
             return false;
         }
 
         // Trigger content & finder plugins before the save event
-        $dispatcher->trigger('onContentBeforeSave', array('com_k2.category', $row, $isNew));
-        $dispatcher->trigger('onFinderBeforeSave', array('com_k2.category', $row, $isNew));
+        $dispatcher->trigger('onContentBeforeSave', ['com_k2.category', $row, $isNew]);
+        $dispatcher->trigger('onFinderBeforeSave', ['com_k2.category', $row, $isNew]);
 
         $row->description = JRequest::getVar('description', '', 'post', 'string', 2);
         if ($params->get('xssFiltering')) {
-            $filter = new JFilterInput(array(), array(), 1, 1, 0);
+            $filter = new JFilterInput([], [], 1, 1, 0);
             $row->description = $filter->clean($row->description);
         }
 
         if (!$row->id) {
-            $row->ordering = $row->getNextOrder('parent = '.(int)$row->parent.' AND trash=0');
+            $row->ordering = $row->getNextOrder('parent = '.(int) $row->parent.' AND trash=0');
         }
 
         if (!$row->check()) {
@@ -78,11 +84,11 @@ class K2ModelCategory extends K2Model
         }
 
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder('parent = '.(int)$row->parent.' AND trash=0');
+            $row->reorder('parent = '.(int) $row->parent.' AND trash=0');
         }
 
-        if ((int)$params->get('imageMemoryLimit')) {
-            ini_set('memory_limit', (int)$params->get('imageMemoryLimit').'M');
+        if ((int) $params->get('imageMemoryLimit')) {
+            ini_set('memory_limit', (int) $params->get('imageMemoryLimit').'M');
         }
 
         $files = JRequest::get('files');
@@ -99,9 +105,9 @@ class K2ModelCategory extends K2Model
             $savepath = JPATH_ROOT.'/media/k2/categories/';
 
             try {
-                $handle = new \Verot\Upload\Upload($image);
-                $handle->allowed = array('image/*');
-                $handle->forbidden = array('image/bmp', 'image/tiff');
+                $handle = new Verot\Upload\Upload($image);
+                $handle->allowed = ['image/*'];
+                $handle->forbidden = ['image/bmp', 'image/tiff'];
 
                 if ($handle->uploaded) {
                     $handle->file_auto_rename = false;
@@ -121,10 +127,10 @@ class K2ModelCategory extends K2Model
                         }
                         $row->image = $handle->file_dst_name;
                     } else {
-                        throw new \RuntimeException($handle->error);
+                        throw new RuntimeException($handle->error);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $app->enqueueMessage(JText::_('K2_COULD_NOT_UPLOAD_YOUR_IMAGE').$e->getMessage(), 'error');
                 $app->redirect('index.php?option=com_k2&view=categories');
             }
@@ -148,15 +154,15 @@ class K2ModelCategory extends K2Model
         $cache->clean();
 
         // Trigger K2 plugins
-        $dispatcher->trigger('onAfterK2Save', array(&$row, $isNew));
+        $dispatcher->trigger('onAfterK2Save', [&$row, $isNew]);
 
         // Trigger content & finder plugins after the save event
         if (K2_JVERSION != '15') {
-            $dispatcher->trigger('onContentAfterSave', array('com_k2.category', &$row, $isNew));
+            $dispatcher->trigger('onContentAfterSave', ['com_k2.category', &$row, $isNew]);
         } else {
-            $dispatcher->trigger('onAfterContentSave', array(&$row, $isNew));
+            $dispatcher->trigger('onAfterContentSave', [&$row, $isNew]);
         }
-        $results = $dispatcher->trigger('onFinderAfterSave', array('com_k2.category', $row, $isNew));
+        $results = $dispatcher->trigger('onFinderAfterSave', ['com_k2.category', $row, $isNew]);
 
         switch (JRequest::getCmd('task')) {
             case 'apply':
@@ -180,10 +186,11 @@ class K2ModelCategory extends K2Model
     public function countCategoryItems($catid, $trash = 0)
     {
         $db = JFactory::getDbo();
-        $catid = (int)$catid;
-        $query = "SELECT COUNT(*) FROM #__k2_items WHERE catid={$catid} AND trash = ".(int)$trash;
+        $catid = (int) $catid;
+        $query = "SELECT COUNT(*) FROM #__k2_items WHERE catid={$catid} AND trash = ".(int) $trash;
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 }

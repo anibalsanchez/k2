@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -15,7 +20,7 @@ jimport('joomla.filesystem.file');
 
 class K2ControllerMedia extends K2Controller
 {
-    public function display($cachable = false, $urlparams = array())
+    public function display($cachable = false, $urlparams = [])
     {
         JRequest::setVar('view', 'media');
         parent::display();
@@ -37,7 +42,7 @@ class K2ControllerMedia extends K2Controller
         $folder = JRequest::getVar('folder', $root, 'default', 'path');
         $type = JRequest::getCmd('type', 'video');
 
-        if (JString::trim($folder) == "") {
+        if (JString::trim($folder) == '') {
             $folder = $root;
         } else {
             // Ensure that we are always below the root directory
@@ -55,7 +60,7 @@ class K2ControllerMedia extends K2Controller
         JPath::check($path);
 
         // Disallow force downloading sensitive file types
-        $disallowedFileTypes = array('php', 'ini', 'sql', 'htaccess');
+        $disallowedFileTypes = ['php', 'ini', 'sql', 'htaccess'];
         $target = JRequest::getCmd('target');
         $download = JRequest::getCmd('download');
         if ($target && $download) {
@@ -66,7 +71,7 @@ class K2ControllerMedia extends K2Controller
             }
         }
 
-        require_once(JPATH_SITE.'/media/k2/assets/vendors/studio-42/elfinder/php/autoload.php');
+        require_once JPATH_SITE.'/media/k2/assets/vendors/studio-42/elfinder/php/autoload.php';
 
         function access($attr, $path, $data, $volume)
         {
@@ -102,15 +107,15 @@ class K2ControllerMedia extends K2Controller
         }
 
         if ($app->isAdmin()) {
-            $permissions = array('read' => true, 'write' => true);
+            $permissions = ['read' => true, 'write' => true];
         } else {
-            $permissions = array('read' => true, 'write' => false);
+            $permissions = ['read' => true, 'write' => false];
         }
 
-        $options = array(
+        $options = [
             'debug' => false,
-            'roots' => array(
-                array(
+            'roots' => [
+                [
                     'driver' => 'LocalFileSystem',
                     'path' => $path,
                     'URL' => $url,
@@ -118,12 +123,12 @@ class K2ControllerMedia extends K2Controller
                     'defaults' => $permissions,
                     'mimeDetect' => 'internal',
                     'mimefile' => JPATH_SITE.'/media/k2/assets/vendors/studio-42/elfinder/php/mime.types',
-                    'uploadDeny' => array('all'),
-                    'uploadAllow' => array('image', 'video', 'audio', 'text/plain', 'text/html', 'application/json', 'application/pdf', 'application/zip', 'application/x-7z-compressed', 'application/x-bzip', 'application/x-bzip2', 'text/css', 'application/msword', 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-                    'uploadOrder' => array('deny', 'allow')
-                )
-            )
-        );
+                    'uploadDeny' => ['all'],
+                    'uploadAllow' => ['image', 'video', 'audio', 'text/plain', 'text/html', 'application/json', 'application/pdf', 'application/zip', 'application/x-7z-compressed', 'application/x-bzip', 'application/x-bzip2', 'text/css', 'application/msword', 'application/vnd.ms-excel', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+                    'uploadOrder' => ['deny', 'allow'],
+                ],
+            ],
+        ];
         $connector = new elFinderConnector(new elFinder($options));
         $connector->run();
     }

@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -18,10 +23,15 @@ require_once JPATH_ADMINISTRATOR.'/components/com_finder/helpers/indexer/adapter
 class plgFinderK2 extends FinderIndexerAdapter
 {
     protected $context = 'K2';
+
     protected $extension = 'com_k2';
+
     protected $layout = 'item';
+
     protected $type_title = 'K2 Item';
+
     protected $table = '#__k2_items';
+
     protected $state_field = 'published';
 
     public function __construct(&$subject, $config)
@@ -34,6 +44,14 @@ class plgFinderK2 extends FinderIndexerAdapter
         $this->loadLanguage();
     }
 
+    protected function setup()
+    {
+        // Load dependent classes.
+        include_once JPATH_SITE.'/components/com_k2/helpers/route.php';
+
+        return true;
+    }
+
     public function onFinderAfterDelete($context, $table)
     {
         if ($context == 'com_k2.item') {
@@ -43,6 +61,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         } else {
             return true;
         }
+
         // Remove the items.
         return $this->remove($id);
     }
@@ -64,7 +83,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         // Check for access changes in the category
         if ($context == 'com_k2.category') {
             // Update the state
-            $this->categoryStateChange(array($row->id), $row->published);
+            $this->categoryStateChange([$row->id], $row->published);
 
             // Check if the access levels are different
             if (!$isNew && $this->old_cataccess != $row->access) {
@@ -116,12 +135,12 @@ class plgFinderK2 extends FinderIndexerAdapter
         }
 
         // Initialize the item parameters.
-        $registry = new JRegistry;
+        $registry = new JRegistry();
         $registry->loadString($item->params);
         $item->params = JComponentHelper::getParams('com_k2', true);
         $item->params->merge($registry);
 
-        $registry = new JRegistry;
+        $registry = new JRegistry();
         $registry->loadString($item->metadata);
         $item->metadata = $registry;
 
@@ -189,14 +208,6 @@ class plgFinderK2 extends FinderIndexerAdapter
         }
     }
 
-    protected function setup()
-    {
-        // Load dependent classes.
-        include_once JPATH_SITE.'/components/com_k2/helpers/route.php';
-
-        return true;
-    }
-
     protected function getListQuery($sql = null)
     {
         $db = JFactory::getDbo();
@@ -216,7 +227,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         $case_when_item_alias .= $sql->charLength('a.alias');
         $case_when_item_alias .= ' THEN ';
         $a_id = $sql->castAsChar('a.id');
-        $case_when_item_alias .= $sql->concatenate(array($a_id, 'a.alias'), ':');
+        $case_when_item_alias .= $sql->concatenate([$a_id, 'a.alias'], ':');
         $case_when_item_alias .= ' ELSE ';
         $case_when_item_alias .= $a_id.' END as slug';
         $sql->select($case_when_item_alias);
@@ -225,7 +236,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         $case_when_category_alias .= $sql->charLength('c.alias');
         $case_when_category_alias .= ' THEN ';
         $c_id = $sql->castAsChar('c.id');
-        $case_when_category_alias .= $sql->concatenate(array($c_id, 'c.alias'), ':');
+        $case_when_category_alias .= $sql->concatenate([$c_id, 'c.alias'], ':');
         $case_when_category_alias .= ' ELSE ';
         $case_when_category_alias .= $c_id.' END as catslug';
         $sql->select($case_when_category_alias);
@@ -243,7 +254,7 @@ class plgFinderK2 extends FinderIndexerAdapter
         $query = $this->db->getQuery(true);
         $query->select($this->db->quoteName('access'));
         $query->from($this->db->quoteName('#__k2_categories'));
-        $query->where($this->db->quoteName('id').' = '.(int)$row->id);
+        $query->where($this->db->quoteName('id').' = '.(int) $row->id);
         $this->db->setQuery($query);
 
         // Store the access level to determine if it changes
@@ -252,8 +263,8 @@ class plgFinderK2 extends FinderIndexerAdapter
 
     protected function categoryAccessChange($row)
     {
-        $sql = clone($this->getStateQuery());
-        $sql->where('c.id = '.(int)$row->id);
+        $sql = clone $this->getStateQuery();
+        $sql->where('c.id = '.(int) $row->id);
 
         // Get the access level.
         $this->db->setQuery($sql);
@@ -265,7 +276,7 @@ class plgFinderK2 extends FinderIndexerAdapter
             $temp = max($item->access, $row->access);
 
             // Update the item.
-            $this->change((int)$item->id, 'access', $temp);
+            $this->change((int) $item->id, 'access', $temp);
 
             // Reindex the item
             $this->reindex($item->id);

@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -28,7 +27,7 @@ defined('_JEXEC') or die;
     </fieldset>
 
     <?php echo $this->pane->startPane('settings'); ?>
-    <?php foreach($this->params->getGroups() as $group=>$value): ?>
+    <?php foreach ($this->params->getGroups() as $group=>$value): ?>
     <?php echo $this->pane->startPanel(JText::_($group), $group.'-tab'); ?>
     <?php echo $this->params->render('params', $group); ?>
     <?php echo $this->pane->endPanel(); ?>

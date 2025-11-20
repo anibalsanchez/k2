@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -15,7 +14,7 @@ $context = JRequest::getCmd('context');
 
 ?>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 <!-- Modal View -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -55,7 +54,7 @@ $context = JRequest::getCmd('context');
                 <thead>
                     <tr>
                         <th class="k2ui-hide-on-mobile">#</th>
-                        <th<?php echo ($context == "modalselector") ? ' class="k2ui-not-visible"' : ' class="k2ui-center"'; ?>><input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" /></th>
+                        <th<?php echo ($context == 'modalselector') ? ' class="k2ui-not-visible"' : ' class="k2ui-center"'; ?>><input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" /></th>
                         <th><?php echo JHTML::_('grid.sort', 'K2_NAME', 'juser.name', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                         <th class="k2ui-hide-on-mobile"><?php echo JHTML::_('grid.sort', 'K2_USERNAME', 'juser.username', @$this->lists['order_Dir'], @$this->lists['order']); ?></th>
                         <th class="k2ui-center"><?php echo JText::_('K2_LOGGED_IN'); ?></th>
@@ -78,12 +77,12 @@ $context = JRequest::getCmd('context');
                 </thead>
                 <?php
                     $tfootColspan = 14;
-                    /*
-                    if ($context == "modalselector") {
-                        $tfootColspan--;
-                    }
-                    */
-                ?>
+/*
+if ($context == "modalselector") {
+    $tfootColspan--;
+}
+*/
+?>
                 <tfoot>
                     <tr>
                         <td colspan="<?php echo $tfootColspan; ?>">
@@ -101,20 +100,21 @@ $context = JRequest::getCmd('context');
                 <tbody>
                     <?php if (isset($this->rows) && count($this->rows) > 0): ?>
                     <?php foreach ($this->rows as $key => $row): ?>
-                    <tr class="row<?php echo($key%2); ?>">
-                        <td class="k2ui-hide-on-mobile"><?php echo $key+1; ?></td>
-                        <td class="k2ui-center<?php echo ($context == "modalselector") ? ' k2ui-not-visible' : ''; ?>">
-                            <?php $row->checked_out = 0; echo JHTML::_('grid.id', $key, $row->id); ?>
+                    <tr class="row<?php echo $key % 2; ?>">
+                        <td class="k2ui-hide-on-mobile"><?php echo $key + 1; ?></td>
+                        <td class="k2ui-center<?php echo ($context == 'modalselector') ? ' k2ui-not-visible' : ''; ?>">
+                            <?php $row->checked_out = 0;
+                        echo JHTML::_('grid.id', $key, $row->id); ?>
                         </td>
                         <td>
-                            <?php if ($context == "modalselector"): ?>
+                            <?php if ($context == 'modalselector'): ?>
                             <?php
-                            if (JRequest::getCmd('output') == 'list') {
-                                $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(array("'", "\""), array("\\'", ""), $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\', \''.JRequest::getCmd('output').'\'); return false;';
-                            } else {
-                                $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(array("'", "\""), array("\\'", ""), $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\'); return false;';
-                            }
-                            ?>
+                        if (JRequest::getCmd('output') == 'list') {
+                            $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\', \''.JRequest::getCmd('output').'\'); return false;';
+                        } else {
+                            $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->name).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\'); return false;';
+                        }
+                        ?>
                             <a class="k2ListItemDisabled" title="<?php echo JText::_('K2_CLICK_TO_ADD_THIS_ENTRY'); ?>" href="#" onclick="<?php echo $onClick; ?>"><?php echo $row->name; ?></a>
                             <?php else: ?>
                             <a href="<?php echo $row->link; ?>"><?php echo $row->name; ?></a>
@@ -148,10 +148,10 @@ $context = JRequest::getCmd('context');
                                 $avatarTimestamp = '';
                                 $avatarFile = JPATH_SITE.'/media/k2/users/'.$row->image;
                                 if (file_exists($avatarFile) && filemtime($avatarFile)) {
-                                    $avatarTimestamp = '?t='.date("Ymd_Hi", filemtime($avatarFile));
+                                    $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                                 }
                                 $avatar = JURI::root(true).'/media/k2/users/'.$row->image.$avatarTimestamp;
-                            ?>
+                                ?>
                             <a href="<?php echo $avatar; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $row->name; ?>">
                                 <i class="fa fa-picture-o" aria-hidden="true" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>"></i>
                             </a>
@@ -159,7 +159,7 @@ $context = JRequest::getCmd('context');
                         </td>
                         <td class="k2ui-center k2ui-hide-on-mobile">
                             <?php if (!$row->block): ?>
-                            <?php if ($context == "modalselector"): ?>
+                            <?php if ($context == 'modalselector'): ?>
                             <a class="k2ReportUserButton k2IsIcon" href="<?php echo JRoute::_('index.php?option=com_k2&view=user&task=report&tmpl=component&context=modalselector&id='.$row->id); ?>">
                                 <i class="fa fa-ban" aria-hidden="true"></i>
                             </a>
@@ -192,7 +192,7 @@ $context = JRequest::getCmd('context');
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         <input type="hidden" name="boxchecked" value="0" />
-        <?php if ($context == "modalselector"): ?>
+        <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />
         <input type="hidden" name="fid" value="<?php echo JRequest::getCmd('fid'); ?>" />
@@ -202,6 +202,6 @@ $context = JRequest::getCmd('context');
         <?php echo JHTML::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 </div>
 <?php endif; ?>

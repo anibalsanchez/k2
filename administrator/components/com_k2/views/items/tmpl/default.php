@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -15,7 +14,7 @@ $context = JRequest::getCmd('context');
 
 ?>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 <!-- Modal View -->
 <div id="k2ModalContainer">
     <div id="k2ModalHeader">
@@ -77,7 +76,7 @@ $context = JRequest::getCmd('context');
                             #
                             <?php endif; ?>
                         </th>
-                        <th class="k2ui-center<?php echo ($context == "modalselector") ? ' k2ui-not-visible' : ''; ?>">
+                        <th class="k2ui-center<?php echo ($context == 'modalselector') ? ' k2ui-not-visible' : ''; ?>">
                             <input id="k2<?php echo $this->params->get('backendListToggler', 'TogglerStandard'); ?>" type="checkbox" name="toggle" value="" />
                         </th>
                         <th class="title">
@@ -93,10 +92,14 @@ $context = JRequest::getCmd('context');
                         <th class="k2ui-order">
                             <?php if ($this->filter_featured == '1'): ?>
                             <?php echo JHTML::_('grid.sort', 'K2_FEATURED_ORDER', 'i.featured_ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
-                            <?php if ($this->ordering) echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'savefeaturedorder'); ?>
+                            <?php if ($this->ordering) {
+                                echo JHTML::_('grid.order', $this->rows, 'filesave.png', 'savefeaturedorder');
+                            } ?>
                             <?php else: ?>
                             <?php echo JHTML::_('grid.sort', 'K2_ORDER', 'i.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
-                            <?php if ($this->ordering) echo JHTML::_('grid.order', $this->rows); ?>
+                            <?php if ($this->ordering) {
+                                echo JHTML::_('grid.order', $this->rows);
+                            } ?>
                             <?php endif; ?>
                         </th>
                         <?php endif; ?>
@@ -141,13 +144,13 @@ $context = JRequest::getCmd('context');
                 </thead>
                 <?php
                     $tfootColspan = 14 + count($this->columns);
-                    if (K2_JVERSION != '30') {
-                        $tfootColspan++;
-                    }
-                    if (isset($this->lists['language'])) {
-                        $tfootColspan++;
-                    }
-                ?>
+if (K2_JVERSION != '30') {
+    $tfootColspan++;
+}
+if (isset($this->lists['language'])) {
+    $tfootColspan++;
+}
+?>
                 <tfoot>
                     <tr>
                         <td colspan="<?php echo $tfootColspan; ?>">
@@ -163,7 +166,7 @@ $context = JRequest::getCmd('context');
                 <tbody>
                     <?php if (isset($this->rows) && count($this->rows) > 0): ?>
                     <?php foreach ($this->rows as $key => $row): ?>
-                    <tr class="row<?php echo $key%2; ?>"<?php echo ($this->filter_featured != '1') ? ' sortable-group-id="'.$row->catid.'"' : ''; ?>>
+                    <tr class="row<?php echo $key % 2; ?>"<?php echo ($this->filter_featured != '1') ? ' sortable-group-id="'.$row->catid.'"' : ''; ?>>
                         <td class="k2ui-center k2ui-hide-on-mobile">
                             <?php if (K2_JVERSION == '30'): ?>
                             <?php if ($row->canChange): ?>
@@ -173,20 +176,20 @@ $context = JRequest::getCmd('context');
                             <span class="sortable-handler inactive"><i class="icon-menu"></i></span>
                             <?php endif; ?>
                             <?php else: ?>
-                            <?php echo $key+1; ?>
+                            <?php echo $key + 1; ?>
                             <?php endif; ?>
                         </td>
-                        <td class="k2ui-center<?php echo ($context == "modalselector") ? ' k2ui-not-visible' : ''; ?>"><?php echo @JHTML::_('grid.checkedout', $row, $key); ?></td>
+                        <td class="k2ui-center<?php echo ($context == 'modalselector') ? ' k2ui-not-visible' : ''; ?>"><?php echo @JHTML::_('grid.checkedout', $row, $key); ?></td>
                         <td>
                             <div class="k2ui-list-title">
-                                <?php if ($context == "modalselector"): ?>
+                                <?php if ($context == 'modalselector'): ?>
                                 <?php
-                                if (JRequest::getCmd('output') == 'list') {
-                                    $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(array("'", "\""), array("\\'", ""), $row->title).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\', \''.JRequest::getCmd('output').'\'); return false;';
-                                } else {
-                                    $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(array("'", "\""), array("\\'", ""), $row->title).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\'); return false;';
-                                }
-                                ?>
+                if (JRequest::getCmd('output') == 'list') {
+                    $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->title).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\', \''.JRequest::getCmd('output').'\'); return false;';
+                } else {
+                    $onClick = 'window.parent.k2ModalSelector(\''.$row->id.'\', \''.str_replace(["'", '"'], ["\\'", ''], $row->title).'\', \''.JRequest::getCmd('fid').'\', \''.JRequest::getVar('fname').'\'); return false;';
+                }
+                        ?>
                                 <a class="k2ListItemDisabled" title="<?php echo JText::_('K2_CLICK_TO_ADD_THIS_ENTRY'); ?>" href="#" onclick="<?php echo $onClick; ?>" data-id="<?php echo $row->id; ?>" data-alias="<?php echo $row->alias; ?>" data-catid="<?php echo $row->catid; ?>">
                                     <?php echo $row->title; ?>
                                 </a>
@@ -206,7 +209,7 @@ $context = JRequest::getCmd('context');
                             <div class="k2ui-show-on-mobile">
                                 <div class="k2ui-list-mobile-attribute">
                                     <?php echo JText::_('K2_CATEGORY'); ?>:
-                                    <?php if ($context == "modalselector"): ?>
+                                    <?php if ($context == 'modalselector'): ?>
                                     <?php echo $row->category; ?>
                                     <?php else: ?>
                                     <a href="<?php echo JRoute::_('index.php?option=com_k2&view=category&cid='.$row->catid); ?>"><?php echo $row->category; ?></a>
@@ -214,7 +217,7 @@ $context = JRequest::getCmd('context');
                                 </div>
                                 <div class="k2ui-list-mobile-attribute">
                                     <?php echo JText::_('K2_AUTHOR'); ?>:
-                                    <?php if ($this->user->gid > 23 && $context != "modalselector"): ?>
+                                    <?php if ($this->user->gid > 23 && $context != 'modalselector'): ?>
                                     <a href="<?php echo JRoute::_('index.php?option=com_k2&view=user&cid='.$row->created_by); ?>"><?php echo $row->author; ?></a>
                                     <?php else: ?>
                                     <?php echo $row->author; ?>
@@ -222,7 +225,7 @@ $context = JRequest::getCmd('context');
 
                                     <?php if (!empty($row->moderator)): ?>
                                     | <?php echo JText::_('K2_LAST_MODIFIED_BY'); ?>:
-                                    <?php if ($this->user->gid > 23 && $context != "modalselector"): ?>
+                                    <?php if ($this->user->gid > 23 && $context != 'modalselector'): ?>
                                     <a href="<?php echo JRoute::_('index.php?option=com_k2&view=user&cid='.$row->modified_by); ?>"><?php echo $row->moderator; ?></a>
                                     <?php else: ?>
                                     <?php echo $row->moderator; ?>
@@ -240,28 +243,28 @@ $context = JRequest::getCmd('context');
                             <span><?php echo $this->page->orderDownIcon($key, count($this->rows), true, 'featuredorderdown', 'K2_MOVE_DOWN', $this->ordering); ?></span>
                             <input type="text" name="order[]" size="5" value="<?php echo $row->featured_ordering; ?>"<?php echo ($this->ordering) ? '' : ' disabled="disabled"'; ?> class="text_area" />
                             <?php else: ?>
-                            <span><?php echo $this->page->orderUpIcon($key, ($row->catid == @$this->rows[$key-1]->catid), 'orderup', 'K2_MOVE_UP', $this->ordering); ?></span>
-                            <span><?php echo $this->page->orderDownIcon($key, count($this->rows), ($row->catid == @$this->rows[$key+1]->catid), 'orderdown', 'K2_MOVE_DOWN', $this->ordering); ?></span>
+                            <span><?php echo $this->page->orderUpIcon($key, ($row->catid == @$this->rows[$key - 1]->catid), 'orderup', 'K2_MOVE_UP', $this->ordering); ?></span>
+                            <span><?php echo $this->page->orderDownIcon($key, count($this->rows), ($row->catid == @$this->rows[$key + 1]->catid), 'orderdown', 'K2_MOVE_DOWN', $this->ordering); ?></span>
                             <input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>"<?php echo ($this->ordering) ? '' : ' disabled="disabled"'; ?> class="text_area" />
                             <?php endif; ?>
                         </td>
                         <?php endif; ?>
                         <td class="k2ui-hide-on-mobile">
-                            <?php if ($context == "modalselector"): ?>
+                            <?php if ($context == 'modalselector'): ?>
                             <?php echo $row->category; ?>
                             <?php else: ?>
                             <a href="<?php echo JRoute::_('index.php?option=com_k2&view=category&cid='.$row->catid); ?>"><?php echo $row->category; ?></a>
                             <?php endif; ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
-                            <?php if ($this->user->gid > 23 && $context != "modalselector"): ?>
+                            <?php if ($this->user->gid > 23 && $context != 'modalselector'): ?>
                             <a href="<?php echo JRoute::_('index.php?option=com_k2&view=user&cid='.$row->created_by); ?>"><?php echo $row->author; ?></a>
                             <?php else: ?>
                             <?php echo $row->author; ?>
                             <?php endif; ?>
                         </td>
                         <td class="k2ui-hide-on-mobile">
-                            <?php if ($this->user->gid > 23 && $context != "modalselector"): ?>
+                            <?php if ($this->user->gid > 23 && $context != 'modalselector'): ?>
                             <a href="<?php echo JRoute::_('index.php?option=com_k2&view=user&cid='.$row->modified_by); ?>"><?php echo $row->moderator; ?></a>
                             <?php else: ?>
                             <?php echo $row->moderator; ?>
@@ -272,8 +275,8 @@ $context = JRequest::getCmd('context');
                         <td class="k2Date k2ui-hide-on-mobile"><?php echo ($row->modified == $this->nullDate) ? JText::_('K2_NEVER') : JHTML::_('date', $row->modified, $this->dateFormat); ?></td>
                         <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->hits ?></td>
                         <td class="k2ui-center k2ui-hide-on-mobile">
-                            <?php if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5("Image".$row->id).'_XL.jpg')): ?>
-                            <a href="<?php echo JURI::root(true).'/media/k2/items/cache/'.md5("Image".$row->id).'_XL.jpg'; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="&lt;b&gt;<?php echo $row->title; ?>&lt;/b&gt; - <?php echo JText::_('K2_PUBLISHED_IN'); ?> &lt;b&gt;<?php echo $row->category; ?>&lt;/b&gt; <?php echo JText::_('K2_BY'); ?> &lt;b&gt;<?php echo $row->author; ?>&lt;/b&gt;">
+                            <?php if (JFile::exists(JPATH_SITE.'/media/k2/items/cache/'.md5('Image'.$row->id).'_XL.jpg')): ?>
+                            <a href="<?php echo JURI::root(true).'/media/k2/items/cache/'.md5('Image'.$row->id).'_XL.jpg'; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="&lt;b&gt;<?php echo $row->title; ?>&lt;/b&gt; - <?php echo JText::_('K2_PUBLISHED_IN'); ?> &lt;b&gt;<?php echo $row->category; ?>&lt;/b&gt; <?php echo JText::_('K2_BY'); ?> &lt;b&gt;<?php echo $row->author; ?>&lt;/b&gt;">
                                 <i class="fa fa-picture-o" aria-hidden="true" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>"></i>
                             </a>
                             <?php endif; ?>
@@ -284,7 +287,8 @@ $context = JRequest::getCmd('context');
                         <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->id; ?></td>
                         <?php foreach ($this->columns as $column): ?>
                         <td<?php echo ($column->class) ? ' class="'.$column->class.'"' : ''; ?>>
-                            <?php $property = $column->property; echo $row->$property; ?>
+                            <?php $property = $column->property;
+                            echo $row->$property; ?>
                         </td>
                         <?php endforeach; ?>
                     </tr>
@@ -363,7 +367,7 @@ $context = JRequest::getCmd('context');
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         <input type="hidden" name="boxchecked" value="0" />
-        <?php if ($context == "modalselector"): ?>
+        <?php if ($context == 'modalselector'): ?>
         <input type="hidden" name="context" value="modalselector" />
         <input type="hidden" name="tmpl" value="component" />
         <input type="hidden" name="fid" value="<?php echo JRequest::getCmd('fid'); ?>" />
@@ -373,6 +377,6 @@ $context = JRequest::getCmd('context');
         <?php echo JHTML::_('form.token'); ?>
     </form>
 
-<?php if ($app->isSite() || $context == "modalselector"): ?>
+<?php if ($app->isSite() || $context == 'modalselector'): ?>
 </div>
 <?php endif; ?>

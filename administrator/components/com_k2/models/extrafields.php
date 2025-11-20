@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -33,7 +38,7 @@ class K2ModelExtraFields extends K2Model
         $filter_type = $app->getUserStateFromRequest($option.$view.'filter_type', 'filter_type', '', 'string');
         $filter_group = $app->getUserStateFromRequest($option.$view.'filter_group', 'filter_group', 0, 'int');
 
-        $query = "SELECT exf.*, exfg.name as groupname FROM #__k2_extra_fields AS exf LEFT JOIN #__k2_extra_fields_groups exfg ON exf.group=exfg.id  WHERE exf.id>0";
+        $query = 'SELECT exf.*, exfg.name as groupname FROM #__k2_extra_fields AS exf LEFT JOIN #__k2_extra_fields_groups exfg ON exf.group=exfg.id  WHERE exf.id>0';
 
         if ($filter_state > -1) {
             $query .= " AND published={$filter_state}";
@@ -41,11 +46,11 @@ class K2ModelExtraFields extends K2Model
 
         if ($search) {
             $escaped = K2_JVERSION == '15' ? $db->getEscaped($search, true) : $db->escape($search, true);
-            $query .= " AND LOWER(exf.name) LIKE ".$db->Quote('%'.$escaped.'%', false);
+            $query .= ' AND LOWER(exf.name) LIKE '.$db->Quote('%'.$escaped.'%', false);
         }
 
         if ($filter_type) {
-            $query .= " AND `type`=".$db->Quote($filter_type);
+            $query .= ' AND `type`='.$db->Quote($filter_type);
         }
 
         if ($filter_group) {
@@ -64,6 +69,7 @@ class K2ModelExtraFields extends K2Model
 
         $db->setQuery($query, $limitstart, $limit);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
@@ -82,7 +88,7 @@ class K2ModelExtraFields extends K2Model
         $filter_type = $app->getUserStateFromRequest($option.$view.'filter_type', 'filter_type', '', 'string');
         $filter_group = $app->getUserStateFromRequest($option.$view.'filter_group', 'filter_group', '', 'string');
 
-        $query = "SELECT COUNT(*) FROM #__k2_extra_fields WHERE id>0";
+        $query = 'SELECT COUNT(*) FROM #__k2_extra_fields WHERE id>0';
 
         if ($filter_state > -1) {
             $query .= " AND published={$filter_state}";
@@ -90,19 +96,20 @@ class K2ModelExtraFields extends K2Model
 
         if ($search) {
             $escaped = K2_JVERSION == '15' ? $db->getEscaped($search, true) : $db->escape($search, true);
-            $query .= " AND LOWER(name) LIKE ".$db->Quote('%'.$escaped.'%', false);
+            $query .= ' AND LOWER(name) LIKE '.$db->Quote('%'.$escaped.'%', false);
         }
 
         if ($filter_type) {
-            $query .= " AND `type`=".$db->Quote($filter_type);
+            $query .= ' AND `type`='.$db->Quote($filter_type);
         }
 
         if ($filter_group) {
-            $query .= " AND `group`=".$db->Quote($filter_group);
+            $query .= ' AND `group`='.$db->Quote($filter_group);
         }
 
         $db->setQuery($query);
         $total = $db->loadresult();
+
         return $total;
     }
 
@@ -140,14 +147,14 @@ class K2ModelExtraFields extends K2Model
     {
         $app = JFactory::getApplication();
         $db = JFactory::getDbo();
-        $cid = JRequest::getVar('cid', array(0), 'post', 'array');
+        $cid = JRequest::getVar('cid', [0], 'post', 'array');
         $total = count($cid);
-        $order = JRequest::getVar('order', array(0), 'post', 'array');
-        JArrayHelper::toInteger($order, array(0));
-        $groupings = array();
+        $order = JRequest::getVar('order', [0], 'post', 'array');
+        JArrayHelper::toInteger($order, [0]);
+        $groupings = [];
         for ($i = 0; $i < $total; $i++) {
             $row = JTable::getInstance('K2ExtraField', 'Table');
-            $row->load((int)$cid[$i]);
+            $row->load((int) $cid[$i]);
             $groupings[] = $row->group;
             if ($row->ordering != $order[$i]) {
                 $row->ordering = $order[$i];
@@ -161,11 +168,12 @@ class K2ModelExtraFields extends K2Model
             $groupings = array_unique($groupings);
             foreach ($groupings as $group) {
                 $row = JTable::getInstance('K2ExtraField', 'Table');
-                $row->reorder("`group` = ".(int)$group);
+                $row->reorder('`group` = '.(int) $group);
             }
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
+
         return true;
     }
 
@@ -178,7 +186,7 @@ class K2ModelExtraFields extends K2Model
         $row->move(-1, "`group` = '{$row->group}'");
         $params = JComponentHelper::getParams('com_k2');
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder("`group` = ".(int)$row->group);
+            $row->reorder('`group` = '.(int) $row->group);
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
@@ -196,7 +204,7 @@ class K2ModelExtraFields extends K2Model
         $row->move(1, "`group` = '{$row->group}'");
         $params = JComponentHelper::getParams('com_k2');
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder("`group` = ".(int)$row->group);
+            $row->reorder('`group` = '.(int) $row->group);
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
@@ -226,6 +234,7 @@ class K2ModelExtraFields extends K2Model
         $cid = JRequest::getVar('cid');
         $row = JTable::getInstance('K2ExtraFieldsGroup', 'Table');
         $row->load($cid);
+
         return $row;
     }
 
@@ -237,7 +246,7 @@ class K2ModelExtraFields extends K2Model
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
         $db = JFactory::getDbo();
-        $query = "SELECT * FROM #__k2_extra_fields_groups ORDER BY `name`";
+        $query = 'SELECT * FROM #__k2_extra_fields_groups ORDER BY `name`';
         if ($filter) {
             $db->setQuery($query);
         } else {
@@ -246,7 +255,7 @@ class K2ModelExtraFields extends K2Model
 
         $rows = $db->loadObjectList();
         for ($i = 0; $i < count($rows); $i++) {
-            $query = "SELECT name FROM #__k2_categories WHERE extraFieldsGroup = ".(int)$rows[$i]->id;
+            $query = 'SELECT name FROM #__k2_categories WHERE extraFieldsGroup = '.(int) $rows[$i]->id;
             $db->setQuery($query);
             $categories = K2_JVERSION == '30' ? $db->loadColumn() : $db->loadResultArray();
             if (is_array($categories)) {
@@ -255,15 +264,17 @@ class K2ModelExtraFields extends K2Model
                 $rows[$i]->categories = '';
             }
         }
+
         return $rows;
     }
 
     public function getTotalGroups()
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(*) FROM #__k2_extra_fields_groups";
+        $query = 'SELECT COUNT(*) FROM #__k2_extra_fields_groups';
         $db->setQuery($query);
         $total = $db->loadResult();
+
         return $total;
     }
 

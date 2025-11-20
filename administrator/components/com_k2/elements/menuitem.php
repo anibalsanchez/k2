@@ -1,16 +1,21 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php');
+require_once JPATH_ADMINISTRATOR.'/components/com_k2/elements/base.php';
 
 class K2ElementMenuItem extends K2Element
 {
@@ -26,7 +31,7 @@ class K2ElementMenuItem extends K2Element
 
         $where = '';
         if ($state = $node->attributes('state')) {
-            $where .= ' AND published = '.(int)$state;
+            $where .= ' AND published = '.(int) $state;
         }
 
         // load the list of menu items
@@ -42,7 +47,7 @@ class K2ElementMenuItem extends K2Element
 
         // establish the hierarchy of the menu
         // TODO: use node model
-        $children = array();
+        $children = [];
 
         if ($menuItems) {
             // first pass - collect children
@@ -52,14 +57,14 @@ class K2ElementMenuItem extends K2Element
                     $v->name = $v->title;
                 }
                 $pt = $v->parent;
-                $list = @$children[$pt] ? $children[$pt] : array();
+                $list = @$children[$pt] ? $children[$pt] : [];
                 array_push($list, $v);
                 $children[$pt] = $list;
             }
         }
 
         // second pass - get an indent list of the items
-        $list = JHTML::_('menu.treerecurse', 0, '', array(), $children, 9999, 0, 0);
+        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
 
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', ' -', $item->treename);
@@ -68,13 +73,13 @@ class K2ElementMenuItem extends K2Element
 
         // assemble into menutype groups
         $n = count($list);
-        $groupedList = array();
+        $groupedList = [];
         foreach ($list as $k => $v) {
             $groupedList[$v->menutype][] = &$list[$k];
         }
 
         // assemble menu items to the array
-        $options = array();
+        $options = [];
         $options[] = JHTML::_('select.option', '', '- '.JText::_('K2_SELECT_MENU_ITEM').' -');
 
         foreach ($menuTypes as $type) {
@@ -89,8 +94,8 @@ class K2ElementMenuItem extends K2Element
 
                     //If menutype is changed but item is not saved yet, use the new type in the list
                     if (JRequest::getString('option', '', 'get') == 'com_menus') {
-                        $currentItemArray = JRequest::getVar('cid', array(0), '', 'array');
-                        $currentItemId = (int)$currentItemArray[0];
+                        $currentItemArray = JRequest::getVar('cid', [0], '', 'array');
+                        $currentItemId = (int) $currentItemArray[0];
                         $currentItemType = JRequest::getString('type', $item->type, 'get');
                         if ($currentItemId == $item->id && $currentItemType != $item->type) {
                             $item->type = $currentItemType;

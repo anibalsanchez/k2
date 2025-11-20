@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -20,9 +25,9 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     $language = JFactory::getLanguage();
     $language->load('com_k2');
 
-    $status = new stdClass;
-    $status->modules = array();
-    $status->plugins = array();
+    $status = new stdClass();
+    $status->modules = [];
+    $status->plugins = [];
 
     $src = $this->parent->getPath('source');
 
@@ -38,9 +43,9 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
                 $client = 'site';
             }
             $path = $client == 'administrator' ? $src.'/administrator/modules/'.$mname : $src.'/modules/'.$mname;
-            $installer = new JInstaller;
+            $installer = new JInstaller();
             $result = $installer->install($path);
-            $status->modules[] = array('name' => $mname, 'client' => $client, 'result' => $result);
+            $status->modules[] = ['name' => $mname, 'client' => $client, 'result' => $result];
         }
 
         if (!$k2AlreadyInstalled) {
@@ -64,12 +69,12 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
                 continue;
             }
             $path = $src.'/plugins/'.$pgroup;
-            $installer = new JInstaller;
+            $installer = new JInstaller();
             $result = $installer->install($path);
-            $query = "UPDATE #__plugins SET published=1 WHERE element=".$db->Quote($pname)." AND folder=".$db->Quote($pgroup);
+            $query = 'UPDATE #__plugins SET published=1 WHERE element='.$db->Quote($pname).' AND folder='.$db->Quote($pgroup);
             $db->setQuery($query);
             $db->query();
-            $status->plugins[] = array('name' => $pname, 'group' => $pgroup, 'result' => $result);
+            $status->plugins[] = ['name' => $pname, 'group' => $pgroup, 'result' => $result];
         }
     }
 
@@ -97,16 +102,16 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     // Categories
     $fields = $db->getTableFields('#__k2_categories');
     if (!array_key_exists('language', $fields['#__k2_categories'])) {
-        $query = "ALTER TABLE #__k2_categories ADD `language` CHAR(7) NOT NULL";
+        $query = 'ALTER TABLE #__k2_categories ADD `language` CHAR(7) NOT NULL';
         $db->setQuery($query);
         $db->query();
 
-        $query = "ALTER TABLE #__k2_categories ADD INDEX `idx_language` (`language`)";
+        $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_language` (`language`)';
         $db->setQuery($query);
         $db->query();
     }
 
-    $query = "SHOW INDEX FROM #__k2_categories";
+    $query = 'SHOW INDEX FROM #__k2_categories';
     $db->setQuery($query);
     $indexes = $db->loadObjectList();
     $indexExists = false;
@@ -116,13 +121,13 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
         }
     }
     if (!$indexExists) {
-        $query = "ALTER TABLE #__k2_categories ADD INDEX `idx_category` (`published`,`access`,`trash`)";
+        $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_category` (`published`,`access`,`trash`)';
         $db->setQuery($query);
         $db->query();
     }
 
     // Comments (add index for comments count)
-    $query = "SHOW INDEX FROM #__k2_comments";
+    $query = 'SHOW INDEX FROM #__k2_comments';
     $db->setQuery($query);
     $indexes = $db->loadObjectList();
     $indexExists = false;
@@ -132,7 +137,7 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
         }
     }
     if (!$indexExists) {
-        $query = "ALTER TABLE #__k2_comments ADD INDEX `idx_countComments` (`itemID`, `published`)";
+        $query = 'ALTER TABLE #__k2_comments ADD INDEX `idx_countComments` (`itemID`, `published`)';
         $db->setQuery($query);
         $db->query();
     }
@@ -145,31 +150,31 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
         $db->query();
     }
     if (!array_key_exists('language', $fields['#__k2_items'])) {
-        $query = "ALTER TABLE #__k2_items ADD `language` CHAR(7) NOT NULL";
+        $query = 'ALTER TABLE #__k2_items ADD `language` CHAR(7) NOT NULL';
         $db->setQuery($query);
         $db->query();
 
-        $query = "ALTER TABLE #__k2_items ADD INDEX (`language`)";
+        $query = 'ALTER TABLE #__k2_items ADD INDEX (`language`)';
         $db->setQuery($query);
         $db->query();
     }
     if ($fields['#__k2_items']['introtext'] == 'text') {
-        $query = "ALTER TABLE #__k2_items MODIFY `introtext` MEDIUMTEXT";
+        $query = 'ALTER TABLE #__k2_items MODIFY `introtext` MEDIUMTEXT';
         $db->setQuery($query);
         $db->query();
     }
     if ($fields['#__k2_items']['fulltext'] == 'text') {
-        $query = "ALTER TABLE #__k2_items MODIFY `fulltext` MEDIUMTEXT";
+        $query = 'ALTER TABLE #__k2_items MODIFY `fulltext` MEDIUMTEXT';
         $db->setQuery($query);
         $db->query();
     }
     if ($fields['#__k2_items']['video'] != 'text') {
-        $query = "ALTER TABLE #__k2_items MODIFY `video` TEXT";
+        $query = 'ALTER TABLE #__k2_items MODIFY `video` TEXT';
         $db->setQuery($query);
         $db->query();
     }
 
-    $query = "SHOW INDEX FROM #__k2_items";
+    $query = 'SHOW INDEX FROM #__k2_items';
     $db->setQuery($query);
     $itemIndices = $db->loadObjectList();
 
@@ -198,27 +203,27 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     }
 
     if ($itemKeys_item) {
-        $query = "ALTER TABLE #__k2_items DROP INDEX `item`";
+        $query = 'ALTER TABLE #__k2_items DROP INDEX `item`';
         $db->setQuery($query);
         $db->query();
     }
     if ($itemKeys_idx_item) {
-        $query = "ALTER TABLE #__k2_items DROP INDEX `idx_item`";
+        $query = 'ALTER TABLE #__k2_items DROP INDEX `idx_item`';
         $db->setQuery($query);
         $db->query();
     }
     if (!$itemKeys_idx_items_common) {
-        $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_common` (`catid`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)";
+        $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common` (`catid`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
         $db->setQuery($query);
         $db->query();
     }
     if (!$itemKeys_idx_items_common_backend) {
-        $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_common_backend` (`trash`,`id`)";
+        $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common_backend` (`trash`,`id`)';
         $db->setQuery($query);
         $db->query();
     }
     if (!$itemKeys_idx_items_authors) {
-        $query = "ALTER TABLE #__k2_items ADD INDEX `idx_items_authors` (`created_by`,`created_by_alias`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)";
+        $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_authors` (`created_by`,`created_by_alias`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
         $db->setQuery($query);
         $db->query();
     }
@@ -226,12 +231,12 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     // Tags
     $fields = $db->getTableFields('#__k2_tags');
     if (!array_key_exists('description', $fields['#__k2_tags'])) {
-        $query = "ALTER TABLE #__k2_tags ADD `description` text NOT NULL";
+        $query = 'ALTER TABLE #__k2_tags ADD `description` text NOT NULL';
         $db->setQuery($query);
         $db->query();
     }
 
-    $query = "SHOW INDEX FROM #__k2_tags_xref";
+    $query = 'SHOW INDEX FROM #__k2_tags_xref';
     $db->setQuery($query);
     $tagXrefIndices = $db->loadObjectList();
     $tagXrefKey_idx_tags_xref_common = false;
@@ -241,7 +246,7 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
         }
     }
     if (!$tagXrefKey_idx_tags_xref_common) {
-        $query = "ALTER TABLE #__k2_tags_xref ADD INDEX `idx_tags_xref_common` (`tagID`,`itemID`)";
+        $query = 'ALTER TABLE #__k2_tags_xref ADD INDEX `idx_tags_xref_common` (`tagID`,`itemID`)';
         $db->setQuery($query);
         $db->query();
     }
@@ -249,16 +254,16 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     // Users
     $fields = $db->getTableFields('#__k2_users');
     if (!array_key_exists('ip', $fields['#__k2_users'])) {
-        $query = "ALTER TABLE `#__k2_users`
+        $query = 'ALTER TABLE `#__k2_users`
             ADD `ip` VARCHAR(45) NOT NULL ,
             ADD `hostname` VARCHAR(255) NOT NULL ,
-            ADD `notes` TEXT NOT NULL";
+            ADD `notes` TEXT NOT NULL';
         $db->setQuery($query);
         $db->query();
     }
 
     // Users - add new ENUM option for "gender"
-    $query = "SELECT DISTINCT gender FROM #__k2_users";
+    $query = 'SELECT DISTINCT gender FROM #__k2_users';
     $db->setQuery($query);
     $enumOptions = $db->loadResultArray();
     if (count($enumOptions) < 3) {
@@ -268,7 +273,7 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     }
 
     // User groups (set first 2 user groups)
-    $query = "SELECT COUNT(*) FROM #__k2_user_groups";
+    $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
     $db->setQuery($query);
     $userGroupCount = $db->loadResult();
     if ($userGroupCount == 0) {
@@ -282,16 +287,16 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     }
 
     // Log for updates
-    $query = "CREATE TABLE IF NOT EXISTS `#__k2_log` (
+    $query = 'CREATE TABLE IF NOT EXISTS `#__k2_log` (
             `status` int(11) NOT NULL,
             `response` text NOT NULL,
             `timestamp` datetime NOT NULL
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;";
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;';
     $db->setQuery($query);
     $db->query();
 
     // Clean up empty entries in #__k2_users table caused by an issue in the K2 user plugin
-    $query = "DELETE FROM #__k2_users WHERE userID = 0";
+    $query = 'DELETE FROM #__k2_users WHERE userID = 0';
     $db->setQuery($query);
     $db->query();
 
@@ -361,10 +366,10 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
             <th></th>
         </tr>
         <?php foreach ($status->modules as $module): ?>
-        <tr class="row<?php echo(++$rows % 2); ?>">
+        <tr class="row<?php echo ++$rows % 2; ?>">
             <td class="key"><?php echo $module['name']; ?></td>
             <td class="key"><?php echo ucfirst($module['client']); ?></td>
-            <td><strong><?php echo ($module['result'])?JText::_('K2_INSTALLED'):JText::_('K2_NOT_INSTALLED'); ?></strong></td>
+            <td><strong><?php echo ($module['result']) ? JText::_('K2_INSTALLED') : JText::_('K2_NOT_INSTALLED'); ?></strong></td>
         </tr>
         <?php endforeach; ?>
         <?php endif; ?>
@@ -375,10 +380,10 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
             <th></th>
         </tr>
         <?php foreach ($status->plugins as $plugin): ?>
-        <tr class="row<?php echo(++$rows % 2); ?>">
+        <tr class="row<?php echo ++$rows % 2; ?>">
             <td class="key"><?php echo ucfirst($plugin['name']); ?></td>
             <td class="key"><?php echo ucfirst($plugin['group']); ?></td>
-            <td><strong><?php echo ($plugin['result'])?JText::_('K2_INSTALLED'):JText::_('K2_NOT_INSTALLED'); ?></strong></td>
+            <td><strong><?php echo ($plugin['result']) ? JText::_('K2_INSTALLED') : JText::_('K2_NOT_INSTALLED'); ?></strong></td>
         </tr>
         <?php endforeach; ?>
         <?php endif; ?>

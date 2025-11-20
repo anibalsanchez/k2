@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -74,13 +79,13 @@ class K2ViewItems extends K2View
         $items = $model->getData();
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
-            $limitstart = max(0, (int)(ceil($total / $limit) - 1) * $limit);
+            $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
 
         if (K2_JVERSION != '15') {
             $langs = JLanguageHelper::getLanguages();
-            $langsMapping = array();
+            $langsMapping = [];
             $langsMapping['*'] = JText::_('K2_ALL');
             foreach ($langs as $lang) {
                 $langsMapping[$lang->lang_code] = $lang->title;
@@ -90,26 +95,26 @@ class K2ViewItems extends K2View
         foreach ($items as $key => $item) {
             if (K2_JVERSION != '15') {
                 $item->status = JHtml::_('jgrid.published', $item->published, $key, '', ($filter_trash == 0), 'cb', $item->publish_up, $item->publish_down);
-                $states = array(
-                    1 => array(
+                $states = [
+                    1 => [
                         'featured',
                         'K2_FEATURED',
                         'K2_REMOVE_FEATURED_FLAG',
                         'K2_FEATURED',
                         false,
                         'publish',
-                        'publish'
-                    ),
-                    0 => array(
+                        'publish',
+                    ],
+                    0 => [
                         'featured',
                         'K2_NOT_FEATURED',
                         'K2_FLAG_AS_FEATURED',
                         'K2_NOT_FEATURED',
                         false,
                         'unpublish',
-                        'unpublish'
-                    ),
-                );
+                        'unpublish',
+                    ],
+                ];
                 $item->featuredStatus = JHtml::_('jgrid.state', $states, $item->featured, $key, '', $filter_trash == 0);
                 $item->canChange = $user->authorise('core.edit.state', 'com_k2.item.'.$item->id);
                 $item->language = $item->language ? $item->language : '*';
@@ -152,11 +157,11 @@ class K2ViewItems extends K2View
         }
         $this->assignRef('rows', $items);
 
-        $lists = array();
+        $lists = [];
 
         // Detect exact search phrase using double quotes in search string
-        if (substr($search, 0, 1)=='"' && substr($search, -1)=='"') {
-            $lists['search'] = "\"".trim(str_replace('"', '', $search))."\"";
+        if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
+            $lists['search'] = '"'.trim(str_replace('"', '', $search)).'"';
         } else {
             $lists['search'] = trim(str_replace('"', '', $search));
         }
@@ -179,7 +184,7 @@ class K2ViewItems extends K2View
         $lists['categories'] = JHTML::_('select.genericlist', $categories_options, 'filter_category', '', 'value', 'text', $filter_category);
 
         $authors = $model->getItemsAuthors();
-        $options = array();
+        $options = [];
         $options[] = JHTML::_('select.option', 0, JText::_('K2_NO_USER'));
         foreach ($authors as $author) {
             $name = $author->name;
@@ -203,7 +208,7 @@ class K2ViewItems extends K2View
         if ($params->get('showTagFilter')) {
             $tagsModel = K2Model::getInstance('Tags', 'K2Model');
             $options = $tagsModel->getFilter();
-            $option = new stdClass;
+            $option = new stdClass();
             $option->id = 0;
             $option->name = JText::_('K2_SELECT_TAG');
             array_unshift($options, $option);
@@ -221,7 +226,7 @@ class K2ViewItems extends K2View
         $categories = $categoriesModel->categoriesTree(null, true, false);
         array_unshift($categories, JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -'));
         $lists['batchCategories'] = JHTML::_('select.genericlist', $categories, 'batchCategory', '', 'value', 'text');
-        $lists['batchAccess'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'batchAccess', null, '', array(JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -'))) : str_replace('size="3"', "", JHTML::_('list.accesslevel', $item));
+        $lists['batchAccess'] = version_compare(JVERSION, '2.5', 'ge') ? JHTML::_('access.level', 'batchAccess', null, '', [JHtml::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -')]) : str_replace('size="3"', '', JHTML::_('list.accesslevel', $item));
 
         if (version_compare(JVERSION, '2.5.0', 'ge')) {
             $languages = JHTML::_('contentlanguage.existing', true, true);
@@ -231,7 +236,7 @@ class K2ViewItems extends K2View
 
         $model = $this->getModel('items');
         $authors = $model->getItemsAuthors();
-        $options = array();
+        $options = [];
         $options[] = JHTML::_('select.option', '', '- '.JText::_('K2_LEAVE_UNCHANGED').' -');
         foreach ($authors as $author) {
             $name = $author->name;
@@ -249,14 +254,14 @@ class K2ViewItems extends K2View
         $this->assignRef('page', $pageNav);
 
         // Augment with plugin events
-        $filters = array();
-        $columns = array();
+        $filters = [];
+        $columns = [];
 
         JPluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
-        $dispatcher->trigger('onK2BeforeAssignFilters', array(&$filters));
+        $dispatcher->trigger('onK2BeforeAssignFilters', [&$filters]);
         $this->assignRef('filters', $filters);
-        $dispatcher->trigger('onK2BeforeAssignColumns', array(&$columns));
+        $dispatcher->trigger('onK2BeforeAssignColumns', [&$columns]);
         $this->assignRef('columns', $columns);
 
         // Toolbar

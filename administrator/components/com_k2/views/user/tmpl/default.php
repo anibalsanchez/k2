@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -58,10 +57,10 @@ defined('_JEXEC') or die;
                         $avatarTimestamp = '';
                         $avatarFile = JPATH_SITE.'/media/k2/users/'.$this->row->image;
                         if (file_exists($avatarFile) && filemtime($avatarFile)) {
-                            $avatarTimestamp = '?t='.date("Ymd_Hi", filemtime($avatarFile));
+                            $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                         }
                         $avatar = JURI::root(true).'/media/k2/users/'.$this->row->image.$avatarTimestamp;
-                    ?>
+                        ?>
                     <div class="k2ImagePreview">
                         <a href="<?php echo $avatar; ?>" title="<?php echo JText::_('K2_PREVIEW_IMAGE'); ?>" data-fancybox="gallery" data-caption="<?php echo $this->row->name; ?>">
                             <img class="k2AdminImage" src="<?php echo $avatar; ?>" alt="<?php echo $this->row->name; ?>" />

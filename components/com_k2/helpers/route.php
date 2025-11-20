@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -14,18 +19,18 @@ jimport('joomla.application.component.helper');
 
 class K2HelperRoute
 {
-    private static $cache = array(
-        'item' => array(),
-        'category' => array(),
-        'date' => array(),
-        'tag' => array(),
-        'user' => array(),
+    private static $cache = [
+        'item' => [],
+        'category' => [],
+        'date' => [],
+        'tag' => [],
+        'user' => [],
         'menu_items' => null,
-        'fallback_menu_items' => array(),
-        'multicat_menu_items' => array(),
+        'fallback_menu_items' => [],
+        'multicat_menu_items' => [],
         'category_tree' => null,
-        'itemlist_model' => null
-    );
+        'itemlist_model' => null,
+    ];
 
     public static function getItemRoute($id, $catid = 0)
     {
@@ -33,15 +38,16 @@ class K2HelperRoute
         if (isset(self::$cache['item'][$key])) {
             return self::$cache['item'][$key];
         }
-        $needles = array(
+        $needles = [
             'item' => (int) $id,
             'category' => (int) $catid,
-        );
+        ];
         $link = 'index.php?option=com_k2&view=item&id='.$id;
         if ($item = self::findMenuItem($needles)) {
             $link .= '&Itemid='.$item->id;
         }
         self::$cache['item'][$key] = $link;
+
         return $link;
     }
 
@@ -51,12 +57,13 @@ class K2HelperRoute
         if (isset(self::$cache['category'][$key])) {
             return self::$cache['category'][$key];
         }
-        $needles = array('category' => (int) $catid);
+        $needles = ['category' => (int) $catid];
         $link = 'index.php?option=com_k2&view=itemlist&task=category&id='.$catid;
         if ($item = self::findMenuItem($needles)) {
             $link .= '&Itemid='.$item->id;
         }
         self::$cache['category'][$key] = $link;
+
         return $link;
     }
 
@@ -66,12 +73,13 @@ class K2HelperRoute
         if (isset(self::$cache['tag'][$key])) {
             return self::$cache['tag'][$key];
         }
-        $needles = array('tag' => $tag);
+        $needles = ['tag' => $tag];
         $link = 'index.php?option=com_k2&view=itemlist&task=tag&tag='.urlencode($tag);
         if ($item = self::findMenuItem($needles)) {
             $link .= '&Itemid='.$item->id;
         }
         self::$cache['tag'][$key] = $link;
+
         return $link;
     }
 
@@ -81,7 +89,7 @@ class K2HelperRoute
         if (isset(self::$cache['user'][$key])) {
             return self::$cache['user'][$key];
         }
-        $needles = array('user' => (int) $userID);
+        $needles = ['user' => (int) $userID];
         $user = JFactory::getUser($userID);
         if (K2_JVERSION != '15' && JFactory::getConfig()->get('unicodeslugs') == 1) {
             $alias = JApplication::stringURLSafe($user->name);
@@ -91,11 +99,11 @@ class K2HelperRoute
             $alias = preg_replace('/[^\p{L}\p{N}]/u', '', trim($user->name));
             $alias = mb_strtolower($alias, 'UTF-8');
             $params = K2HelperUtilities::getParams('com_k2');
-            $processedSEFReplacements = array();
+            $processedSEFReplacements = [];
             $SEFReplacements = explode(',', $params->get('SEFReplacements', null));
             foreach ($SEFReplacements as $pair) {
                 if (!empty($pair)) {
-                    @list($src, $dst) = explode('|', trim($pair));
+                    @[$src, $dst] = explode('|', trim($pair));
                     $processedSEFReplacements[trim($src)] = trim($dst);
                 }
             }
@@ -113,6 +121,7 @@ class K2HelperRoute
             $link .= '&Itemid='.$item->id;
         }
         self::$cache['user'][$key] = $link;
+
         return $link;
     }
 
@@ -122,7 +131,7 @@ class K2HelperRoute
         if (isset(self::$cache['date'][$key])) {
             return self::$cache['date'][$key];
         }
-        $needles = array('date' => (int) $year.$month.$day);
+        $needles = ['date' => (int) $year.$month.$day];
         $link = 'index.php?option=com_k2&view=itemlist&task=date&year='.$year.'&month='.$month;
         if ($day) {
             $link .= '&day='.$day;
@@ -134,25 +143,27 @@ class K2HelperRoute
             $link .= '&Itemid='.$item->id;
         }
         self::$cache['date'][$key] = $link;
+
         return $link;
     }
 
     public static function getSearchRoute($Itemid = '')
     {
-        $needles = array('search' => 'search');
+        $needles = ['search' => 'search'];
         $link = 'index.php?option=com_k2&view=itemlist&task=search';
         if ($Itemid) {
             $link .= '&Itemid='.$Itemid;
         } elseif ($item = self::findMenuItem($needles)) {
             $link .= '&Itemid='.$item->id;
         }
+
         return $link;
     }
 
     private static function findMenuItem($needles)
     {
         $app = JFactory::getApplication();
-        $menu = $app->getMenu('site', array());
+        $menu = $app->getMenu('site', []);
         $component = JComponentHelper::getComponent('com_k2');
 
         if (!is_null(self::$cache['menu_items'])) {
@@ -166,7 +177,7 @@ class K2HelperRoute
             self::$cache['menu_items'] = $items;
         }
 
-        $parsedItems = array();
+        $parsedItems = [];
 
         if (count($items)) {
             foreach ($items as $item) {
@@ -186,7 +197,7 @@ class K2HelperRoute
                             }
                         } else {
                             $menuparams = json_decode($item->params);
-                            $item->K2Categories = isset($menuparams->categories) ? $menuparams->categories : array();
+                            $item->K2Categories = $menuparams->categories ?? [];
                         }
 
                         self::$cache['multicat_menu_items'][$item->id] = $item->K2Categories;
@@ -266,7 +277,7 @@ class K2HelperRoute
                     foreach ($parents as $categoryID) {
                         if ($categoryID != $id) {
                             // Recursively check if a menu item exists with the parent category ID
-                            $match = self::findMenuItem(array('category' => $categoryID));
+                            $match = self::findMenuItem(['category' => $categoryID]);
                             if (!is_null($match)) {
                                 break;
                             }

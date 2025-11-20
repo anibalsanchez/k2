@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -17,7 +22,7 @@ if (K2_JVERSION != '15') {
     require_once JPATH_SITE.'/components/com_users/helpers/route.php';
 }
 
-require_once(dirname(__FILE__).'/helper.php');
+require_once dirname(__FILE__).'/helper.php';
 
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
 $userGreetingText = $params->get('userGreetingText', '');
@@ -69,7 +74,7 @@ if ($user->guest) {
     $option = (K2_JVERSION != '15') ? 'com_users' : 'com_user';
     $task = K2_JVERSION != '15' ? 'user.login' : 'login';
 
-    require(JModuleHelper::getLayoutPath('mod_k2_user', 'login'));
+    require JModuleHelper::getLayoutPath('mod_k2_user', 'login');
 } else {
     $user->profile = modK2UserHelper::getProfile($params);
     $user->numOfComments = modK2UserHelper::countUserComments($user->id);
@@ -86,5 +91,5 @@ if ($user->guest) {
     $option = (K2_JVERSION != '15') ? 'com_users' : 'com_user';
     $task = (K2_JVERSION != '15') ? 'user.logout' : 'logout';
 
-    require(JModuleHelper::getLayoutPath('mod_k2_user', 'userblock'));
+    require JModuleHelper::getLayoutPath('mod_k2_user', 'userblock');
 }

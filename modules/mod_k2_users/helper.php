@@ -1,17 +1,22 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
 defined('_JEXEC') or die;
 
-require_once(JPATH_SITE.'/components/com_k2/helpers/route.php');
-require_once(JPATH_SITE.'/components/com_k2/helpers/utilities.php');
+require_once JPATH_SITE.'/components/com_k2/helpers/route.php';
+require_once JPATH_SITE.'/components/com_k2/helpers/utilities.php';
 
 class modK2UsersHelper
 {
@@ -39,29 +44,29 @@ class modK2UsersHelper
         if (K2_JVERSION != '15') {
             if ($app->getLanguageFilter()) {
                 $languageTag = JFactory::getLanguage()->getTag();
-                $languageFilter = $db->Quote($languageTag).", ".$db->Quote('*');
+                $languageFilter = $db->Quote($languageTag).', '.$db->Quote('*');
             }
         }
 
-        $userObjects = array();
+        $userObjects = [];
 
         if ($params->get('source') == 'specific' && $params->get('userIDs')) {
-            $IDs = array();
+            $IDs = [];
             if (is_string($params->get('userIDs'))) {
                 $IDs[] = $params->get('userIDs');
             } else {
                 $IDs = $params->get('userIDs');
             }
 
-            $query = "SELECT users.name, users.email, users.id AS UID, profiles.*
+            $query = 'SELECT users.name, users.email, users.id AS UID, profiles.*
                 FROM #__users AS users
                 LEFT JOIN #__k2_users AS profiles ON users.id=profiles.userID
-                WHERE users.block=0 AND users.id IN (".implode(',', $IDs).")";
+                WHERE users.block=0 AND users.id IN ('.implode(',', $IDs).')';
 
             $db->setQuery($query);
             $userObjects = $db->loadObjectList();
 
-            $newUserObjects = array();
+            $newUserObjects = [];
             foreach ($IDs as $id) {
                 foreach ($userObjects as $uO) {
                     if ($uO->UID == $id) {
@@ -73,30 +78,29 @@ class modK2UsersHelper
             $userObjects = $newUserObjects;
         } else {
             switch ($params->get('filter', 0)) {
-
                 // By K2 user group
                 case 0:
-                    $query = "SELECT users.name, users.email, users.id AS UID, profiles.*";
+                    $query = 'SELECT users.name, users.email, users.id AS UID, profiles.*';
 
                     if ($params->get('ordering') == 'recent') {
-                        $query .= ", MAX(i.created) AS counter";
+                        $query .= ', MAX(i.created) AS counter';
                     }
 
-                    $query .= " FROM #__users AS users
-                        LEFT JOIN #__k2_users AS profiles ON users.id=profiles.userID";
+                    $query .= ' FROM #__users AS users
+                        LEFT JOIN #__k2_users AS profiles ON users.id=profiles.userID';
 
                     if ($params->get('ordering') == 'recent') {
-                        $query .= " LEFT JOIN #__k2_items AS i ON users.id=i.created_by LEFT JOIN #__k2_categories AS c ON i.catid=c.id";
+                        $query .= ' LEFT JOIN #__k2_items AS i ON users.id=i.created_by LEFT JOIN #__k2_categories AS c ON i.catid=c.id';
                     }
 
-                    $query .= " WHERE users.block=0 AND profiles.`group`=".(int)$params->get('K2UserGroup');
+                    $query .= ' WHERE users.block=0 AND profiles.`group`='.(int) $params->get('K2UserGroup');
 
                     if ($params->get('ordering') == 'recent') {
                         $query .= " AND i.published = 1
                             AND i.trash = 0
                             AND i.access {$aclCheck}
-                            AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                            AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                            AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                             AND i.created_by_alias=''
                             AND c.published = 1
                             AND c.trash = 0
@@ -109,20 +113,20 @@ class modK2UsersHelper
 
                     switch ($params->get('ordering')) {
                         case 'alpha':
-                            $orderby = "users.name";
+                            $orderby = 'users.name';
                             break;
                         case 'recent':
-                            $orderby = "counter DESC";
+                            $orderby = 'counter DESC';
                             break;
                         case 'random':
-                            $orderby = "RAND()";
+                            $orderby = 'RAND()';
                             break;
                     }
 
                     $query .= " GROUP BY users.id ORDER BY {$orderby}";
                     break;
 
-                // With most items
+                    // With most items
                 case 1:
                     $query = "SELECT users.name, users.email, users.id AS UID, profiles.*, COUNT(i.id) AS counter
                         FROM #__users AS users
@@ -133,8 +137,8 @@ class modK2UsersHelper
                             AND i.published = 1
                             AND i.trash = 0
                             AND i.access {$aclCheck}
-                            AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                            AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                            AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                             AND i.created_by_alias=''
                             AND c.published = 1
                             AND c.trash = 0
@@ -144,10 +148,10 @@ class modK2UsersHelper
                         $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
                     }
 
-                    $query .= " GROUP BY users.id ORDER BY counter DESC";
+                    $query .= ' GROUP BY users.id ORDER BY counter DESC';
                     break;
 
-                // With most popular items
+                    // With most popular items
                 case 2:
                     $query = "SELECT users.name, users.email, users.id AS UID, profiles.*, MAX(i.hits) AS counter
                         FROM #__users AS users
@@ -158,8 +162,8 @@ class modK2UsersHelper
                             AND i.published = 1
                             AND i.trash = 0
                             AND i.access {$aclCheck}
-                            AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                            AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                            AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                             AND i.created_by_alias=''
                             AND c.published = 1
                             AND c.trash = 0
@@ -169,10 +173,10 @@ class modK2UsersHelper
                         $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
                     }
 
-                    $query .= " GROUP BY users.id ORDER BY counter DESC";
+                    $query .= ' GROUP BY users.id ORDER BY counter DESC';
                     break;
 
-                // With most commented items
+                    // With most commented items
                 case 3:
                     $query = "SELECT users.name, users.email, users.id AS UID, profiles.*, COUNT(comment.id) AS counter
                         FROM #__users AS users
@@ -184,8 +188,8 @@ class modK2UsersHelper
                             AND i.published = 1
                             AND i.trash = 0
                             AND i.access {$aclCheck}
-                            AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                            AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
+                            AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).")
                             AND i.created_by_alias=''
                             AND c.published = 1
                             AND c.trash = 0
@@ -195,7 +199,7 @@ class modK2UsersHelper
                         $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
                     }
 
-                    $query .= " GROUP BY users.id ORDER BY counter DESC";
+                    $query .= ' GROUP BY users.id ORDER BY counter DESC';
                     break;
             }
 
@@ -218,9 +222,9 @@ class modK2UsersHelper
                         WHERE i.published = 1
                             AND i.trash = 0
                             AND i.access {$aclCheck}
-                            AND (i.publish_up = ".$db->Quote($nullDate)." OR i.publish_up <= ".$db->Quote($now).")
-                            AND (i.publish_down = ".$db->Quote($nullDate)." OR i.publish_down >= ".$db->Quote($now).")
-                            AND i.created_by=".(int)$userObject->UID."
+                            AND (i.publish_up = ".$db->Quote($nullDate).' OR i.publish_up <= '.$db->Quote($now).')
+                            AND (i.publish_down = '.$db->Quote($nullDate).' OR i.publish_down >= '.$db->Quote($now).')
+                            AND i.created_by='.(int) $userObject->UID."
                             AND i.created_by_alias=''
                             AND c.published = 1
                             AND c.trash = 0
@@ -230,7 +234,7 @@ class modK2UsersHelper
                         $query .= " AND i.language IN ({$languageFilter}) AND c.language IN ({$languageFilter})";
                     }
 
-                    $query .= " ORDER BY i.created DESC";
+                    $query .= ' ORDER BY i.created DESC';
 
                     $db->setQuery($query, 0, $params->get('userItemCount'));
                     $userObject->items = $db->loadObjectList();
@@ -247,6 +251,7 @@ class modK2UsersHelper
                 }
             }
         }
+
         return $userObjects;
     }
 }

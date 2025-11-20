@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -21,6 +26,7 @@ class K2ModelExtraField extends K2Model
         $cid = JRequest::getVar('cid');
         $row = JTable::getInstance('K2ExtraField', 'Table');
         $row->load($cid);
+
         return $row;
     }
 
@@ -43,10 +49,10 @@ class K2ModelExtraField extends K2Model
         }
 
         if (!$row->id) {
-            $row->ordering = $row->getNextOrder("`group` = ".(int)$row->group);
+            $row->ordering = $row->getNextOrder('`group` = '.(int) $row->group);
         }
 
-        $objects = array();
+        $objects = [];
         $values = JRequest::getVar('option_value', null, 'default', 'none', 4);
         $names = JRequest::getVar('option_name');
         $target = JRequest::getVar('option_target');
@@ -63,7 +69,7 @@ class K2ModelExtraField extends K2Model
         }
         $lastOptionId = 1;
         for ($i = 0; $i < count($values); $i++) {
-            $object = new stdClass;
+            $object = new stdClass();
             $object->name = $names[$i];
 
             if ($row->type == 'select' || $row->type == 'multipleSelect' || $row->type == 'radio') {
@@ -71,7 +77,7 @@ class K2ModelExtraField extends K2Model
                     $object->value = $values[$i];
                     $lastOptionId = intval($values[$i]);
                 } else {
-                    $lastOptionId ++;
+                    $lastOptionId++;
                     $object->value = $lastOptionId;
                 }
             } elseif ($row->type == 'link') {
@@ -88,7 +94,7 @@ class K2ModelExtraField extends K2Model
                 $csvFile = $file['tmp_name'];
                 if (!empty($csvFile) && JFile::getExt($file['name']) == 'csv') {
                     $handle = @fopen($csvFile, 'r');
-                    $csvData = array();
+                    $csvData = [];
                     while (($data = fgetcsv($handle, 0)) !== false) {
                         $csvData[] = $data;
                     }
@@ -135,7 +141,7 @@ class K2ModelExtraField extends K2Model
 
         $params = JComponentHelper::getParams('com_k2');
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder("`group` = ".(int)$row->group);
+            $row->reorder('`group` = '.(int) $row->group);
         }
 
         $cache = JFactory::getCache('com_k2');
@@ -163,10 +169,11 @@ class K2ModelExtraField extends K2Model
     public function getExtraFieldsByGroup($group)
     {
         $db = JFactory::getDbo();
-        $group = (int)$group;
+        $group = (int) $group;
         $query = "SELECT * FROM #__k2_extra_fields WHERE `group`={$group} AND published=1 ORDER BY ordering";
         $db->setQuery($query);
         $rows = $db->loadObjectList();
+
         return $rows;
     }
 
@@ -182,16 +189,16 @@ class K2ModelExtraField extends K2Model
         $defaultValues = json_decode($extraField->value);
 
         foreach ($defaultValues as $value) {
-            $required = isset($value->required) ? $value->required : 0;
-            $showNull = isset($value->showNull) ? $value->showNull : 0;
+            $required = $value->required ?? 0;
+            $showNull = $value->showNull ?? 0;
 
             if ($extraField->type == 'textfield' || $extraField->type == 'csv' || $extraField->type == 'labels' || $extraField->type == 'date' || $extraField->type == 'image') {
                 $active = $value->value;
             } elseif ($extraField->type == 'textarea') {
                 $active[0] = $value->value;
                 $active[1] = $value->editor;
-                $active[2] = (int)$value->rows ? (int)$value->rows : 10;
-                $active[3] = (int)$value->cols ? (int)$value->cols : 40;
+                $active[2] = (int) $value->rows ? (int) $value->rows : 10;
+                $active[3] = (int) $value->cols ? (int) $value->cols : 40;
             } elseif ($extraField->type == 'link') {
                 $active[0] = $value->name;
                 $active[1] = $value->value;
@@ -224,33 +231,32 @@ class K2ModelExtraField extends K2Model
             }
         }
         $attributes = '';
-        $arrayAttributes = array();
+        $arrayAttributes = [];
         if ($required) {
-            $arrayAttributes['class'] = "k2Required";
+            $arrayAttributes['class'] = 'k2Required';
             $attributes .= 'class="k2Required"';
         }
 
-        if ($showNull && in_array($extraField->type, array(
+        if ($showNull && in_array($extraField->type, [
             'select',
-            'multipleSelect'
-        ))) {
-            $nullOption = new stdClass;
+            'multipleSelect',
+        ])) {
+            $nullOption = new stdClass();
             $nullOption->name = JText::_('K2_PLEASE_SELECT');
             $nullOption->value = '';
             array_unshift($defaultValues, $nullOption);
         }
 
-        if (in_array($extraField->type, array(
+        if (in_array($extraField->type, [
             'textfield',
             'labels',
             'date',
-            'image'
-        ))) {
+            'image',
+        ])) {
             $active = htmlspecialchars($active, ENT_QUOTES, 'UTF-8');
         }
 
         switch ($extraField->type) {
-
             case 'textfield':
                 $output = '<input type="text" name="K2ExtraField_'.$extraField->id.'" id="K2ExtraField_'.$extraField->id.'" value="'.$active.'" '.$attributes.' />';
                 break;
@@ -281,7 +287,7 @@ class K2ModelExtraField extends K2Model
 
                 $attributes .= ' id="K2ExtraField_'.$extraField->id.'" multiple="multiple"';
                 $arrayAttributes['id'] = 'K2ExtraField_'.$extraField->id;
-                $arrayAttributes['multiple'] = "multiple";
+                $arrayAttributes['multiple'] = 'multiple';
                 $attrs = version_compare(JVERSION, '3.2', 'ge') ? $arrayAttributes : $attributes;
                 $output = JHTML::_('select.genericlist', $defaultValues, 'K2ExtraField_'.$extraField->id.'[]', $attrs, 'value', 'name', $active);
                 break;
@@ -347,10 +353,11 @@ class K2ModelExtraField extends K2Model
     public function getExtraFieldInfo($fieldID)
     {
         $db = JFactory::getDbo();
-        $fieldID = (int)$fieldID;
-        $query = "SELECT * FROM #__k2_extra_fields WHERE published=1 AND id = ".$fieldID;
+        $fieldID = (int) $fieldID;
+        $query = 'SELECT * FROM #__k2_extra_fields WHERE published=1 AND id = '.$fieldID;
         $db->setQuery($query, 0, 1);
         $row = $db->loadObject();
+
         return $row;
     }
 
@@ -383,6 +390,7 @@ class K2ModelExtraField extends K2Model
                 }
             }
         }
+
         return $value;
     }
 }

@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -15,7 +20,7 @@ if (K2_JVERSION != '15') {
     $language->load('com_k2.dates', JPATH_ADMINISTRATOR, null, true);
 }
 
-require_once(dirname(__FILE__).'/helper.php');
+require_once dirname(__FILE__).'/helper.php';
 
 // Params
 $moduleclass_sfx = $params->get('moduleclass_sfx', '');
@@ -38,7 +43,7 @@ switch ($module_usage) {
     case '0':
         $months = modK2ToolsHelper::getArchive($params);
         if (count($months)) {
-            require(JModuleHelper::getLayoutPath('mod_k2_tools', 'archive'));
+            require JModuleHelper::getLayoutPath('mod_k2_tools', 'archive');
         }
         break;
 
@@ -51,24 +56,24 @@ switch ($module_usage) {
             $avatarWidth = $authorAvatarWidth;
         }
         $authors = modK2ToolsHelper::getAuthors($params);
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'authors'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'authors');
         break;
 
     case '2':
         $calendar = modK2ToolsHelper::calendar($params);
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'calendar'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'calendar');
         break;
 
     case '3':
         $breadcrumbs = modK2ToolsHelper::breadcrumbs($params);
         $path = $breadcrumbs[0];
         $title = $breadcrumbs[1];
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'breadcrumbs'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'breadcrumbs');
         break;
 
     case '4':
         $output = modK2ToolsHelper::treerecurse($params, 0, 0, true);
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'categories'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'categories');
         break;
 
     case '5':
@@ -78,26 +83,26 @@ switch ($module_usage) {
     case '6':
         $categoryFilter = modK2ToolsHelper::getSearchCategoryFilter($params);
         $action = JRoute::_(K2HelperRoute::getSearchRoute($searchItemId));
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'search'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'search');
         break;
 
     case '7':
         $tags = modK2ToolsHelper::tagCloud($params);
         if (count($tags)) {
-            require(JModuleHelper::getLayoutPath('mod_k2_tools', 'tags'));
+            require JModuleHelper::getLayoutPath('mod_k2_tools', 'tags');
         }
         break;
 
     case '8':
         $customcode = modK2ToolsHelper::renderCustomCode($params);
-        require(JModuleHelper::getLayoutPath('mod_k2_tools', 'customcode'));
+        require JModuleHelper::getLayoutPath('mod_k2_tools', 'customcode');
         break;
 
     case '9':
         $selectedTags = (array) $params->get('selectedTags');
         $selectedTagsLimit = (int) $params->get('selectedTagsLimit', 0);
         if (count($selectedTags)) {
-            require(JModuleHelper::getLayoutPath('mod_k2_tools', 'selected_tags'));
+            require JModuleHelper::getLayoutPath('mod_k2_tools', 'selected_tags');
         }
         break;
 }

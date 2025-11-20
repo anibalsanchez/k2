@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -27,7 +26,7 @@ defined('_JEXEC') or die;
     <h1><?php echo (JRequest::getCmd('task') == 'date') ? JText::_('K2_ITEMS_FILTERED_BY_DATE') : JText::_('K2_SEARCH_RESULTS_FOR'); ?> <?php echo $this->title; ?></h1>
     <?php endif; ?>
 
-    <?php if ($this->params->get('genericFeedIcon',1) && isset($this->items) && count($this->items)): ?>
+    <?php if ($this->params->get('genericFeedIcon', 1) && isset($this->items) && count($this->items)): ?>
     <!-- RSS feed icon -->
     <div class="k2FeedIcon">
         <a href="<?php echo $this->feed; ?>" title="<?php echo JText::_('K2_SUBSCRIBE_TO_THIS_RSS_FEED'); ?>">
@@ -40,14 +39,14 @@ defined('_JEXEC') or die;
     <?php if (isset($this->items) && count($this->items)): ?>
 
     <div class="genericItemList">
-        <?php foreach($this->items as $item): ?>
+        <?php foreach ($this->items as $item): ?>
         <!-- Start K2 Item Layout -->
         <div class="genericItemView">
             <div class="genericItemHeader">
                 <?php if ($this->params->get('genericItemDateCreated')): ?>
                 <!-- Date created -->
                 <span class="genericItemDateCreated">
-                    <?php echo JHTML::_('date', $item->created , JText::_('K2_DATE_FORMAT_LC2')); ?>
+                    <?php echo JHTML::_('date', $item->created, JText::_('K2_DATE_FORMAT_LC2')); ?>
                 </span>
                 <?php endif; ?>
 
@@ -70,8 +69,16 @@ defined('_JEXEC') or die;
                 <!-- Item Image -->
                 <div class="genericItemImageBlock">
                     <span class="genericItemImage">
-                        <a href="<?php echo $item->link; ?>" title="<?php if (!empty($item->image_caption)) echo K2HelperUtilities::cleanHtml($item->image_caption); else echo K2HelperUtilities::cleanHtml($item->title); ?>">
-                            <img src="<?php echo $item->imageGeneric; ?>" alt="<?php if (!empty($item->image_caption)) echo K2HelperUtilities::cleanHtml($item->image_caption); else echo K2HelperUtilities::cleanHtml($item->title); ?>" style="width:<?php echo $this->params->get('itemImageGeneric'); ?>px;height:auto;" />
+                        <a href="<?php echo $item->link; ?>" title="<?php if (!empty($item->image_caption)) {
+                            echo K2HelperUtilities::cleanHtml($item->image_caption);
+                        } else {
+                            echo K2HelperUtilities::cleanHtml($item->title);
+                        } ?>">
+                            <img src="<?php echo $item->imageGeneric; ?>" alt="<?php if (!empty($item->image_caption)) {
+                                echo K2HelperUtilities::cleanHtml($item->image_caption);
+                            } else {
+                                echo K2HelperUtilities::cleanHtml($item->title);
+                            } ?>" style="width:<?php echo $this->params->get('itemImageGeneric'); ?>px;height:auto;" />
                         </a>
                     </span>
                     <div class="clr"></div>
@@ -97,7 +104,7 @@ defined('_JEXEC') or die;
                 <ul>
                     <?php foreach ($item->extra_fields as $key => $extraField): ?>
                     <?php if ($extraField->value != ''): ?>
-                    <li class="<?php echo ($key%2) ? "odd" : "even"; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
+                    <li class="<?php echo ($key % 2) ? 'odd' : 'even'; ?> type<?php echo ucfirst($extraField->type); ?> group<?php echo $extraField->group; ?> alias<?php echo ucfirst($extraField->alias); ?>">
                         <?php if ($extraField->type == 'header'): ?>
                         <h4 class="genericItemExtraFieldsHeader"><?php echo $extraField->name; ?></h4>
                         <?php else: ?>

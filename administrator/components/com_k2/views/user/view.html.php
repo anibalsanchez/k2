@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -21,7 +26,7 @@ class K2ViewUser extends K2View
         if (K2_JVERSION == '15') {
             JFilterOutput::objectHTMLSafe($user);
         } else {
-            JFilterOutput::objectHTMLSafe($user, ENT_QUOTES, array('params', 'plugins'));
+            JFilterOutput::objectHTMLSafe($user, ENT_QUOTES, ['params', 'plugins']);
         }
         $joomlaUser = JUser::getInstance(JRequest::getInt('cid'));
 
@@ -33,7 +38,7 @@ class K2ViewUser extends K2View
         $editor = $wysiwyg->display('description', $user->description, '480px', '250px', '', '', false);
         $this->assignRef('editor', $editor);
 
-        $lists = array();
+        $lists = [];
         $genderOptions[] = JHTML::_('select.option', 'n', JText::_('K2_NOT_SPECIFIED'));
         $genderOptions[] = JHTML::_('select.option', 'm', JText::_('K2_MALE'));
         $genderOptions[] = JHTML::_('select.option', 'f', JText::_('K2_FEMALE'));
@@ -50,7 +55,7 @@ class K2ViewUser extends K2View
         // Plugins
         JPluginHelper::importPlugin('k2');
         $dispatcher = JDispatcher::getInstance();
-        $K2Plugins = $dispatcher->trigger('onRenderAdminForm', array(&$user, 'user'));
+        $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [&$user, 'user']);
         $this->assignRef('K2Plugins', $K2Plugins);
 
         // Disable Joomla menu

@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -14,7 +13,7 @@ defined('_JEXEC') or die;
 
 <!-- K2 user profile form -->
 <form action="<?php echo JURI::root(true); ?>/index.php" enctype="multipart/form-data" method="post" name="userform" autocomplete="off" class="form-validate">
-    <?php if ($this->params->def('show_page_title',1)): ?>
+    <?php if ($this->params->def('show_page_title', 1)): ?>
     <div class="componentheading<?php echo $this->escape($this->params->get('pageclass_sfx')); ?>">
         <?php echo $this->escape($this->params->get('page_title')); ?>
     </div>
@@ -39,7 +38,7 @@ defined('_JEXEC') or die;
                     <label id="namemsg" for="name"><?php echo JText::_('K2_NAME'); ?></label>
                 </td>
                 <td>
-                    <input type="text" name="<?php echo $this->nameFieldName; ?>" id="name" size="40" value="<?php echo $this->escape($this->user->get( 'name' )); ?>" class="inputbox required" maxlength="50" />
+                    <input type="text" name="<?php echo $this->nameFieldName; ?>" id="name" size="40" value="<?php echo $this->escape($this->user->get('name')); ?>" class="inputbox required" maxlength="50" />
                 </td>
             </tr>
             <tr>
@@ -47,7 +46,7 @@ defined('_JEXEC') or die;
                     <label id="emailmsg" for="email"><?php echo JText::_('K2_EMAIL'); ?></label>
                 </td>
                 <td>
-                    <input type="text" id="email" name="<?php echo $this->emailFieldName; ?>" size="40" value="<?php echo $this->escape($this->user->get( 'email' )); ?>" class="inputbox required validate-email" maxlength="100" />
+                    <input type="text" id="email" name="<?php echo $this->emailFieldName; ?>" size="40" value="<?php echo $this->escape($this->user->get('email')); ?>" class="inputbox required validate-email" maxlength="100" />
                 </td>
             </tr>
             <?php if (version_compare(JVERSION, '2.5', 'ge')): ?>
@@ -56,7 +55,7 @@ defined('_JEXEC') or die;
                     <label id="email2msg" for="email2"><?php echo JText::_('K2_CONFIRM_EMAIL'); ?></label>
                 </td>
                 <td>
-                    <input type="text" id="email2" name="jform[email2]" size="40" value="<?php echo $this->escape($this->user->get( 'email' )); ?>" class="inputbox required validate-email" maxlength="100" />
+                    <input type="text" id="email2" name="jform[email2]" size="40" value="<?php echo $this->escape($this->user->get('email')); ?>" class="inputbox required validate-email" maxlength="100" />
                     *
                 </td>
             </tr>
@@ -101,7 +100,7 @@ defined('_JEXEC') or die;
             </tr>
             <tr>
                 <td class="key">
-                    <label id="imagemsg" for="image"><?php echo JText::_( 'K2_USER_IMAGE_AVATAR' ); ?></label>
+                    <label id="imagemsg" for="image"><?php echo JText::_('K2_USER_IMAGE_AVATAR'); ?></label>
                 </td>
                 <td>
                     <input type="file" id="image" name="image" accept="image/*" />
@@ -161,11 +160,11 @@ defined('_JEXEC') or die;
                     <?php echo JText::_($fieldset->label); ?>
                 </th>
             </tr>
-            <?php endif;?>
+            <?php endif; ?>
             <?php foreach ($fields as $field): // Iterate through the fields in the set and display them.?>
             <?php if ($field->hidden): // If the field is hidden, just display the input.?>
             <tr>
-                <td colspan="2"><?php echo $field->input;?></td>
+                <td colspan="2"><?php echo $field->input; ?></td>
             </tr>
             <?php else: ?>
             <tr>
@@ -175,13 +174,13 @@ defined('_JEXEC') or die;
                     <span class="optional"><?php echo JText::_('COM_USERS_OPTIONAL'); ?></span>
                     <?php endif; ?>
                 </td>
-                <td><?php echo $field->input;?></td>
+                <td><?php echo $field->input; ?></td>
             </tr>
-            <?php endif;?>
-            <?php endforeach;?>
-            <?php endif;?>
             <?php endif; ?>
-            <?php endforeach;?>
+            <?php endforeach; ?>
+            <?php endif; ?>
+            <?php endif; ?>
+            <?php endforeach; ?>
             <?php endif; ?>
         </table>
         <div class="k2AccountPageUpdate">

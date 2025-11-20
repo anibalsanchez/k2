@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -12,11 +11,16 @@ defined('_JEXEC') or die;
 
 ?>
 
-<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2TopCommentersBlock<?php if ($params->get('moduleclass_sfx')) echo ' '.$params->get('moduleclass_sfx'); ?>">
+<div id="k2ModuleBox<?php echo $module->id; ?>" class="k2TopCommentersBlock<?php if ($params->get('moduleclass_sfx')) {
+    echo ' '.$params->get('moduleclass_sfx');
+} ?>">
     <?php if (isset($commenters) && count($commenters)): ?>
     <ul>
         <?php foreach ($commenters as $key=>$commenter): ?>
-        <li class="<?php echo ($key%2) ? "odd" : "even"; if (count($commenters)==$key+1) echo ' lastItem'; ?>">
+        <li class="<?php echo ($key % 2) ? 'odd' : 'even';
+            if (count($commenters) == $key + 1) {
+                echo ' lastItem';
+            } ?>">
             <?php if ($commenter->userImage): ?>
             <a class="k2Avatar tcAvatar" rel="author" href="<?php echo $commenter->link; ?>">
                 <img src="<?php echo $commenter->userImage; ?>" alt="<?php echo JFilterOutput::cleanText($commenter->userName); ?>" style="width:<?php echo $tcAvatarWidth; ?>px;height:auto;" />

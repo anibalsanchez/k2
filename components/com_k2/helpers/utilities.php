@@ -1,11 +1,15 @@
 <?php
 
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -19,7 +23,7 @@ class K2HelperUtilities
         jimport('joomla.filesystem.folder');
         jimport('joomla.application.component.model');
         $app = JFactory::getApplication();
-        $params = K2HelperUtilities::getParams('com_k2');
+        $params = self::getParams('com_k2');
         $template = JRequest::getCmd('template');
 
         // Check for placeholder overrides
@@ -55,7 +59,7 @@ class K2HelperUtilities
                 $avatarTimestamp = '';
                 $avatarFile = JPATH_SITE.'/media/k2/users/'.$avatar;
                 if (is_file($avatarFile) && filemtime($avatarFile)) {
-                    $avatarTimestamp = '?t='.date("Ymd_Hi", filemtime($avatarFile));
+                    $avatarTimestamp = '?t='.date('Ymd_Hi', filemtime($avatarFile));
                 }
                 $avatar = JURI::root(true).'/media/k2/users/'.$avatar.$avatarTimestamp;
             }
@@ -76,7 +80,7 @@ class K2HelperUtilities
             $catImageTimestamp = '';
             $catImageFile = JPATH_SITE.'/media/k2/categories/'.$image;
             if (is_file($catImageFile) && filemtime($catImageFile)) {
-                $catImageTimestamp = '?t='.date("Ymd_Hi", filemtime($catImageFile));
+                $catImageTimestamp = '?t='.date('Ymd_Hi', filemtime($catImageFile));
             }
             $categoryImage = JURI::root(true).'/media/k2/categories/'.$image.$catImageTimestamp;
         } else {
@@ -88,6 +92,7 @@ class K2HelperUtilities
                 }
             }
         }
+
         return $categoryImage;
     }
 
@@ -101,14 +106,15 @@ class K2HelperUtilities
         // always strip tags for text
         $str = strip_tags($str);
 
-        $find = array("/\r|\n/u", "/\t/u", "/\s\s+/u");
-        $replace = array(" ", " ", " ");
+        $find = ["/\r|\n/u", "/\t/u", "/\s\s+/u"];
+        $replace = [' ', ' ', ' '];
         $str = preg_replace($find, $replace, $str);
 
-        preg_match('/\s*(?:\S*\s*){'.(int)$limit.'}/u', $str, $matches);
+        preg_match('/\s*(?:\S*\s*){'.(int) $limit.'}/u', $str, $matches);
         if (JString::strlen($matches[0]) == JString::strlen($str)) {
             $end_char = '';
         }
+
         return JString::rtrim($matches[0]).$end_char;
     }
 
@@ -122,22 +128,24 @@ class K2HelperUtilities
         // always strip tags for text
         $str = strip_tags(JString::trim($str));
 
-        $find = array("/\r|\n/u", "/\t/u", "/\s\s+/u");
-        $replace = array(" ", " ", " ");
+        $find = ["/\r|\n/u", "/\t/u", "/\s\s+/u"];
+        $replace = [' ', ' ', ' '];
         $str = preg_replace($find, $replace, $str);
 
         if (JString::strlen($str) > $limit) {
             $str = JString::substr($str, 0, $limit);
+
             return JString::rtrim($str).$end_char;
-        } else {
-            return $str;
         }
+
+        return $str;
     }
 
     // Cleanup HTML entities
     public static function cleanHtml($text)
     {
         $text = trim(preg_replace('/\s+/u', ' ', $text));
+
         return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     }
 
@@ -181,7 +189,7 @@ class K2HelperUtilities
 
         if ($view == 'itemlist') {
             $image = 'image'.$params->get($item->itemGroup.'ImgSize');
-            $item->image = isset($item->$image) ? $item->$image : '';
+            $item->image = $item->$image ?? '';
             switch ($params->get($item->itemGroup.'ImgSize')) {
                 case 'XSmall':
                     $item->imageWidth = $item->params->get('itemImageXS');
@@ -258,17 +266,19 @@ class K2HelperUtilities
         } else {
             $params = JComponentHelper::getParams($option);
         }
+
         return $params;
     }
 
     public static function cleanTags($string, $allowed_tags)
     {
-        $allowed_htmltags = array();
+        $allowed_htmltags = [];
         foreach ($allowed_tags as $tag) {
-            $allowed_htmltags[] .= "<".$tag.">";
+            $allowed_htmltags[] .= '<'.$tag.'>';
         }
-        $allowed_htmltags = implode("", $allowed_htmltags);
+        $allowed_htmltags = implode('', $allowed_htmltags);
         $string = strip_tags($string, $allowed_htmltags);
+
         return $string;
     }
 
@@ -276,7 +286,7 @@ class K2HelperUtilities
     // e.g. cleanupAttributes($string,"img,hr,h1,h2,h3,h4","style,width,height,hspace,vspace,border,class,id");
     public static function cleanAttributes($string, $tag_array, $attr_array)
     {
-        $attr = implode("|", $attr_array);
+        $attr = implode('|', $attr_array);
         foreach ($tag_array as $tag) {
             preg_match_all("#<($tag) .+?>#", $string, $matches, PREG_PATTERN_ORDER);
             foreach ($matches[0] as $match) {
@@ -288,13 +298,14 @@ class K2HelperUtilities
                 }
             }
         }
+
         return $string;
     }
 
     public static function verifyRecaptcha()
     {
         $params = JComponentHelper::getParams('com_k2');
-        $vars = array();
+        $vars = [];
         $vars['secret'] = $params->get('recaptcha_private_key');
         $vars['response'] = $_POST['g-recaptcha-response'];
         $ch = curl_init();
@@ -307,10 +318,7 @@ class K2HelperUtilities
         $info = curl_getinfo($ch);
         curl_close($ch);
         $response = json_decode($result);
-        if ($result && $info['http_code'] == 200 && is_object($response) && isset($response->success) && $response->success == true) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return (bool) ($result && $info['http_code'] == 200 && is_object($response) && isset($response->success) && $response->success == true);
     }
 }

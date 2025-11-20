@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -38,11 +43,11 @@ class K2ModelCategories extends K2Model
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', -1, 'int');
         $filter_trash = $app->getUserStateFromRequest($option.$view.'filter_trash', 'filter_trash', 0, 'int');
 
-        $queryStart = "/* Backend / K2 / Categories */ SELECT c.*, g.name AS groupname, exfg.name as extra_fields_group
+        $queryStart = '/* Backend / K2 / Categories */ SELECT c.*, g.name AS groupname, exfg.name as extra_fields_group
             FROM #__k2_categories as c
             LEFT JOIN #__groups AS g ON g.id = c.access
             LEFT JOIN #__k2_extra_fields_groups AS exfg ON exfg.id = c.extraFieldsGroup
-            WHERE c.id > 0";
+            WHERE c.id > 0';
         if (K2_JVERSION != '15') {
             $queryStart = JString::str_ireplace('g.name AS groupname', 'g.title AS groupname', $queryStart);
             $queryStart = JString::str_ireplace('#__groups', '#__viewlevels', $queryStart);
@@ -54,21 +59,20 @@ class K2ModelCategories extends K2Model
             K2Model::addIncludePath(JPATH_SITE.'/components/com_k2/models');
             $ItemlistModel = K2Model::getInstance('Itemlist', 'K2Model');
             $tree = $ItemlistModel->getCategoryTree($filter_category);
-            $query .= " AND c.id IN (".implode(',', $tree).")";
+            $query .= ' AND c.id IN ('.implode(',', $tree).')';
         }
         if ($filter_state > -1) {
             $query .= " AND c.published = {$filter_state}";
         }
         if (!$filter_trash) {
-            $query .= " AND c.trash = 0";
+            $query .= ' AND c.trash = 0';
         }
         if ($language) {
-            $query .= " AND (c.language = ".$db->Quote($language)." OR c.language = '*')";
+            $query .= ' AND (c.language = '.$db->Quote($language)." OR c.language = '*')";
         }
 
         // Search
         if ($search) {
-
             // Detect exact search phrase using double quotes in search string
             if (substr($search, 0, 1) == '"' && substr($search, -1) == '"') {
                 $exact = true;
@@ -85,21 +89,21 @@ class K2ModelCategories extends K2Model
             // Full phrase or set of words
             if (strpos($escaped, ' ') !== false && !$exact) {
                 $escaped = explode(' ', $escaped);
-                $quoted = array();
+                $quoted = [];
                 foreach ($escaped as $key => $escapedWord) {
                     $quoted[] = $db->Quote('%'.$escapedWord.'%', false);
                 }
                 if ($params->get('adminSearch') == 'full') {
                     $searchPerTerm = [];
-                    $query .= " AND (";
+                    $query .= ' AND (';
                     foreach ($quoted as $quotedWord) {
-                        $query .= "LOWER(c.name) LIKE ".$quotedWord." OR LOWER(c.description) LIKE ".$quotedWord;
+                        $query .= 'LOWER(c.name) LIKE '.$quotedWord.' OR LOWER(c.description) LIKE '.$quotedWord;
                     }
                     $query .= implode(' OR ', $searchPerTerm);
-                    $query .= ")";
+                    $query .= ')';
                 } else {
                     foreach ($quoted as $quotedWord) {
-                        $query .= " AND LOWER(c.name) LIKE ".$quotedWord;
+                        $query .= ' AND LOWER(c.name) LIKE '.$quotedWord;
                     }
                 }
             }
@@ -107,9 +111,9 @@ class K2ModelCategories extends K2Model
             else {
                 $quoted = $db->Quote('%'.$escaped.'%', false);
                 if ($params->get('adminSearch') == 'full') {
-                    $query .= " AND (LOWER(c.name) LIKE ".$quoted." OR LOWER(c.description) LIKE ".$quoted.")";
+                    $query .= ' AND (LOWER(c.name) LIKE '.$quoted.' OR LOWER(c.description) LIKE '.$quoted.')';
                 } else {
-                    $query .= " AND LOWER(c.name) LIKE ".$quoted;
+                    $query .= ' AND LOWER(c.name) LIKE '.$quoted;
                 }
             }
         }
@@ -123,7 +127,7 @@ class K2ModelCategories extends K2Model
 
         // --- Row counter ---
         if (count($rows)) {
-            $countQuery = "/* Backend / K2 / Categories Count */ SELECT COUNT(c.id) FROM #__k2_categories as c WHERE c.id > 0".$query;
+            $countQuery = '/* Backend / K2 / Categories Count */ SELECT COUNT(c.id) FROM #__k2_categories as c WHERE c.id > 0'.$query;
             $db->setQuery($countQuery);
             $this->getTotal = (int) $db->loadResult();
         }
@@ -138,7 +142,7 @@ class K2ModelCategories extends K2Model
             }
         }
 
-        $categories = array();
+        $categories = [];
 
         if ($search) {
             foreach ($rows as $row) {
@@ -167,7 +171,7 @@ class K2ModelCategories extends K2Model
         foreach ($categories as $category) {
             $category->parameters = class_exists('JParameter') ? new JParameter($category->params) : new JRegistry($category->params);
             if ($category->parameters->get('inheritFrom')) {
-                $db->setQuery("SELECT name FROM #__k2_categories WHERE id = ".(int)$category->parameters->get('inheritFrom'));
+                $db->setQuery('SELECT name FROM #__k2_categories WHERE id = '.(int) $category->parameters->get('inheritFrom'));
                 $category->inheritFrom = $db->loadResult();
             } else {
                 $category->inheritFrom = '';
@@ -184,16 +188,17 @@ class K2ModelCategories extends K2Model
 
     public function indentRows(&$rows, $root = 0)
     {
-        $children = array();
+        $children = [];
         if (count($rows)) {
             foreach ($rows as $v) {
                 $pt = $v->parent;
-                $list = @$children[$pt] ? $children[$pt] : array();
+                $list = @$children[$pt] ? $children[$pt] : [];
                 array_push($list, $v);
                 $children[$pt] = $list;
             }
         }
-        $categories = JHTML::_('menu.treerecurse', $root, '', array(), $children);
+        $categories = JHTML::_('menu.treerecurse', $root, '', [], $children);
+
         return $categories;
     }
 
@@ -209,10 +214,10 @@ class K2ModelCategories extends K2Model
         }
         JPluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
-        $dispatcher->trigger('onFinderChangeState', array('com_k2.category', $cid, 1));
+        $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 1]);
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -231,10 +236,10 @@ class K2ModelCategories extends K2Model
         }
         JPluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
-        $dispatcher->trigger('onFinderChangeState', array('com_k2.category', $cid, 0));
+        $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 0]);
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -246,14 +251,14 @@ class K2ModelCategories extends K2Model
         $app = JFactory::getApplication();
         $params = JComponentHelper::getParams('com_k2');
         $db = JFactory::getDbo();
-        $cid = JRequest::getVar('cid', array(0), 'post', 'array');
+        $cid = JRequest::getVar('cid', [0], 'post', 'array');
         $total = count($cid);
-        $order = JRequest::getVar('order', array(0), 'post', 'array');
-        JArrayHelper::toInteger($order, array(0));
-        $groupings = array();
+        $order = JRequest::getVar('order', [0], 'post', 'array');
+        JArrayHelper::toInteger($order, [0]);
+        $groupings = [];
         for ($i = 0; $i < $total; $i++) {
             $row = JTable::getInstance('K2Category', 'Table');
-            $row->load(( int )$cid[$i]);
+            $row->load((int) $cid[$i]);
             $groupings[] = $row->parent;
             if ($row->ordering != $order[$i]) {
                 $row->ordering = $order[$i];
@@ -266,11 +271,12 @@ class K2ModelCategories extends K2Model
             $groupings = array_unique($groupings);
             foreach ($groupings as $group) {
                 $row = JTable::getInstance('K2Category', 'Table');
-                $row->reorder('parent = '.( int )$group.' AND trash=0');
+                $row->reorder('parent = '.(int) $group.' AND trash=0');
             }
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
+
         return true;
     }
 
@@ -283,13 +289,13 @@ class K2ModelCategories extends K2Model
         $row->load($cid[0]);
         $row->move(-1, 'parent = '.$row->parent.' AND trash=0');
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder('parent = '.(int)$row->parent.' AND trash=0');
+            $row->reorder('parent = '.(int) $row->parent.' AND trash=0');
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
         $msg = JText::_('K2_NEW_ORDERING_SAVED');
         $app->enqueueMessage($msg);
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -305,13 +311,13 @@ class K2ModelCategories extends K2Model
         $row->load($cid[0]);
         $row->move(1, 'parent = '.$row->parent.' AND trash=0');
         if (!$params->get('disableCompactOrdering')) {
-            $row->reorder('parent = '.(int)$row->parent.' AND trash=0');
+            $row->reorder('parent = '.(int) $row->parent.' AND trash=0');
         }
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
         $msg = JText::_('K2_NEW_ORDERING_SAVED');
         $app->enqueueMessage($msg);
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=categories&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=categories');
@@ -402,7 +408,7 @@ class K2ModelCategories extends K2Model
 
         JPluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
-        $dispatcher->trigger('onFinderChangeState', array('com_k2.category', $cid, 0));
+        $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 0]);
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
         $app->enqueueMessage(JText::_('K2_CATEGORIES_MOVED_TO_TRASH'));
@@ -415,11 +421,11 @@ class K2ModelCategories extends K2Model
         $db = JFactory::getDbo();
         $cid = JRequest::getVar('cid');
         $warning = false;
-        $restored = array();
+        $restored = [];
         foreach ($cid as $id) {
             $row = JTable::getInstance('K2Category', 'Table');
             $row->load($id);
-            if ((int)$row->parent == 0) {
+            if ((int) $row->parent == 0) {
                 $row->trash = 0;
                 $row->store();
                 $restored[] = $id;
@@ -444,7 +450,7 @@ class K2ModelCategories extends K2Model
         }
         JPluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
-        $dispatcher->trigger('onFinderChangeState', array('com_k2.category', $cid, 1));
+        $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 1]);
         $cache = JFactory::getCache('com_k2');
         $cache->clean();
         if ($warning) {
@@ -491,7 +497,7 @@ class K2ModelCategories extends K2Model
                     JFile::delete(JPATH_ROOT.'/media/k2/categories/'.$row->image);
                 }
                 $row->delete($cid[$i]);
-                $dispatcher->trigger('onFinderAfterDelete', array('com_k2.category', $row));
+                $dispatcher->trigger('onFinderAfterDelete', ['com_k2.category', $row]);
             }
         }
         $cache = JFactory::getCache('com_k2');
@@ -525,17 +531,17 @@ class K2ModelCategories extends K2Model
         $query = "SELECT m.* FROM #__k2_categories m WHERE id > 0 {$idCheck}";
 
         if ($hideUnpublished) {
-            $query .= " AND published = 1";
+            $query .= ' AND published = 1';
         }
 
         if ($hideTrashed) {
-            $query .= " AND trash = 0";
+            $query .= ' AND trash = 0';
         }
 
-        $query .= " ORDER BY parent, ordering";
+        $query .= ' ORDER BY parent, ordering';
         $db->setQuery($query);
         $mitems = $db->loadObjectList();
-        $children = array();
+        $children = [];
         if ($mitems) {
             foreach ($mitems as $v) {
                 if (K2_JVERSION != '15') {
@@ -547,13 +553,13 @@ class K2ModelCategories extends K2Model
                     $v->parent_id = $v->parent;
                 }
                 $pt = $v->parent;
-                $list = @$children[$pt] ? $children[$pt] : array();
+                $list = @$children[$pt] ? $children[$pt] : [];
                 array_push($list, $v);
                 $children[$pt] = $list;
             }
         }
-        $list = JHTML::_('menu.treerecurse', 0, '', array(), $children, 9999, 0, 0);
-        $mitems = array();
+        $list = JHTML::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
+        $mitems = [];
         foreach ($list as $item) {
             $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
             if (!$item->published) {
@@ -564,6 +570,7 @@ class K2ModelCategories extends K2Model
             }
             $mitems[] = JHTML::_('select.option', $item->id, $item->treename);
         }
+
         return $mitems;
     }
 
@@ -573,7 +580,7 @@ class K2ModelCategories extends K2Model
         $app = JFactory::getApplication();
         $cid = JRequest::getVar('cid');
         JArrayHelper::toInteger($cid);
-        $copies = array();
+        $copies = [];
         foreach ($cid as $id) {
             // Load source category
             $category = JTable::getInstance('K2Category', 'Table');
@@ -596,10 +603,9 @@ class K2ModelCategories extends K2Model
         }
         if ($batch) {
             return $copies;
-        } else {
-            $app->enqueueMessage(JText::_('K2_COPY_COMPLETED'));
-            $app->redirect('index.php?option=com_k2&view=categories');
         }
+        $app->enqueueMessage(JText::_('K2_COPY_COMPLETED'));
+        $app->redirect('index.php?option=com_k2&view=categories');
     }
 
     public function saveBatch()
@@ -616,6 +622,7 @@ class K2ModelCategories extends K2Model
         }
         if (in_array($catid, $cid)) {
             $app->redirect('index.php?option=com_k2&view=categories');
+
             return;
         }
         foreach ($cid as $id) {
@@ -623,7 +630,7 @@ class K2ModelCategories extends K2Model
             $row->load($id);
             if (is_numeric($catid) && $catid != '') {
                 $row->parent = $catid;
-                $row->ordering = $row->getNextOrder('parent = '.(int)$catid.' AND published = 1');
+                $row->ordering = $row->getNextOrder('parent = '.(int) $catid.' AND published = 1');
             }
             if ($access) {
                 $row->access = $access;

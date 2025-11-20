@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -38,7 +43,7 @@ class K2ViewExtraFields extends K2View
         $model = $this->getModel();
         $total = $model->getTotal();
         if ($limitstart > $total - $limit) {
-            $limitstart = max(0, (int)(ceil($total / $limit) - 1) * $limit);
+            $limitstart = max(0, (int) (ceil($total / $limit) - 1) * $limit);
             JRequest::setVar('limitstart', $limitstart);
         }
         $extraFields = $model->getData();
@@ -58,7 +63,7 @@ class K2ViewExtraFields extends K2View
         $pageNav = new JPagination($total, $limitstart, $limit);
         $this->assignRef('page', $pageNav);
 
-        $lists = array();
+        $lists = [];
         $lists['search'] = $search;
         $lists['order_Dir'] = $filter_order_Dir;
         $lists['order'] = $filter_order;

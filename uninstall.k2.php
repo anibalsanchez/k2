@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -18,9 +23,9 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     $language = JFactory::getLanguage();
     $language->load('com_k2');
 
-    $status = new stdClass;
-    $status->modules = array();
-    $status->plugins = array();
+    $status = new stdClass();
+    $status->modules = [];
+    $status->plugins = [];
 
     // Remove K2 modules
     $modules = $this->manifest->getElementByPath('modules');
@@ -29,16 +34,16 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
             $mname = $module->attributes('module');
             $client = $module->attributes('client');
             $db = JFactory::getDbo();
-            $query = "SELECT `id` FROM `#__modules` WHERE module = ".$db->Quote($mname)."";
+            $query = 'SELECT `id` FROM `#__modules` WHERE module = '.$db->Quote($mname).'';
             $db->setQuery($query);
             $modules = $db->loadResultArray();
             if (count($modules)) {
                 foreach ($modules as $module) {
-                    $installer = new JInstaller;
+                    $installer = new JInstaller();
                     $result = $installer->uninstall('module', $module, 0);
                 }
             }
-            $status->modules[] = array('name' => $mname, 'client' => $client, 'result' => $result);
+            $status->modules[] = ['name' => $mname, 'client' => $client, 'result' => $result];
         }
     }
 
@@ -57,11 +62,11 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
             $plugins = $db->loadResultArray();
             if (count($plugins)) {
                 foreach ($plugins as $plugin) {
-                    $installer = new JInstaller;
+                    $installer = new JInstaller();
                     $result = $installer->uninstall('plugin', $plugin, 0);
                 }
             }
-            $status->plugins[] = array('name' => $pname, 'group' => $pgroup, 'result' => $result);
+            $status->plugins[] = ['name' => $pname, 'group' => $pgroup, 'result' => $result];
         }
     }
 
@@ -104,10 +109,10 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
 			<th></th>
 		</tr>
 		<?php foreach ($status->modules as $module): ?>
-		<tr class="row<?php echo(++$rows % 2); ?>">
+		<tr class="row<?php echo ++$rows % 2; ?>">
 			<td class="key"><?php echo $module['name']; ?></td>
 			<td class="key"><?php echo ucfirst($module['client']); ?></td>
-			<td><strong><?php echo ($module['result'])?JText::_('K2_REMOVED'):JText::_('K2_NOT_REMOVED'); ?></strong></td>
+			<td><strong><?php echo ($module['result']) ? JText::_('K2_REMOVED') : JText::_('K2_NOT_REMOVED'); ?></strong></td>
 		</tr>
 		<?php endforeach; ?>
 		<?php endif; ?>
@@ -119,10 +124,10 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
 			<th></th>
 		</tr>
 		<?php foreach ($status->plugins as $plugin): ?>
-		<tr class="row<?php echo(++$rows % 2); ?>">
+		<tr class="row<?php echo ++$rows % 2; ?>">
 			<td class="key"><?php echo ucfirst($plugin['name']); ?></td>
 			<td class="key"><?php echo ucfirst($plugin['group']); ?></td>
-			<td><strong><?php echo ($plugin['result'])?JText::_('K2_REMOVED'):JText::_('K2_NOT_REMOVED'); ?></strong></td>
+			<td><strong><?php echo ($plugin['result']) ? JText::_('K2_REMOVED') : JText::_('K2_NOT_REMOVED'); ?></strong></td>
 		</tr>
 		<?php endforeach; ?>
 		<?php endif; ?>

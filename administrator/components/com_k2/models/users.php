@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -33,17 +38,17 @@ class K2ModelUsers extends K2Model
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
-        $query = "SELECT juser.*, k2user.group, k2group.name AS groupname, k2user.image AS image
+        $query = 'SELECT juser.*, k2user.group, k2group.name AS groupname, k2user.image AS image
             FROM #__users AS juser
             LEFT JOIN #__k2_users AS k2user ON juser.id = k2user.userID
             LEFT JOIN #__k2_user_groups AS k2group ON k2user.group = k2group.id
-        ";
+        ';
 
         if (K2_JVERSION != '15' && $filter_group) {
-            $query .= " LEFT JOIN #__user_usergroup_map AS `map` ON juser.id = map.user_id";
+            $query .= ' LEFT JOIN #__user_usergroup_map AS `map` ON juser.id = map.user_id';
         }
 
-        $query .= " WHERE juser.id > 0";
+        $query .= ' WHERE juser.id > 0';
 
         if ($filter_status > -1) {
             $query .= " AND juser.block = {$filter_status}";
@@ -51,7 +56,7 @@ class K2ModelUsers extends K2Model
 
         if ($filter_group) {
             if (K2_JVERSION != '15') {
-                $query .= " AND `map`.group_id =".(int)$filter_group;
+                $query .= ' AND `map`.group_id ='.(int) $filter_group;
             } else {
                 switch ($filter_group) {
                     case 'Public Frontend':
@@ -64,22 +69,22 @@ class K2ModelUsers extends K2Model
 
                     default:
                         $filter_group = strtolower(trim($filter_group));
-                        $query .= " AND juser.usertype = ".$db->Quote($filter_group);
+                        $query .= ' AND juser.usertype = '.$db->Quote($filter_group);
                 }
             }
         }
 
         if ($filter_group_k2) {
-            $query .= " AND k2user.group = ".$db->Quote($filter_group_k2);
+            $query .= ' AND k2user.group = '.$db->Quote($filter_group_k2);
         }
 
         if ($search) {
             $escaped = (K2_JVERSION == '15') ? $db->getEscaped($search, true) : $db->escape($search, true);
-            $query .= " AND (LOWER(juser.name) LIKE ".$db->Quote('%'.$escaped.'%', false)." OR LOWER(juser.email) LIKE ".$db->Quote('%'.$escaped.'%', false).")";
+            $query .= ' AND (LOWER(juser.name) LIKE '.$db->Quote('%'.$escaped.'%', false).' OR LOWER(juser.email) LIKE '.$db->Quote('%'.$escaped.'%', false).')';
         }
 
         if (!$filter_order) {
-            $filter_order = "juser.name";
+            $filter_order = 'juser.name';
         }
 
         $query .= " ORDER BY {$filter_order} {$filter_order_Dir}";
@@ -93,8 +98,8 @@ class K2ModelUsers extends K2Model
             $query = "SELECT map.user_id, COUNT(map.group_id) AS group_count, GROUP_CONCAT(g2.title SEPARATOR '\n') AS group_names
                 FROM #__user_usergroup_map AS map
                 LEFT JOIN #__usergroups AS g2 ON g2.id = map.group_id
-                WHERE map.user_id IN (".implode(',', $IDs).")
-                GROUP BY map.user_id";
+                WHERE map.user_id IN (".implode(',', $IDs).')
+                GROUP BY map.user_id';
             $db->setQuery($query);
             $groups = $db->loadObjectList();
             foreach ($rows as $row) {
@@ -124,13 +129,13 @@ class K2ModelUsers extends K2Model
         $search = JString::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
-        $query = "SELECT COUNT(DISTINCT juser.id) FROM #__users as juser "."LEFT JOIN #__k2_users as k2user ON juser.id=k2user.userID "."LEFT JOIN #__k2_user_groups as k2group ON k2user.group=k2group.id ";
+        $query = 'SELECT COUNT(DISTINCT juser.id) FROM #__users as juser '.'LEFT JOIN #__k2_users as k2user ON juser.id=k2user.userID '.'LEFT JOIN #__k2_user_groups as k2group ON k2user.group=k2group.id ';
 
         if (K2_JVERSION != '15' && $filter_group) {
-            $query .= " LEFT JOIN #__user_usergroup_map as `map` ON juser.id=map.user_id ";
+            $query .= ' LEFT JOIN #__user_usergroup_map as `map` ON juser.id=map.user_id ';
         }
 
-        $query .= " WHERE juser.id>0";
+        $query .= ' WHERE juser.id>0';
 
         if ($filter_status > -1) {
             $query .= " AND juser.block = {$filter_status}";
@@ -138,7 +143,7 @@ class K2ModelUsers extends K2Model
 
         if ($filter_group) {
             if (K2_JVERSION != '15') {
-                $query .= " AND `map`.group_id =".(int)$filter_group;
+                $query .= ' AND `map`.group_id ='.(int) $filter_group;
             } else {
                 switch ($filter_group) {
                     case 'Public Frontend':
@@ -151,22 +156,23 @@ class K2ModelUsers extends K2Model
 
                     default:
                         $filter_group = strtolower(trim($filter_group));
-                        $query .= " AND juser.usertype = ".$db->Quote($filter_group);
+                        $query .= ' AND juser.usertype = '.$db->Quote($filter_group);
                 }
             }
         }
 
         if ($filter_group_k2) {
-            $query .= " AND k2user.group = ".$db->Quote($filter_group_k2);
+            $query .= ' AND k2user.group = '.$db->Quote($filter_group_k2);
         }
 
         if ($search) {
             $escaped = K2_JVERSION == '15' ? $db->getEscaped($search, true) : $db->escape($search, true);
-            $query .= " AND (LOWER( juser.name ) LIKE ".$db->Quote('%'.$escaped.'%', false)." OR LOWER( juser.email ) LIKE ".$db->Quote('%'.$escaped.'%', false).")";
+            $query .= ' AND (LOWER( juser.name ) LIKE '.$db->Quote('%'.$escaped.'%', false).' OR LOWER( juser.email ) LIKE '.$db->Quote('%'.$escaped.'%', false).')';
         }
 
         $db->setQuery($query);
         $total = $db->loadResult();
+
         return $total;
     }
 
@@ -176,7 +182,7 @@ class K2ModelUsers extends K2Model
         $cid = JRequest::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = JFactory::getDbo();
-        $query = "DELETE FROM #__k2_users WHERE userID IN(".implode(',', $cid).")";
+        $query = 'DELETE FROM #__k2_users WHERE userID IN('.implode(',', $cid).')';
         $db->setQuery($query);
         $db->query();
         $cache = JFactory::getCache('com_k2');
@@ -193,20 +199,20 @@ class K2ModelUsers extends K2Model
             $query = 'SELECT (lft - 3) AS lft, name AS value, name AS text'.' FROM #__core_acl_aro_groups'.' WHERE name != "ROOT"'.' AND name != "USERS"'.' ORDER BY `lft` ASC';
 
             if (K2_JVERSION != '15') {
-                $query = "SELECT a.lft AS lft, a.id AS value, a.title AS text, COUNT(DISTINCT b.id) AS level
+                $query = 'SELECT a.lft AS lft, a.id AS value, a.title AS text, COUNT(DISTINCT b.id) AS level
                     FROM #__usergroups AS a
                     LEFT JOIN #__usergroups AS b ON a.lft > b.lft AND a.rgt < b.rgt
                     GROUP BY a.id
-                    ORDER BY a.lft ASC";
+                    ORDER BY a.lft ASC';
             }
 
             $db->setQuery($query);
             $groups = $db->loadObjectList();
-            $userGroups = array();
+            $userGroups = [];
 
             foreach ($groups as $group) {
                 if ($group->lft >= 10) {
-                    $group->lft = (int)$group->lft - 10;
+                    $group->lft = (int) $group->lft - 10;
                 }
                 if (K2_JVERSION != '15') {
                     $group->text = $this->indent($group->level, '- ').$group->text;
@@ -217,7 +223,7 @@ class K2ModelUsers extends K2Model
                 array_push($userGroups, $group);
             }
         } else {
-            $query = "SELECT * FROM #__k2_user_groups";
+            $query = 'SELECT * FROM #__k2_user_groups';
             $db->setQuery($query);
             $userGroups = $db->loadObjectList();
         }
@@ -232,24 +238,27 @@ class K2ModelUsers extends K2Model
             $return .= $char;
         }
         $return .= $end_char;
+
         return $return;
     }
 
     public function checkLogin($id)
     {
         $db = JFactory::getDbo();
-        $query = "SELECT COUNT(s.userid) FROM #__session AS s WHERE s.userid = ".(int)$id;
+        $query = 'SELECT COUNT(s.userid) FROM #__session AS s WHERE s.userid = '.(int) $id;
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
     public function hasProfile($id)
     {
         $db = JFactory::getDbo();
-        $query = "SELECT id FROM #__k2_users WHERE userID = ".(int)$id;
+        $query = 'SELECT id FROM #__k2_users WHERE userID = '.(int) $id;
         $db->setQuery($query);
         $result = $db->loadResult();
+
         return $result;
     }
 
@@ -259,11 +268,11 @@ class K2ModelUsers extends K2Model
         $cid = JRequest::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = JFactory::getDbo();
-        $query = "UPDATE #__users SET block=0 WHERE id IN(".implode(',', $cid).")";
+        $query = 'UPDATE #__users SET block=0 WHERE id IN('.implode(',', $cid).')';
         $db->setQuery($query);
         $db->query();
         $app->enqueueMessage(JText::_('K2_USERS_ENABLED'));
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=users&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=users');
@@ -276,11 +285,11 @@ class K2ModelUsers extends K2Model
         $cid = JRequest::getVar('cid');
         JArrayHelper::toInteger($cid);
         $db = JFactory::getDbo();
-        $query = "UPDATE #__users SET block=1 WHERE id IN(".implode(',', $cid).")";
+        $query = 'UPDATE #__users SET block=1 WHERE id IN('.implode(',', $cid).')';
         $db->setQuery($query);
         $db->query();
         $app->enqueueMessage(JText::_('K2_USERS_DISABLED'));
-        if (JRequest::getCmd('context') == "modalselector") {
+        if (JRequest::getCmd('context') == 'modalselector') {
             $app->redirect('index.php?option=com_k2&view=users&tmpl=component&context=modalselector');
         } else {
             $app->redirect('index.php?option=com_k2&view=users');
@@ -320,14 +329,14 @@ class K2ModelUsers extends K2Model
                     // Get users data for the users to delete.
                     $user_to_delete = JFactory::getUser($id);
                     // Fire the onUserBeforeDelete event.
-                    $dispatcher->trigger('onUserBeforeDelete', array($table->getProperties()));
+                    $dispatcher->trigger('onUserBeforeDelete', [$table->getProperties()]);
                     if (!$table->delete($id)) {
                         $this->setError($table->getError());
+
                         return false;
-                    } else {
-                        // Trigger the onUserAfterDelete event.
-                        $dispatcher->trigger('onUserAfterDelete', array($user_to_delete->getProperties(), true, $this->getError()));
                     }
+                    // Trigger the onUserAfterDelete event.
+                    $dispatcher->trigger('onUserAfterDelete', [$user_to_delete->getProperties(), true, $this->getError()]);
                 } else {
                     // Prune items that you can't change.
                     unset($cid[$key]);
@@ -336,15 +345,15 @@ class K2ModelUsers extends K2Model
             }
             $IDsToDelete = $cid;
         } else {
-            $query = "SELECT * FROM #__users WHERE id IN(".implode(',', $cid).") AND gid<={$user->gid}";
+            $query = 'SELECT * FROM #__users WHERE id IN('.implode(',', $cid).") AND gid<={$user->gid}";
             $db->setQuery($query);
             $IDsToDelete = K2_JVERSION == '30' ? $db->loadColumn() : $db->loadResultArray();
 
-            $query = "DELETE FROM #__users WHERE id IN(".implode(',', $IDsToDelete).") AND id!={$user->id}";
+            $query = 'DELETE FROM #__users WHERE id IN('.implode(',', $IDsToDelete).") AND id!={$user->id}";
             $db->setQuery($query);
             $db->query();
         }
-        $query = "DELETE FROM #__k2_users WHERE userID IN(".implode(',', $IDsToDelete).") AND userID!={$user->id}";
+        $query = 'DELETE FROM #__k2_users WHERE userID IN('.implode(',', $IDsToDelete).") AND userID!={$user->id}";
         $db->setQuery($query);
         $db->query();
         $app->enqueueMessage(JText::_('K2_DELETE_COMPLETED'));
@@ -364,20 +373,20 @@ class K2ModelUsers extends K2Model
             $group = array_filter($group);
             if (count($group)) {
                 foreach ($cid as $id) {
-                    $query = "DELETE FROM #__user_usergroup_map WHERE user_id = ".$id;
+                    $query = 'DELETE FROM #__user_usergroup_map WHERE user_id = '.$id;
                     $db->setQuery($query);
                     $db->query();
-                    $query = "INSERT INTO #__user_usergroup_map VALUES (".$id.", ".implode("), (".$id.", ", $group).")";
+                    $query = 'INSERT INTO #__user_usergroup_map VALUES ('.$id.', '.implode('), ('.$id.', ', $group).')';
                     $db->setQuery($query);
                     $db->query();
                 }
             }
         } else {
             if ($group) {
-                $query = "SELECT id FROM #__core_acl_aro_groups WHERE name=".$db->Quote($group);
+                $query = 'SELECT id FROM #__core_acl_aro_groups WHERE name='.$db->Quote($group);
                 $db->setQuery($query);
                 $gid = $db->loadResult();
-                $query = "UPDATE #__users SET gid={$gid}, usertype=".$db->Quote($group)." WHERE id IN(".implode(',', $cid).")";
+                $query = "UPDATE #__users SET gid={$gid}, usertype=".$db->Quote($group).' WHERE id IN('.implode(',', $cid).')';
                 $db->setQuery($query);
                 $db->query();
             }
@@ -385,7 +394,7 @@ class K2ModelUsers extends K2Model
 
         if ($k2group) {
             foreach ($cid as $id) {
-                $query = "SELECT COUNT(*) FROM #__k2_users WHERE userID = ".$id;
+                $query = 'SELECT COUNT(*) FROM #__k2_users WHERE userID = '.$id;
                 $db->setQuery($query);
                 $result = $db->loadResult();
                 if ($result) {
@@ -407,7 +416,7 @@ class K2ModelUsers extends K2Model
         $app = JFactory::getApplication();
         $db = JFactory::getDbo();
         if (K2_JVERSION != '15') {
-            $db->setQuery("SELECT id, title AS name FROM #__usergroups");
+            $db->setQuery('SELECT id, title AS name FROM #__usergroups');
             $usergroups = $db->loadObjectList();
             $xml = new JXMLElement(JFile::read(JPATH_COMPONENT.'/models/usergroup.xml'));
             $permissions = class_exists('JParameter') ? new JParameter('') : new JRegistry('');
@@ -416,7 +425,7 @@ class K2ModelUsers extends K2Model
                     $attribute = K2_JVERSION == '30' ? $param->attributes()->type : $param->getAttribute('type');
                     if ($attribute != 'spacer') {
                         if (K2_JVERSION == '30') {
-                            $permissions->set((string)$param->attributes()->name, (string)$param->attributes()->default);
+                            $permissions->set((string) $param->attributes()->name, (string) $param->attributes()->default);
                         } else {
                             $permissions->set($param->getAttribute('name'), $param->getAttribute('default'));
                         }
@@ -429,7 +438,7 @@ class K2ModelUsers extends K2Model
             $backEndGroups = $acl->_getBelow('#__core_acl_aro_groups', 'g1.id, g1.name, COUNT(g2.name) AS level', 'g1.name', false, 'Public Backend', false);
             $usergroups = array_merge($frontEndGroups, $backEndGroups);
 
-            $xml = new JSimpleXML;
+            $xml = new JSimpleXML();
             $xml->loadFile(JPATH_COMPONENT.'/models/usergroup.xml');
             $permissions = class_exists('JParameter') ? new JParameter('') : new JRegistry('');
             foreach ($xml->document->params as $paramGroup) {
@@ -447,13 +456,13 @@ class K2ModelUsers extends K2Model
 
         foreach ($usergroups as $usergroup) {
             $K2UserGroup = JTable::getInstance('K2UserGroup', 'Table');
-            $K2UserGroup->name = JString::trim($usergroup->name)." (Imported from Joomla)";
+            $K2UserGroup->name = JString::trim($usergroup->name).' (Imported from Joomla)';
             $K2UserGroup->permissions = $permissions;
             $K2UserGroup->store();
 
             if (K2_JVERSION != '15') {
-                $query = "SELECT * FROM #__users AS user JOIN #__user_usergroup_map AS map ON user.id = map.user_id
-                WHERE map.group_id = ".$usergroup->id;
+                $query = 'SELECT * FROM #__users AS user JOIN #__user_usergroup_map AS map ON user.id = map.user_id
+                WHERE map.group_id = '.$usergroup->id;
             } else {
                 $query = "SELECT * FROM #__users WHERE gid={$usergroup->id}";
             }

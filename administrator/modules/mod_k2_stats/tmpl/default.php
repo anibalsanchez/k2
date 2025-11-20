@@ -1,7 +1,6 @@
 <?php
 /**
  * @version    2.x (rolling release)
- * @package    K2
  * @author     JoomlaWorks https://www.joomlaworks.net
  * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
  * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
@@ -13,8 +12,8 @@ defined('_JEXEC') or die;
 // Quick and dirty fix for Joomla 3.0 missing CSS tabs when creating tabs using the API.
 // Should be removed when Joomla fixes that...
 if (K2_JVERSION == '30') {
-	$document = JFactory::getDocument();
-	$document->addStyleDeclaration('
+    $document = JFactory::getDocument();
+    $document->addStyleDeclaration('
 		dl.tabs {float:left;margin:10px 0 -1px 0;z-index:50;}
 		dl.tabs dt {float:left;padding:4px 10px;border:1px solid #ccc;margin-left:3px;background:#e9e9e9;color:#666;}
 		dl.tabs dt.open {background:#f9f9f9;border-bottom:1px solid #f9f9f9;z-index:100;color:#000;}
@@ -28,7 +27,9 @@ jimport('joomla.html.pane');
 
 ?>
 
-<?php if (K2_JVERSION != '30') $pane = JPane::getInstance('Tabs'); ?>
+<?php if (K2_JVERSION != '30') {
+    $pane = JPane::getInstance('Tabs');
+} ?>
 
 <div class="clr"></div>
 
@@ -45,16 +46,18 @@ jimport('joomla.html.pane');
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach($latestItems as $latest): ?>
+		<?php foreach ($latestItems as $latest): ?>
 		<tr>
 			<td><a href="<?php echo JRoute::_('index.php?option=com_k2&view=item&cid='.$latest->id); ?>"><?php echo $latest->title; ?></a></td>
-			<td><?php echo JHTML::_('date', $latest->created , JText::_('K2_DATE_FORMAT')); ?></td>
+			<td><?php echo JHTML::_('date', $latest->created, JText::_('K2_DATE_FORMAT')); ?></td>
 			<td><?php echo $latest->author; ?></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
 </table>
-<?php if (K2_JVERSION != '30') echo $pane->endPanel(); ?>
+<?php if (K2_JVERSION != '30') {
+    echo $pane->endPanel();
+} ?>
 <?php endif; ?>
 
 <?php if ($params->get('popularItems', 1)): ?>
@@ -69,17 +72,19 @@ jimport('joomla.html.pane');
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach($popularItems as $popular): ?>
+		<?php foreach ($popularItems as $popular): ?>
 		<tr>
 			<td><a href="<?php echo JRoute::_('index.php?option=com_k2&view=item&cid='.$popular->id); ?>"><?php echo $popular->title; ?></a></td>
 			<td><?php echo $popular->hits; ?></td>
-			<td><?php echo JHTML::_('date', $popular->created , JText::_('K2_DATE_FORMAT')); ?></td>
+			<td><?php echo JHTML::_('date', $popular->created, JText::_('K2_DATE_FORMAT')); ?></td>
 			<td><?php echo $popular->author; ?></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
 </table>
-<?php if (K2_JVERSION != '30') echo $pane->endPanel(); ?>
+<?php if (K2_JVERSION != '30') {
+    echo $pane->endPanel();
+} ?>
 <?php endif; ?>
 
 <?php if ($params->get('mostCommentedItems', 1)): ?>
@@ -94,17 +99,19 @@ jimport('joomla.html.pane');
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach($mostCommentedItems as $mostCommented): ?>
+		<?php foreach ($mostCommentedItems as $mostCommented): ?>
 		<tr>
 			<td><a href="<?php echo JRoute::_('index.php?option=com_k2&view=item&cid='.$mostCommented->id); ?>"><?php echo $mostCommented->title; ?></a></td>
 			<td><?php echo $mostCommented->numOfComments; ?></td>
-			<td><?php echo JHTML::_('date', $mostCommented->created , JText::_('K2_DATE_FORMAT')); ?></td>
+			<td><?php echo JHTML::_('date', $mostCommented->created, JText::_('K2_DATE_FORMAT')); ?></td>
 			<td><?php echo $mostCommented->author; ?></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
 </table>
-<?php if (K2_JVERSION != '30') echo $pane->endPanel(); ?>
+<?php if (K2_JVERSION != '30') {
+    echo $pane->endPanel();
+} ?>
 <?php endif; ?>
 
 <?php if ($params->get('latestComments', 1)): ?>
@@ -118,16 +125,18 @@ jimport('joomla.html.pane');
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach($latestComments as $latest): ?>
+		<?php foreach ($latestComments as $latest): ?>
 		<tr>
 			<td><?php echo $latest->commentText; ?></td>
-			<td><?php echo JHTML::_('date', $latest->commentDate , JText::_('K2_DATE_FORMAT')); ?></td>
+			<td><?php echo JHTML::_('date', $latest->commentDate, JText::_('K2_DATE_FORMAT')); ?></td>
 			<td><?php echo $latest->userName; ?></td>
 		</tr>
 		<?php endforeach; ?>
 	</tbody>
 </table>
-<?php if (K2_JVERSION != '30') echo $pane->endPanel(); ?>
+<?php if (K2_JVERSION != '30') {
+    echo $pane->endPanel();
+} ?>
 <?php endif; ?>
 
 <?php if ($params->get('statistics', 1)): ?>
@@ -166,7 +175,9 @@ jimport('joomla.html.pane');
 		</tr>
 	</tbody>
 </table>
-<?php if (K2_JVERSION != '30') echo $pane->endPanel(); ?>
+<?php if (K2_JVERSION != '30') {
+    echo $pane->endPanel();
+} ?>
 <?php endif; ?>
 
-<?php echo K2_JVERSION != '30'? $pane->endPane() : JHtml::_('tabs.end'); ?>
+<?php echo K2_JVERSION != '30' ? $pane->endPane() : JHtml::_('tabs.end'); ?>

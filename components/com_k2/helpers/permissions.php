@@ -1,10 +1,15 @@
 <?php
-/**
- * @version    2.x (rolling release)
- * @package    K2
- * @author     JoomlaWorks https://www.joomlaworks.net
- * @copyright  Copyright (c) 2009 - 2025 JoomlaWorks Ltd. All rights reserved.
- * @license    GNU/GPL: https://gnu.org/licenses/gpl.html
+
+/*
+ * @package     k2-jx-ready
+ *
+ * @author      Extly, CB. <team@extly.com>
+ * @copyright   Copyright (c)2025 Extly, CB. All rights reserved.
+ * @license     https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
+ *
+ * @see         https://www.extly.com
+ *
+ * Based on K2 by JoomlaWorks Ltd. See: https://github.com/getk2/k2
  */
 
 // no direct access
@@ -21,11 +26,11 @@ class K2HelperPermissions
         if ($user->guest) {
             return;
         }
-        $K2User = K2HelperPermissions::getK2User($user->id);
+        $K2User = self::getK2User($user->id);
         if (!is_object($K2User)) {
             return;
         }
-        $K2UserGroup = K2HelperPermissions::getK2UserGroup($K2User->group);
+        $K2UserGroup = self::getK2UserGroup($K2User->group);
         if (is_null($K2UserGroup)) {
             return;
         }
@@ -101,7 +106,7 @@ class K2HelperPermissions
                 }
             }
         }
-        return;
+
     }
 
     public static function checkPermissions()
@@ -125,9 +130,8 @@ class K2HelperPermissions
         }
 
         switch ($task) {
-
             case 'add':
-                if (!K2HelperPermissions::canAddItem()) {
+                if (!self::canAddItem()) {
                     JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                 }
                 break;
@@ -141,14 +145,13 @@ class K2HelperPermissions
                     $item = JTable::getInstance('K2Item', 'Table');
                     $item->load($cid);
 
-                    if (!K2HelperPermissions::canEditItem($item->created_by, $item->catid)) {
+                    if (!self::canEditItem($item->created_by, $item->catid)) {
                         // Handle in a different way the case when user can add an item but not edit it.
-                        if ($task == 'edit' && !$user->guest && $item->created_by == $user->id && (int)$item->modified == 0 && K2HelperPermissions::canAddItem()) {
+                        if ($task == 'edit' && !$user->guest && $item->created_by == $user->id && (int) $item->modified == 0 && self::canAddItem()) {
                             echo '<script>parent.location.href = "'.JUri::root().'";</script>';
                             exit;
-                        } else {
-                            JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                         }
+                        JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                     }
                 }
                 break;
@@ -160,11 +163,11 @@ class K2HelperPermissions
                     $item = JTable::getInstance('K2Item', 'Table');
                     $item->load($cid);
 
-                    if (!K2HelperPermissions::canEditItem($item->created_by, $item->catid)) {
+                    if (!self::canEditItem($item->created_by, $item->catid)) {
                         JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                     }
                 } else {
-                    if (!K2HelperPermissions::canAddItem()) {
+                    if (!self::canAddItem()) {
                         JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                     }
                 }
@@ -172,13 +175,13 @@ class K2HelperPermissions
                 break;
 
             case 'tag':
-                if (!K2HelperPermissions::canAddTag()) {
+                if (!self::canAddTag()) {
                     JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                 }
                 break;
 
             case 'extraFields':
-                if (!K2HelperPermissions::canRenderExtraFields()) {
+                if (!self::canRenderExtraFields()) {
                     JError::raiseError(403, JText::_('K2_ALERTNOTAUTH'));
                 }
                 break;
@@ -188,18 +191,20 @@ class K2HelperPermissions
     public static function getK2User($userID)
     {
         $db = JFactory::getDbo();
-        $query = "SELECT * FROM #__k2_users WHERE userID = ".(int)$userID;
+        $query = 'SELECT * FROM #__k2_users WHERE userID = '.(int) $userID;
         $db->setQuery($query);
         $row = $db->loadObject();
+
         return $row;
     }
 
     public static function getK2UserGroup($id)
     {
         $db = JFactory::getDbo();
-        $query = "SELECT * FROM #__k2_user_groups WHERE id = ".(int)$id;
+        $query = 'SELECT * FROM #__k2_user_groups WHERE id = '.(int) $id;
         $db->setQuery($query);
         $row = $db->loadObject();
+
         return $row;
     }
 
@@ -214,11 +219,11 @@ class K2HelperPermissions
             return in_array('add.category.'.$category, $K2Permissions->actions);
         }
         $db = JFactory::getDbo();
-        $query = "SELECT id FROM #__k2_categories WHERE published=1 AND trash=0";
+        $query = 'SELECT id FROM #__k2_categories WHERE published=1 AND trash=0';
         if (K2_JVERSION != '15') {
-            $query .= " AND access IN(".implode(',', $user->getAuthorisedViewLevels()).")";
+            $query .= ' AND access IN('.implode(',', $user->getAuthorisedViewLevels()).')';
         } else {
-            $aid = (int)$user->get('aid');
+            $aid = (int) $user->get('aid');
             $query .= " AND access<={$aid}";
         }
         $db->setQuery($query);
@@ -235,64 +240,66 @@ class K2HelperPermissions
     public static function canAddToAll()
     {
         $K2Permissions = K2Permissions::getInstance();
+
         return in_array('add.category.all', $K2Permissions->actions);
     }
 
     public static function canEditItem($itemOwner, $itemCategory)
     {
         $K2Permissions = K2Permissions::getInstance();
-        if (in_array('editAll.category.all', $K2Permissions->actions) || in_array('editOwn.item.'.$itemOwner, $K2Permissions->actions) || in_array('editOwn.item.'.$itemOwner.'.'.$itemCategory, $K2Permissions->actions) || in_array('editAll.category.'.$itemCategory, $K2Permissions->actions)) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return (bool) (in_array('editAll.category.all', $K2Permissions->actions) || in_array('editOwn.item.'.$itemOwner, $K2Permissions->actions) || in_array('editOwn.item.'.$itemOwner.'.'.$itemCategory, $K2Permissions->actions) || in_array('editAll.category.'.$itemCategory, $K2Permissions->actions));
     }
 
     public static function canPublishItem($itemCategory)
     {
         $K2Permissions = K2Permissions::getInstance();
-        if (in_array('publish.category.all', $K2Permissions->actions) || in_array('publish.category.'.$itemCategory, $K2Permissions->actions)) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return (bool) (in_array('publish.category.all', $K2Permissions->actions) || in_array('publish.category.'.$itemCategory, $K2Permissions->actions));
     }
 
     public static function canAddTag()
     {
         $K2Permissions = K2Permissions::getInstance();
+
         return in_array('tag', $K2Permissions->actions);
     }
 
     public static function canRenderExtraFields()
     {
         $K2Permissions = K2Permissions::getInstance();
+
         return in_array('extraFields', $K2Permissions->actions);
     }
 
     public static function canAddComment($itemCategory)
     {
         $K2Permissions = K2Permissions::getInstance();
+
         return in_array('comment.category.all', $K2Permissions->actions) || in_array('comment.category.'.$itemCategory, $K2Permissions->actions);
     }
 
     public static function canEditPublished($itemCategory)
     {
         $K2Permissions = K2Permissions::getInstance();
+
         return in_array('editPublished.category.all', $K2Permissions->actions) || in_array('editPublished.category.'.$itemCategory, $K2Permissions->actions);
     }
 }
 
 class K2Permissions
 {
-    public $actions = array();
+    public $actions = [];
+
     public $permissions = null;
+
     public static function getInstance()
     {
         static $instance;
         if (!is_object($instance)) {
-            $instance = new K2Permissions();
+            $instance = new self();
         }
+
         return $instance;
     }
 }
