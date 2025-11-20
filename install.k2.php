@@ -277,11 +277,11 @@ if (version_compare(JVERSION, '1.6.0', '<')) {
     $db->setQuery($query);
     $userGroupCount = $db->loadResult();
     if ($userGroupCount == 0) {
-        $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Registered', 'comment=1\nfrontEdit=0\nadd=0\neditOwn=0\neditAll=0\npublish=0\neditPublished=0\ninheritance=0\ncategories=all\n\n')";
+        $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Registered', 'comment=1\nfrontEdit=0\nadd=0\neditOwn=0\neditAll=0\npublish=0\neditPublished=0\ninheritance=0\ncategories=all\n\n')";
         $db->setQuery($query);
         $db->Query();
 
-        $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Site Owner', 'comment=1\nfrontEdit=1\nadd=1\neditOwn=1\neditAll=1\npublish=1\neditPublished=1\ninheritance=1\ncategories=all\n\n')";
+        $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Site Owner', 'comment=1\nfrontEdit=1\nadd=1\neditOwn=1\neditAll=1\npublish=1\neditPublished=1\ninheritance=1\ncategories=all\n\n')";
         $db->setQuery($query);
         $db->Query();
     }

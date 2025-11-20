@@ -123,11 +123,11 @@ class Com_K2InstallerScript
         $userGroupCount = $db->loadResult();
 
         if ($userGroupCount == 0) {
-            $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
+            $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
             $db->setQuery($query);
             $db->execute();
 
-            $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
+            $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
             $db->setQuery($query);
             $db->execute();
         }
@@ -402,11 +402,11 @@ class Com_K2InstallerScript
         $userGroupCount = $db->loadResult();
 
         if ($userGroupCount == 0) {
-            $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
+            $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
             $db->setQuery($query);
             $db->execute();
 
-            $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
+            $query = "INSERT INTO #__k2_user_groups (`name`, `permissions`) VALUES('Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
             $db->setQuery($query);
             $db->execute();
         }
