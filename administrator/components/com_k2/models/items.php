@@ -680,7 +680,7 @@ class K2ModelItems extends K2Model
             foreach ($sourceTags as $sourceTag) {
                 $query = 'INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, '.(int) $sourceTag->tagID.', '.(int) $row->id.')';
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
             }
 
             $row->store();
@@ -898,17 +898,17 @@ class K2ModelItems extends K2Model
 
             $query = 'DELETE FROM #__k2_attachments WHERE itemID='.$row->id;
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             // Delete tags
             $query = 'DELETE FROM #__k2_tags_xref WHERE itemID='.$row->id;
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             // Delete comments
             $query = 'DELETE FROM #__k2_comments WHERE itemID='.$row->id;
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $row->delete($id);
 
@@ -1070,7 +1070,7 @@ class K2ModelItems extends K2Model
                                 $id = $db->loadResult();
                                 $query = sprintf('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, %s, %s)', $id, $K2Item->id);
                                 $db->setQuery($query);
-                                $db->query();
+                                $db->execute();
                             } else {
                                 $K2Tag = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
                                 $K2Tag->name = $itemTag;
@@ -1079,7 +1079,7 @@ class K2ModelItems extends K2Model
                                 $tags[] = $K2Tag;
                                 $query = sprintf('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, %s, %s)', $K2Tag->id, $K2Item->id);
                                 $db->setQuery($query);
-                                $db->query();
+                                $db->execute();
                             }
                         }
                     }
@@ -1151,7 +1151,7 @@ class K2ModelItems extends K2Model
                             $id = $db->loadResult();
                             $query = sprintf('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, %s, %s)', $id, $K2Item->id);
                             $db->setQuery($query);
-                            $db->query();
+                            $db->execute();
                         } else {
                             $K2Tag = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
                             $K2Tag->name = $itemTag;
@@ -1160,7 +1160,7 @@ class K2ModelItems extends K2Model
                             $tags[] = $K2Tag;
                             $query = sprintf('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, %s, %s)', $K2Tag->id, $K2Item->id);
                             $db->setQuery($query);
-                            $db->query();
+                            $db->execute();
                         }
                     }
                 }
@@ -1336,7 +1336,7 @@ class K2ModelItems extends K2Model
                             }
 
                             $db->setQuery($query);
-                            $db->query();
+                            $db->execute();
 
                             /*
                             // OLD
@@ -1347,7 +1347,7 @@ class K2ModelItems extends K2Model
                                 if ($id) {
                                     $query = "INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, {$id}, {$K2Item->id})";
                                     $db->setQuery($query);
-                                    $db->query();
+                                    $db->execute();
                                 }
                             } else {
                                 $K2Tag = JTable::getInstance('K2Tag', 'Table');
@@ -1357,7 +1357,7 @@ class K2ModelItems extends K2Model
                                 $tags[] = $K2Tag;
                                 $query = "INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, {$K2Tag->id}, {$K2Item->id})";
                                 $db->setQuery($query);
-                                $db->query();
+                                $db->execute();
                             }
                             */
                         }
@@ -1369,7 +1369,7 @@ class K2ModelItems extends K2Model
         foreach ($mapping as $oldID => $newID) {
             $query = 'UPDATE #__k2_categories SET parent='.$newID.' WHERE parent='.$oldID;
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_IMPORT_COMPLETED'));

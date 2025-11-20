@@ -148,14 +148,14 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 if ($result > 0) {
                     $query = 'UPDATE #__jf_content SET value='.$db->Quote($extra_fields).sprintf(" WHERE reference_field = 'extra_fields' AND language_id = %s AND reference_id = %s AND reference_table='k2_items'", $language_id, $reference_id);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_items', 'extra_fields', ", $language_id, $reference_id).$db->Quote($extra_fields).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 }
 
                 $query = sprintf("SELECT COUNT(*) FROM #__jf_content WHERE reference_field = 'extra_fields_search' AND language_id = %s AND reference_id = %s AND reference_table='k2_items'", $language_id, $reference_id);
@@ -165,14 +165,14 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 if ($result > 0) {
                     $query = 'UPDATE #__jf_content SET value='.$db->Quote($extra_fields_search).sprintf(" WHERE reference_field = 'extra_fields_search' AND language_id = %s AND reference_id = %s AND reference_table='k2_items'", $language_id, $reference_id);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_items', 'extra_fields_search', ", $language_id, $reference_id).$db->Quote($extra_fields_search).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 }
             }
 
@@ -277,14 +277,14 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
                 if ($result > 0) {
                     $query = 'UPDATE #__jf_content SET value='.$db->Quote($value).sprintf(" WHERE reference_field = 'value' AND language_id = %s AND reference_id = %s AND reference_table='k2_extra_fields'", $language_id, $reference_id);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 } else {
                     $modified = date('Y-m-d H:i:s');
                     $modified_by = $user->id;
                     $published = JRequest::getVar('published', 0);
                     $query = sprintf("INSERT INTO #__jf_content (`id`, `language_id`, `reference_id`, `reference_table`, `reference_field` ,`value`, `original_value`, `original_text`, `modified`, `modified_by`, `published`) VALUES (NULL, %s, %s, 'k2_extra_fields', 'value', ", $language_id, $reference_id).$db->Quote($value).", '','', ".$db->Quote($modified).sprintf(', %s, %s )', $modified_by, $published);
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 }
             }
 

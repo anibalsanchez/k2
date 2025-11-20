@@ -198,11 +198,11 @@ class K2ControllerItems extends K2Controller
 
         $query = 'DELETE FROM #__k2_log';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $query = 'INSERT INTO #__k2_log VALUES('.$status.', '.$db->quote($response).', '.$db->quote($now).')';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         exit;
     }

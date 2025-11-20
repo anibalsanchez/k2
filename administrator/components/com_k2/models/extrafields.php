@@ -345,7 +345,7 @@ class K2ModelExtraFields extends K2Model
             $row->load($id);
             $query = 'DELETE FROM #__k2_extra_fields WHERE `group`='.$id;
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
             $row->delete($id);
         }
 

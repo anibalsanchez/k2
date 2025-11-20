@@ -926,12 +926,12 @@ class K2ModelItem extends K2Model
             if (!$rating) {
                 $query = 'INSERT INTO #__k2_rating ( itemID, lastip, rating_sum, rating_count ) VALUES ( '.(int) $item->id.', '.$db->Quote($userIP).sprintf(', %s, 1 )', $rate);
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
                 echo Joomla\CMS\Language\Text::_('K2_THANKS_FOR_RATING');
             } elseif ($userIP != ($rating->lastip)) {
                 $query = sprintf('UPDATE #__k2_rating SET rating_count = rating_count + 1, rating_sum = rating_sum + %s, lastip = ', $rate).$db->Quote($userIP).(' WHERE itemID = '.$item->id);
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
                 echo Joomla\CMS\Language\Text::_('K2_THANKS_FOR_RATING');
             } else {
                 echo Joomla\CMS\Language\Text::_('K2_YOU_HAVE_ALREADY_RATED_THIS_ITEM');

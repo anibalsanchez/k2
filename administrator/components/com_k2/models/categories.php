@@ -430,11 +430,11 @@ class K2ModelCategories extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $query = sprintf('UPDATE #__k2_categories SET trash=1  WHERE id IN (%s)', $sql);
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $query = sprintf('UPDATE #__k2_items SET trash=1  WHERE catid IN (%s)', $sql);
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
         $dispatcher = JDispatcher::getInstance();
@@ -479,7 +479,7 @@ class K2ModelCategories extends K2Model
         if ($restored !== []) {
             JArrayHelper::toInteger($restored);
             $db->setQuery('UPDATE #__k2_items SET trash = 0 WHERE catid IN ('.implode(',', $restored).') AND trash = 1');
-            $db->query();
+            $db->execute();
         }
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');

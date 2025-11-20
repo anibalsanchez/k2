@@ -272,12 +272,12 @@ class K2ModelComments extends K2Model
             if (count($ids) > 0) {
                 $query = 'DELETE FROM #__k2_comments WHERE id IN('.implode(',', $ids).')';
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
             }
         } else {
             $query = 'DELETE FROM #__k2_comments WHERE published=0';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');

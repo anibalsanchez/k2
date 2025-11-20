@@ -219,7 +219,7 @@ class K2ModelItem extends K2Model
         }
 
         $db->setQuery('DELETE FROM #__k2_tags_xref WHERE itemID='.(int) $row->id);
-        $db->query();
+        $db->execute();
 
         if ($params->get('taggingSystem') == 'free') {
             if ($user->gid < 24 && $params->get('lockTags')) {
@@ -250,7 +250,7 @@ class K2ModelItem extends K2Model
 
                         if ($tagID) {
                             $db->setQuery('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, '.(int) $tagID.', '.(int) $row->id.')');
-                            $db->query();
+                            $db->execute();
                         }
                     }
                 }
@@ -260,7 +260,7 @@ class K2ModelItem extends K2Model
             if (is_array($tags) && count($tags)) {
                 foreach ($tags as $tag) {
                     $db->setQuery('INSERT INTO #__k2_tags_xref (`id`, `tagID`, `itemID`) VALUES (NULL, '.(int) $tag.', '.(int) $row->id.')');
-                    $db->query();
+                    $db->execute();
                 }
             }
         }
@@ -1054,7 +1054,7 @@ class K2ModelItem extends K2Model
         $id = JRequest::getInt('id');
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('UPDATE #__k2_items SET hits=0 WHERE id='.$id);
-        $db->query();
+        $db->execute();
         if ($app->isAdmin()) {
             $url = 'index.php?option=com_k2&view=item&cid='.$id;
         } else {
@@ -1071,7 +1071,7 @@ class K2ModelItem extends K2Model
         $id = JRequest::getInt('id');
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('DELETE FROM #__k2_rating WHERE itemID='.$id);
-        $db->query();
+        $db->execute();
         if ($app->isAdmin()) {
             $url = 'index.php?option=com_k2&view=item&cid='.$id;
         } else {

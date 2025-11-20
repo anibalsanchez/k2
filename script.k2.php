@@ -58,13 +58,13 @@ class Com_K2InstallerScript
             if ($client == 'administrator' && !$k2AlreadyInstalled) {
                 $position = (version_compare(JVERSION, '3.0', '<') && $name == 'mod_k2_quickicons') ? 'icon' : 'cpanel';
                 $db->setQuery('UPDATE #__modules SET `position`='.$db->quote($position).", `published`='1' WHERE `module`=".$db->quote($name));
-                $db->query();
+                $db->execute();
 
                 $db->setQuery('SELECT id FROM #__modules WHERE `module` = '.$db->quote($name));
                 $id = (int) $db->loadResult();
 
                 $db->setQuery('INSERT IGNORE INTO #__modules_menu (`moduleid`,`menuid`) VALUES ('.$id.', 0)');
-                $db->query();
+                $db->execute();
             }
         }
 
@@ -90,7 +90,7 @@ class Com_K2InstallerScript
             if ($group != 'finder') {
                 $query = "UPDATE #__extensions SET enabled=1 WHERE type='plugin' AND element=".$db->Quote($name).' AND folder='.$db->Quote($group);
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
             }
 
             $status->plugins[] = ['name' => $name, 'group' => $group, 'result' => $result];
@@ -115,7 +115,7 @@ class Com_K2InstallerScript
         // Clean up empty entries in #__k2_users table caused by an issue in the K2 user plugin.
         $query = 'DELETE FROM #__k2_users WHERE userID = 0';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         // User groups (set first 2 user groups)
         $query = 'SELECT COUNT(*) FROM #__k2_user_groups';
@@ -125,11 +125,11 @@ class Com_K2InstallerScript
         if ($userGroupCount == 0) {
             $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         /*
@@ -228,11 +228,11 @@ class Com_K2InstallerScript
         if (!array_key_exists('language', $fields)) {
             $query = 'ALTER TABLE #__k2_categories ADD `language` CHAR(7) NOT NULL';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_language` (`language`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $query = 'SHOW INDEX FROM #__k2_categories';
@@ -247,7 +247,7 @@ class Com_K2InstallerScript
         if (!$indexExists) {
             $query = 'ALTER TABLE #__k2_categories ADD INDEX `idx_category` (`published`,`access`,`trash`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Comments (add index for comments count)
@@ -263,7 +263,7 @@ class Com_K2InstallerScript
         if (!$indexExists) {
             $query = 'ALTER TABLE #__k2_comments ADD INDEX `idx_countComments` (`itemID`, `published`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Items
@@ -271,31 +271,31 @@ class Com_K2InstallerScript
         if (!array_key_exists('featured_ordering', $fields)) {
             $query = "ALTER TABLE #__k2_items ADD `featured_ordering` INT(11) NOT NULL default '0' AFTER `featured`";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if (!array_key_exists('language', $fields)) {
             $query = 'ALTER TABLE #__k2_items ADD `language` CHAR(7) NOT NULL';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $query = 'ALTER TABLE #__k2_items ADD INDEX (`language`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if ($fields['introtext'] == 'text') {
             $query = 'ALTER TABLE #__k2_items MODIFY `introtext` MEDIUMTEXT';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if ($fields['fulltext'] == 'text') {
             $query = 'ALTER TABLE #__k2_items MODIFY `fulltext` MEDIUMTEXT';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if ($fields['video'] != 'text') {
             $query = 'ALTER TABLE #__k2_items MODIFY `video` TEXT';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $query = 'SHOW INDEX FROM #__k2_items';
@@ -329,27 +329,27 @@ class Com_K2InstallerScript
         if ($itemKeys_item) {
             $query = 'ALTER TABLE #__k2_items DROP INDEX `item`';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if ($itemKeys_idx_item) {
             $query = 'ALTER TABLE #__k2_items DROP INDEX `idx_item`';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if (!$itemKeys_idx_items_common) {
             $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common` (`catid`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if (!$itemKeys_idx_items_common_backend) {
             $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_common_backend` (`trash`,`id`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         if (!$itemKeys_idx_items_authors) {
             $query = 'ALTER TABLE #__k2_items ADD INDEX `idx_items_authors` (`created_by`,`created_by_alias`,`published`,`access`,`trash`,`publish_up`,`publish_down`,`id`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Tags
@@ -357,7 +357,7 @@ class Com_K2InstallerScript
         if (!array_key_exists('description', $fields)) {
             $query = 'ALTER TABLE #__k2_tags ADD `description` text NOT NULL';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $query = 'SHOW INDEX FROM #__k2_tags_xref';
@@ -372,7 +372,7 @@ class Com_K2InstallerScript
         if (!$tagXrefKey_idx_tags_xref_common) {
             $query = 'ALTER TABLE #__k2_tags_xref ADD INDEX `idx_tags_xref_common` (`tagID`,`itemID`)';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Users
@@ -383,7 +383,7 @@ class Com_K2InstallerScript
                 ADD `hostname` VARCHAR(255) NOT NULL ,
                 ADD `notes` TEXT NOT NULL';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Users - add new ENUM option for "gender"
@@ -393,7 +393,7 @@ class Com_K2InstallerScript
         if (count($enumOptions) < 3) {
             $query = "ALTER TABLE #__k2_users MODIFY COLUMN `gender` enum('m','f','n') NOT NULL DEFAULT 'n'";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // User groups (set first 2 user groups)
@@ -404,11 +404,11 @@ class Com_K2InstallerScript
         if ($userGroupCount == 0) {
             $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Registered', '{\"comment\":\"1\",\"frontEdit\":\"0\",\"add\":\"0\",\"editOwn\":\"0\",\"editAll\":\"0\",\"publish\":\"0\",\"editPublished\":\"0\",\"inheritance\":\"0\",\"categories\":\"all\"}')";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $query = "INSERT INTO #__k2_user_groups (`id`, `name`, `permissions`) VALUES('', 'Site Owner', '{\"comment\":\"1\",\"frontEdit\":\"1\",\"add\":\"1\",\"editOwn\":\"1\",\"editAll\":\"1\",\"publish\":\"1\",\"editPublished\":\"1\",\"inheritance\":\"1\",\"categories\":\"all\"}')";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         // Log for updates
@@ -418,7 +418,7 @@ class Com_K2InstallerScript
                 `timestamp` datetime NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         /*
         // TO DO: Use the following info to remove FULLTEXT attributes from the items & tags tables
@@ -435,11 +435,11 @@ class Com_K2InstallerScript
         if (!$indexExists) {
             $query = "ALTER TABLE #__k2_items ADD FULLTEXT `search` (`title`,`introtext`,`fulltext`,`extra_fields_search`,`image_caption`,`image_credits`,`video_caption`,`video_credits`,`metadesc`,`metakey`)";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
 
             $query = "ALTER TABLE #__k2_items ADD FULLTEXT (`title`)";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $query = "SHOW INDEX FROM #__k2_tags";
@@ -455,7 +455,7 @@ class Com_K2InstallerScript
         if (!$indexExists) {
             $query = "ALTER TABLE #__k2_tags ADD FULLTEXT (`name`)";
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
         */
     }

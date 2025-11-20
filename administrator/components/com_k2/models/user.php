@@ -172,13 +172,13 @@ class K2ModelUser extends K2Model
 
         // Unpublish user comments
         $db->setQuery('UPDATE #__k2_comments SET published = 0 WHERE userID = '.$id);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_COMMENTS_UNPUBLISHED'));
 
         // Unpublish user items
         $db->setQuery('UPDATE #__k2_items SET published = 0 WHERE created_by = '.$id);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_ITEMS_UNPUBLISHED'));
 
@@ -203,7 +203,7 @@ class K2ModelUser extends K2Model
 
         // Finally block the user
         $db->setQuery('UPDATE #__users SET block = 1 WHERE id='.$id);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USER_BLOCKED'));
 

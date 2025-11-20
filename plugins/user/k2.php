@@ -217,7 +217,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'DELETE FROM #__k2_users WHERE userID='.$user['id'];
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
     }
 
     public function onBeforeStoreUser($user, $isNew)
@@ -265,7 +265,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
                 if ($response->ip->appears || $response->email->appears || $response->username->appears) {
                     $db = Joomla\CMS\Factory::getDbo();
                     $db->setQuery('UPDATE #__users SET block = 1 WHERE id = '.$user['id']);
-                    $db->query();
+                    $db->execute();
                     $user['notes'] = Joomla\CMS\Language\Text::_('K2_POSSIBLE_SPAMMER_DETECTED_BY_STOPFORUMSPAM');
                 }
             }

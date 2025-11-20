@@ -185,7 +185,7 @@ class K2ModelUsers extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'DELETE FROM #__k2_users WHERE userID IN('.implode(',', $cid).')';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
         $cache->clean();
@@ -275,7 +275,7 @@ class K2ModelUsers extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'UPDATE #__users SET block=0 WHERE id IN('.implode(',', $cid).')';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USERS_ENABLED'));
         if (JRequest::getCmd('context') == 'modalselector') {
@@ -293,7 +293,7 @@ class K2ModelUsers extends K2Model
         $db = Joomla\CMS\Factory::getDbo();
         $query = 'UPDATE #__users SET block=1 WHERE id IN('.implode(',', $cid).')';
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_USERS_DISABLED'));
         if (JRequest::getCmd('context') == 'modalselector') {
@@ -363,12 +363,12 @@ class K2ModelUsers extends K2Model
 
             $query = 'DELETE FROM #__users WHERE id IN('.implode(',', $IDsToDelete).(') AND id!='.$user->id);
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         $query = 'DELETE FROM #__k2_users WHERE userID IN('.implode(',', $IDsToDelete).(') AND userID!='.$user->id);
         $db->setQuery($query);
-        $db->query();
+        $db->execute();
 
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
         $app->redirect('index.php?option=com_k2&view=users');
@@ -391,10 +391,10 @@ class K2ModelUsers extends K2Model
                 foreach ($cid as $id) {
                     $query = 'DELETE FROM #__user_usergroup_map WHERE user_id = '.$id;
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                     $query = 'INSERT INTO #__user_usergroup_map VALUES ('.$id.', '.implode('), ('.$id.', ', $group).')';
                     $db->setQuery($query);
-                    $db->query();
+                    $db->execute();
                 }
             }
         } elseif ($group) {
@@ -403,7 +403,7 @@ class K2ModelUsers extends K2Model
             $gid = $db->loadResult();
             $query = sprintf('UPDATE #__users SET gid=%s, usertype=', $gid).$db->Quote($group).' WHERE id IN('.implode(',', $cid).')';
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         if ($k2group) {
@@ -419,7 +419,7 @@ class K2ModelUsers extends K2Model
                 }
 
                 $db->setQuery($query);
-                $db->query();
+                $db->execute();
             }
         }
 

@@ -177,7 +177,7 @@ class K2ModelTags extends K2Model
     {
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery('DELETE FROM #__k2_tags WHERE id NOT IN (SELECT tagID FROM #__k2_tags_xref GROUP BY tagID)');
-        $db->query();
+        $db->execute();
 
         $app = Joomla\CMS\Factory::getApplication();
         $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_DELETE_COMPLETED'));
