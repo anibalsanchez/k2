@@ -48,7 +48,7 @@ class K2ViewItems extends K2View
         $filter_author = $app->getUserStateFromRequest($option.$view.'filter_author', 'filter_author', 0, 'int');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', -1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-.,:!?\'"()]/u', '', $search));
 
         $tag = $app->getUserStateFromRequest($option.$view.'tag', 'tag', 0, 'int');
@@ -273,7 +273,7 @@ class K2ViewItems extends K2View
         $columns = [];
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onK2BeforeAssignFilters', [&$filters]);
         $this->assignRef('filters', $filters);
         $dispatcher->trigger('onK2BeforeAssignColumns', [&$columns]);

@@ -93,7 +93,7 @@ class K2ViewCategory extends K2View
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [&$category, 'category']);
         $this->assignRef('K2Plugins', $K2Plugins);
 

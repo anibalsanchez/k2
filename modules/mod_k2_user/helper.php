@@ -29,7 +29,7 @@ class modK2UserHelper
             $url = K2_JVERSION != '15' ? 'index.php?Itemid='.$item->id : Joomla\CMS\Router\Route::_($item->link.'&Itemid='.$itemid, false);
         } else {
             // stay on the same page
-            $uri = Joomla\CMS\Factory::getURI();
+            $uri = Joomla\CMS\Uri\Uri::getInstance();
             $url = $uri->toString(['path', 'query', 'fragment']);
         }
 

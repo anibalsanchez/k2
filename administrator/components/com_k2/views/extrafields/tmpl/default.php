@@ -97,7 +97,7 @@ if (K2_JVERSION != '30') {
                         <input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>"<?php echo ($this->ordering) ? '' : ' disabled="disabled"'; ?> class="text_area" />
                     </td>
                     <?php endif; ?>
-                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\Language\Text::_('K2_EXTRA_FIELD_'.JString::strtoupper($row->type)); ?></td>
+                    <td class="k2ui-center k2ui-hide-on-mobile"><?php echo Joomla\CMS\Language\Text::_('K2_EXTRA_FIELD_'.\Joomla\String\StringHelper::strtoupper($row->type)); ?></td>
                     <td class="k2ui-center"><?php echo $row->status; ?></td>
                     <td class="k2ui-center k2ui-hide-on-mobile"><?php echo $row->id; ?></td>
                 </tr>

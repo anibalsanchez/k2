@@ -926,7 +926,7 @@ class modK2ToolsHelper
         }
 
         if ($document->getType() != 'feed') {
-            $dispatcher = JDispatcher::getInstance();
+            $dispatcher = K2Dispatcher::getInstance();
             if ($params->get('JPlugins')) {
                 Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
                 $row = new stdClass();

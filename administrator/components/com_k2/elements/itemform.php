@@ -22,7 +22,7 @@ class K2ElementItemForm extends K2Element
     public function fetchElement($name, $value, &$node, $control_name)
     {
         if (version_compare(JVERSION, '3.5', 'ge')) {
-            Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+            K2Behavior::framework();
         }
 
         $document = Joomla\CMS\Factory::getDocument();

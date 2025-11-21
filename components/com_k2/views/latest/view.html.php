@@ -50,7 +50,7 @@ class K2ViewLatest extends K2View
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if ($params->get('source')) {
             // Categories

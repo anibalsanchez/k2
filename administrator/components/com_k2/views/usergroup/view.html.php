@@ -21,7 +21,7 @@ class K2ViewUserGroup extends K2View
 {
     public function display($tpl = null)
     {
-        Joomla\CMS\HTML\HTMLHelper::_('behavior.tooltip');
+        K2Behavior::tooltip();
 
         $model = $this->getModel();
         $userGroup = $model->getData();

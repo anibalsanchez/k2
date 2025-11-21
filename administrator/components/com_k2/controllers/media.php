@@ -42,7 +42,7 @@ class K2ControllerMedia extends K2Controller
         $folder = K2Request::getVar('folder', $root, 'default', 'path');
         $type = K2Request::getCmd('type', 'video');
 
-        if (JString::trim($folder) == '') {
+        if (\Joomla\String\StringHelper::trim($folder) == '') {
             $folder = $root;
         } elseif (!str_starts_with($folder, $root)) {
             // Ensure that we are always below the root directory

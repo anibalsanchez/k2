@@ -99,7 +99,7 @@ class K2HelperUtilities
     // Word limit
     public static function wordLimit($str, $limit = 100, $end_char = '&#8230;')
     {
-        if (JString::trim($str) == '') {
+        if (\Joomla\String\StringHelper::trim($str) == '') {
             return $str;
         }
 
@@ -111,31 +111,31 @@ class K2HelperUtilities
         $str = preg_replace($find, $replace, $str);
 
         preg_match('/\s*(?:\S*\s*){'.(int) $limit.'}/u', $str, $matches);
-        if (JString::strlen($matches[0]) == JString::strlen($str)) {
+        if (\Joomla\String\StringHelper::strlen($matches[0]) == \Joomla\String\StringHelper::strlen($str)) {
             $end_char = '';
         }
 
-        return JString::rtrim($matches[0]).$end_char;
+        return \Joomla\String\StringHelper::rtrim($matches[0]).$end_char;
     }
 
     // Character limit
     public static function characterLimit($str, $limit = 150, $end_char = '...')
     {
-        if (JString::trim($str) == '') {
+        if (\Joomla\String\StringHelper::trim($str) == '') {
             return $str;
         }
 
         // always strip tags for text
-        $str = strip_tags(JString::trim($str));
+        $str = strip_tags(\Joomla\String\StringHelper::trim($str));
 
         $find = ["/\r|\n/u", "/\t/u", "/\s\s+/u"];
         $replace = [' ', ' ', ' '];
         $str = preg_replace($find, $replace, $str);
 
-        if (JString::strlen($str) > $limit) {
-            $str = JString::substr($str, 0, $limit);
+        if (\Joomla\String\StringHelper::strlen($str) > $limit) {
+            $str = \Joomla\String\StringHelper::substr($str, 0, $limit);
 
-            return JString::rtrim($str).$end_char;
+            return \Joomla\String\StringHelper::rtrim($str).$end_char;
         }
 
         return $str;

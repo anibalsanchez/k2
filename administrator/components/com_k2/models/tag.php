@@ -37,7 +37,7 @@ class K2ModelTag extends K2Model
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');

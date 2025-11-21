@@ -46,7 +46,7 @@ class K2ElementK2Category extends K2Element
         $prefix = ($option == 'com_joomfish') ? 'refField_' : '';
         if ($name == 'categories' || $name == 'jform[params][categories]') {
             if (version_compare(JVERSION, '3.5', 'ge')) {
-                Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+                K2Behavior::framework();
             }
 
             $doc = Joomla\CMS\Factory::getDocument();
@@ -221,7 +221,7 @@ class K2ElementK2Category extends K2Element
         }
 
         foreach ($list as $item) {
-            $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
+            $item->treename = \Joomla\String\StringHelper::str_ireplace('&#160;', '- ', $item->treename);
             @$mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, $item->treename);
         }
 

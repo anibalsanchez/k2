@@ -294,7 +294,7 @@ class K2ControllerItem extends K2Controller
 
         $user = Joomla\CMS\Factory::getUser();
         if ($user->guest) {
-            $uri = Joomla\CMS\Factory::getURI();
+            $uri = Joomla\CMS\Uri\Uri::getInstance();
             if (K2_JVERSION != '15') {
                 $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
             } else {

@@ -81,6 +81,71 @@ abstract class K2Request
     }
 }
 
+abstract class K2Behavior
+{
+    public static function framework()
+    {
+    }
+
+    public static function mootools()
+    {
+    }
+
+    public static function tooltip()
+    {
+    }
+}
+
+class K2Dispatcher
+{
+    public static function getInstance()
+    {
+        return new self();
+    }
+
+    public function trigger($event, $options = [])
+    {
+        $dispatcher = $this->jDispatcherGetInstance();
+
+        if ($dispatcher) {
+            if (method_exists($dispatcher, 'trigger')) {
+                return $dispatcher->trigger('onContentCleanCache', $options);
+            }
+
+            if (method_exists($dispatcher, 'triggerEvent')) {
+                return $dispatcher->triggerEvent('onContentCleanCache', $options);
+            }
+        }
+
+        $app = Joomla\CMS\Factory::getApplication();
+
+        if (method_exists($app, 'triggerEvent')) {
+            return $app->triggerEvent('onContentCleanCache', $options);
+        }
+    }
+
+    private function jDispatcherGetInstance()
+    {
+        if (class_exists('\Joomla\CMS\Factory')) {
+            $app = Joomla\CMS\Factory::getApplication();
+
+            if (method_exists($app, 'getDispatcher')) {
+                return $app->getDispatcher();
+            }
+        }
+
+        if (class_exists('JDispatcher')) {
+            return \JDispatcher::getInstance();
+        }
+
+        if (class_exists('JEventDispatcher')) {
+            return \JEventDispatcher::getInstance();
+        }
+
+        throw new Exception('Unable to load the Event Dispatcher');
+    }
+}
+
 class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 {
     public function onAfterInitialise()
@@ -158,9 +223,11 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
             $viewsToRun = ['items', 'categories', 'tags', 'comments', 'users', 'usergroups', 'extrafields', 'extrafieldsgroups', ''];
             if ($option == 'com_k2' && in_array($view, $viewsToRun)) {
                 require_once JPATH_ADMINISTRATOR.'/components/com_k2/helpers/stats.php';
-                if (K2HelperStats::shouldLog()) {
-                    K2HelperStats::getScripts();
-                }
+
+                // TODO: Move it to onAfterDispatch
+                // if (K2HelperStats::shouldLog()) {
+                //     K2HelperStats::getScripts();
+                // }
             }
         }
 
@@ -285,9 +352,9 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
                 // Load CSS & JS
                 if (K2_JVERSION === '15') {
-                    Joomla\CMS\HTML\HTMLHelper::_('behavior.mootools');
+                    K2Behavior::mootools();
                 } else {
-                    Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+                    K2Behavior::framework();
                 }
 
                 $document = Joomla\CMS\Factory::getDocument();
@@ -418,9 +485,9 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
                 // Load CSS & JS
                 if (K2_JVERSION === '15') {
-                    Joomla\CMS\HTML\HTMLHelper::_('behavior.mootools');
+                    K2Behavior::mootools();
                 } else {
-                    Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+                    K2Behavior::framework();
                 }
 
                 $document = Joomla\CMS\Factory::getDocument();
@@ -482,7 +549,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (K2_JVERSION != '15') {
             $active = Joomla\CMS\Factory::getApplication()->getMenu()->getActive();
@@ -602,7 +669,7 @@ class plgSystemK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         if (($option == 'com_user' && $view == 'user' && ($task == 'edit' || $layout == 'form')) || ($option == 'com_users' && $view == 'profile' && ($layout == 'edit' || $task == 'profile.edit'))) {
             if ($user->guest) {
-                $uri = Joomla\CMS\Factory::getURI();
+                $uri = Joomla\CMS\Uri\Uri::getInstance();
 
                 if (K2_JVERSION != '15') {
                     $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());

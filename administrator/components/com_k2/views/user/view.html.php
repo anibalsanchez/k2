@@ -55,7 +55,7 @@ class K2ViewUser extends K2View
 
         // Plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $K2Plugins = $dispatcher->trigger('onRenderAdminForm', [&$user, 'user']);
         $this->assignRef('K2Plugins', $K2Plugins);
 

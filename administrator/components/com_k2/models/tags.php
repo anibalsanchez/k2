@@ -33,7 +33,7 @@ class K2ModelTags extends K2Model
         $filter_order_Dir = $app->getUserStateFromRequest($option.$view.'filter_order_Dir', 'filter_order_Dir', 'DESC', 'word');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', -1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $query = 'SELECT #__k2_tags.*, (SELECT COUNT(*) FROM #__k2_tags_xref WHERE #__k2_tags_xref.tagID = #__k2_tags.id) AS numOfItems FROM #__k2_tags';
@@ -75,7 +75,7 @@ class K2ModelTags extends K2Model
         $limitstart = $app->getUserStateFromRequest($option.'.limitstart', 'limitstart', 0, 'int');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', 1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $query = 'SELECT COUNT(*) FROM #__k2_tags WHERE id > 0';

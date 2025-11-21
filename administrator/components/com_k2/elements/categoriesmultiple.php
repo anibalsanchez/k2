@@ -46,7 +46,7 @@ class K2ElementCategoriesMultiple extends K2Element
         $mitems = [];
 
         foreach ($list as $item) {
-            $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
+            $item->treename = \Joomla\String\StringHelper::str_ireplace('&#160;', '- ', $item->treename);
             $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, '   '.$item->treename);
         }
 

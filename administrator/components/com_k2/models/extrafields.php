@@ -33,7 +33,7 @@ class K2ModelExtraFields extends K2Model
         $filter_order_Dir = $app->getUserStateFromRequest($option.$view.'filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', -1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $filter_type = $app->getUserStateFromRequest($option.$view.'filter_type', 'filter_type', '', 'string');
@@ -84,7 +84,7 @@ class K2ModelExtraFields extends K2Model
         $limitstart = $app->getUserStateFromRequest($option.'.limitstart', 'limitstart', 0, 'int');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', 1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $filter_type = $app->getUserStateFromRequest($option.$view.'filter_type', 'filter_type', '', 'string');

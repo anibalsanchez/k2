@@ -32,7 +32,7 @@ class TableK2UserGroup extends K2Table
 
     public function check()
     {
-        $this->name = JString::trim($this->name);
+        $this->name = \Joomla\String\StringHelper::trim($this->name);
         if ($this->name == '') {
             $this->setError(Joomla\CMS\Language\Text::_('K2_GROUP_CANNOT_BE_EMPTY'));
 

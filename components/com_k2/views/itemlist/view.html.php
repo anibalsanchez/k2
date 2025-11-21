@@ -69,7 +69,7 @@ class K2ViewItemlist extends K2View
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // --- Feed Output [start] ---
         if ($document->getType() == 'feed' && $moduleID) {
@@ -125,7 +125,7 @@ class K2ViewItemlist extends K2View
                     if (K2_JVERSION != '15') {
                         if (!in_array($category->access, $user->getAuthorisedViewLevels())) {
                             if ($user->guest) {
-                                $uri = Joomla\CMS\Factory::getURI();
+                                $uri = Joomla\CMS\Uri\Uri::getInstance();
                                 $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
                                 $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
                                 $app->redirect(Joomla\CMS\Router\Route::_($url, false));
@@ -143,7 +143,7 @@ class K2ViewItemlist extends K2View
                         }
                     } elseif ($category->access > $user->get('aid', 0)) {
                         if ($user->guest) {
-                            $uri = Joomla\CMS\Factory::getURI();
+                            $uri = Joomla\CMS\Uri\Uri::getInstance();
                             $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
                             $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
                             $app->redirect(Joomla\CMS\Router\Route::_($url, false));

@@ -254,7 +254,7 @@ class K2ModelItem extends K2Model
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Category
         $category = Joomla\CMS\Table\Table::getInstance('K2Category', 'Table');
@@ -363,7 +363,7 @@ class K2ModelItem extends K2Model
 
         // Item Video
         if ($params->get('feedItemVideo') && $item->video) {
-            if (!empty($item->video) && JString::substr($item->video, 0, 1) !== '{') {
+            if (!empty($item->video) && \Joomla\String\StringHelper::substr($item->video, 0, 1) !== '{') {
                 $item->description .= '<div class="K2FeedVideo">'.$item->video.'</div>';
             } else {
                 $params->set('vfolder', 'media/k2/videos');
@@ -517,7 +517,7 @@ class K2ModelItem extends K2Model
         // Import plugins
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (!property_exists($this, 'isSigInstalled') || $this->isSigInstalled === null) {
             $this->isSigInstalled = (
@@ -533,7 +533,7 @@ class K2ModelItem extends K2Model
 
         // Gallery
         if (($view == 'item' && $item->params->get('itemImageGallery') || $view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemImageGallery') || $view == 'relatedByTag') && $item->gallery) {
-            if (JString::strpos($item->gallery, 'flickr.com') === false) {
+            if (\Joomla\String\StringHelper::strpos($item->gallery, 'flickr.com') === false) {
                 $item->gallery = sprintf('{gallery}%s{/gallery}', $item->id);
                 if (!Joomla\CMS\Filesystem\Folder::exists(JPATH_SITE.'/media/k2/galleries/'.$item->id)) {
                     $item->gallery = null;
@@ -550,7 +550,7 @@ class K2ModelItem extends K2Model
             }
 
             if ($width && $height) {
-                if (JString::strpos($item->gallery, 'flickr.com') !== false) {
+                if (\Joomla\String\StringHelper::strpos($item->gallery, 'flickr.com') !== false) {
                     $sigParams = Joomla\CMS\Component\ComponentHelper::getParams('com_sigpro');
                     $item->gallery = str_replace('{/gallery}', ':'.$sigParams->get('flickrImageCount', 20).':'.$width.':'.$height.'{/gallery}', $item->gallery);
                 } else {
@@ -586,7 +586,7 @@ class K2ModelItem extends K2Model
 
         // Media (also referred to as "Video" in variables)
         if (($view == 'item' && $item->params->get('itemVideo')) || ($view == 'itemlist' && ($task == '' || $task == 'category') && $item->params->get('catItemVideo')) || ($view == 'latest' && $item->params->get('latestItemVideo')) || ($view == 'relatedByTag')) {
-            if (!empty($item->video) && JString::substr($item->video, 0, 1) !== '{') {
+            if (!empty($item->video) && \Joomla\String\StringHelper::substr($item->video, 0, 1) !== '{') {
                 $item->video = $item->video;
                 $item->videoType = 'embedded';
             } else {

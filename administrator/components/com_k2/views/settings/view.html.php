@@ -21,7 +21,7 @@ class K2ViewSettings extends K2View
 {
     public function display($tpl = null)
     {
-        Joomla\CMS\HTML\HTMLHelper::_('behavior.tooltip');
+        K2Behavior::tooltip();
 
         jimport('joomla.html.pane');
 

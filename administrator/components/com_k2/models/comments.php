@@ -38,7 +38,7 @@ class K2ModelComments extends K2Model
         $filter_category = $app->getUserStateFromRequest($option.$view.'filter_category', 'filter_category', 0, 'int');
         $filter_author = $app->getUserStateFromRequest($option.$view.'filter_author', 'filter_author', 0, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\"\.\@\-_]/u', '', $search));
 
         $queryStart = '/* Backend / K2 / Comments */ SELECT c.*, i.title , i.catid, i.alias AS itemAlias, i.created_by, cat.alias AS catAlias, cat.name as catName';
@@ -323,8 +323,8 @@ class K2ModelComments extends K2Model
     public function report()
     {
         $id = $this->getState('id');
-        $name = JString::trim($this->getState('name'));
-        $reportReason = JString::trim($this->getState('reportReason'));
+        $name = \Joomla\String\StringHelper::trim($this->getState('name'));
+        $reportReason = \Joomla\String\StringHelper::trim($this->getState('reportReason'));
         $params = K2HelperUtilities::getParams('com_k2');
         $user = Joomla\CMS\Factory::getUser();
         $row = Joomla\CMS\Table\Table::getInstance('K2Comment', 'Table');

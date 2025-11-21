@@ -36,9 +36,9 @@ class TableK2Tag extends K2Table
 
     public function check()
     {
-        $this->name = JString::trim($this->name);
-        $this->name = JString::str_ireplace('-', '', $this->name);
-        $this->name = JString::str_ireplace('.', '', $this->name);
+        $this->name = \Joomla\String\StringHelper::trim($this->name);
+        $this->name = \Joomla\String\StringHelper::str_ireplace('-', '', $this->name);
+        $this->name = \Joomla\String\StringHelper::str_ireplace('.', '', $this->name);
 
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
         if ($params->get('k2TagNorm')) {
@@ -61,20 +61,20 @@ class TableK2Tag extends K2Table
 
             // Switch case
             if ($params->get('k2TagNormCase') == 'upper') {
-                $this->name = JString::strtoupper($this->name);
+                $this->name = \Joomla\String\StringHelper::strtoupper($this->name);
             } else {
-                $this->name = JString::strtolower($this->name);
+                $this->name = \Joomla\String\StringHelper::strtolower($this->name);
 
                 // Special case for Greek letter s final
-                $this->name = JString::str_ireplace('σ ', 'ς ', $this->name);
-                if (JString::substr($this->name, -1) == 'σ') {
-                    $this->name = JString::substr($this->name, 0, -1);
+                $this->name = \Joomla\String\StringHelper::str_ireplace('σ ', 'ς ', $this->name);
+                if (\Joomla\String\StringHelper::substr($this->name, -1) == 'σ') {
+                    $this->name = \Joomla\String\StringHelper::substr($this->name, 0, -1);
                     $this->name .= 'ς';
                 }
             }
         }
 
-        $this->name = JString::trim($this->name);
+        $this->name = \Joomla\String\StringHelper::trim($this->name);
         if ($this->name == '') {
             $this->setError(Joomla\CMS\Language\Text::_('K2_TAG_CANNOT_BE_EMPTY'));
 

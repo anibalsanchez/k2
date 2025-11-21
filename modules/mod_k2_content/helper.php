@@ -269,7 +269,7 @@ class modK2ContentHelper
             Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         }
 
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (count($items) > 0) {
             foreach ($items as $item) {

@@ -107,7 +107,7 @@ class TableK2Item extends K2Table
         jimport('joomla.filter.output');
         $app = Joomla\CMS\Factory::getApplication();
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $this->title = JString::trim($this->title);
+        $this->title = \Joomla\String\StringHelper::trim($this->title);
         if ($this->title == '') {
             $this->setError(Joomla\CMS\Language\Text::_('K2_ITEM_MUST_HAVE_A_TITLE'));
 

@@ -33,7 +33,7 @@ class K2ModelCategories extends K2Model
         $limit = $app->getUserStateFromRequest('global.list.limit', 'limit', $app->getCfg('list_limit'), 'int');
         $limitstart = $app->getUserStateFromRequest($option.$view.'.limitstart', 'limitstart', 0, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-.,:!?\'"()]/u', '', $search));
 
         $language = $app->getUserStateFromRequest($option.$view.'language', 'language', '', 'string');
@@ -50,8 +50,8 @@ class K2ModelCategories extends K2Model
             LEFT JOIN #__k2_extra_fields_groups AS exfg ON exfg.id = c.extraFieldsGroup
             WHERE c.id > 0';
         if (K2_JVERSION != '15') {
-            $queryStart = JString::str_ireplace('g.name AS groupname', 'g.title AS groupname', $queryStart);
-            $queryStart = JString::str_ireplace('#__groups', '#__viewlevels', $queryStart);
+            $queryStart = \Joomla\String\StringHelper::str_ireplace('g.name AS groupname', 'g.title AS groupname', $queryStart);
+            $queryStart = \Joomla\String\StringHelper::str_ireplace('#__groups', '#__viewlevels', $queryStart);
         }
 
         $query = '';
@@ -218,7 +218,7 @@ class K2ModelCategories extends K2Model
         }
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 1]);
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
@@ -242,7 +242,7 @@ class K2ModelCategories extends K2Model
         }
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 0]);
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
@@ -437,7 +437,7 @@ class K2ModelCategories extends K2Model
         $db->execute();
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 0]);
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
@@ -483,7 +483,7 @@ class K2ModelCategories extends K2Model
         }
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onFinderChangeState', ['com_k2.category', $cid, 1]);
 
         $cache = Joomla\CMS\Factory::getCache('com_k2');
@@ -504,7 +504,7 @@ class K2ModelCategories extends K2Model
         $cid = K2Request::getVar('cid');
         JArrayHelper::toInteger($cid);
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $warningItems = false;
         $warningChildren = false;
         $cid = array_reverse($cid);
@@ -599,7 +599,7 @@ class K2ModelCategories extends K2Model
         $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
         $mitems = [];
         foreach ($list as $item) {
-            $item->treename = JString::str_ireplace('&#160;', '- ', $item->treename);
+            $item->treename = \Joomla\String\StringHelper::str_ireplace('&#160;', '- ', $item->treename);
             if (!$item->published) {
                 $item->treename .= ' [**'.Joomla\CMS\Language\Text::_('K2_UNPUBLISHED_CATEGORY').'**]';
             }

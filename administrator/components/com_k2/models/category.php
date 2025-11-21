@@ -41,7 +41,7 @@ class K2ModelCategory extends K2Model
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');

@@ -68,7 +68,7 @@ class K2ElementMenuItem extends K2Element
         $list = Joomla\CMS\HTML\HTMLHelper::_('menu.treerecurse', 0, '', [], $children, 9999, 0, 0);
 
         foreach ($list as $item) {
-            $item->treename = JString::str_ireplace('&#160;', ' -', $item->treename);
+            $item->treename = \Joomla\String\StringHelper::str_ireplace('&#160;', ' -', $item->treename);
             $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, '   '.$item->treename);
         }
 

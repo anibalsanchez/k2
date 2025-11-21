@@ -45,7 +45,7 @@ class K2ElementCategories extends K2Element
         $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', '0', Joomla\CMS\Language\Text::_('K2_NONE_ONSELECTLISTS'));
 
         foreach ($list as $item) {
-            $item->treename = JString::str_ireplace('&#160;', ' -', $item->treename);
+            $item->treename = \Joomla\String\StringHelper::str_ireplace('&#160;', ' -', $item->treename);
             $mitems[] = Joomla\CMS\HTML\HTMLHelper::_('select.option', $item->id, $item->treename);
         }
 

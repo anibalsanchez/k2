@@ -23,9 +23,9 @@ class K2HelperStats
         $token = version_compare(JVERSION, '2.5', 'ge') ? Joomla\CMS\Session\Session::getFormToken() : Joomla\CMS\Utility\Utility::getToken();
 
         if (version_compare(JVERSION, '1.6.0', 'ge')) {
-            Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+            K2Behavior::framework();
         } else {
-            Joomla\CMS\HTML\HTMLHelper::_('behavior.mootools');
+            K2Behavior::mootools();
         }
 
         if (version_compare(JVERSION, '3.0.0', 'ge')) {

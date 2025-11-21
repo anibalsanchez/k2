@@ -72,7 +72,7 @@ class plgSearchK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         $limit = $pluginParams->def('search_limit', 50);
 
-        $text = JString::trim($text);
+        $text = \Joomla\String\StringHelper::trim($text);
         if ($text == '') {
             return [];
         }
@@ -81,7 +81,7 @@ class plgSearchK2 extends Joomla\CMS\Plugin\CMSPlugin
 
         if ($limit > 0) {
             if ($phrase == 'exact') {
-                $text = JString::trim($text, '"');
+                $text = \Joomla\String\StringHelper::trim($text, '"');
                 $escaped = (K2_JVERSION == '15') ? $db->getEscaped($text, true) : $db->escape($text, true);
                 $quoted = $db->Quote('%'.$escaped.'%', false);
                 $where = '(
@@ -120,7 +120,7 @@ class plgSearchK2 extends Joomla\CMS\Plugin\CMSPlugin
             }
 
             if ($pluginParams->get('search_tags')) {
-                $tagQuery = JString::strtolower($text);
+                $tagQuery = \Joomla\String\StringHelper::strtolower($text);
                 $escaped = (K2_JVERSION == '15') ? $db->getEscaped($tagQuery, true) : $db->escape($tagQuery, true);
                 $quoted = $db->Quote('%'.$escaped.'%', false);
                 $query = 'SELECT id FROM #__k2_tags WHERE published = 1 AND LOWER(name) LIKE '.$quoted;

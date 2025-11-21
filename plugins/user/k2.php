@@ -60,7 +60,7 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
             Joomla\CMS\Table\Table::addIncludePath(JPATH_ADMINISTRATOR.'/components/com_k2/tables');
             $row = Joomla\CMS\Table\Table::getInstance('K2User', 'Table');
             $k2id = $this->getK2UserID($user['id']);
-            K2Request::setVar('id', $k2id, 'post');
+            K2Request::setVar('id', $k2id);
             $row->bind(K2Request::getPost());
             $row->set('userID', $user['id']);
             $row->set('userName', $user['name']);
@@ -83,11 +83,11 @@ class plgUserK2 extends Joomla\CMS\Plugin\CMSPlugin
                 $row->gender = 'n';
             }
             */
-            $row->url = JString::str_ireplace(' ', '', $row->url);
-            $row->url = JString::str_ireplace('"', '', $row->url);
-            $row->url = JString::str_ireplace('<', '', $row->url);
-            $row->url = JString::str_ireplace('>', '', $row->url);
-            $row->url = JString::str_ireplace("'", '', $row->url);
+            $row->url = \Joomla\String\StringHelper::str_ireplace(' ', '', $row->url);
+            $row->url = \Joomla\String\StringHelper::str_ireplace('"', '', $row->url);
+            $row->url = \Joomla\String\StringHelper::str_ireplace('<', '', $row->url);
+            $row->url = \Joomla\String\StringHelper::str_ireplace('>', '', $row->url);
+            $row->url = \Joomla\String\StringHelper::str_ireplace("'", '', $row->url);
             $row->set('description', K2Request::getVar('description', '', 'post', 'string', 4));
             if ($params->get('xssFiltering')) {
                 $jFilterInput = new JFilterInput([], [], 1, 1, 0);

@@ -40,7 +40,7 @@ class K2ModelItems extends K2Model
         $filter_author = $app->getUserStateFromRequest($option.$view.'filter_author', 'filter_author', 0, 'int');
         $filter_state = $app->getUserStateFromRequest($option.$view.'filter_state', 'filter_state', -1, 'int');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-.,:!?\'"()]/u', '', $search));
 
         $tag = $app->getUserStateFromRequest($option.$view.'tag', 'tag', 0, 'int');
@@ -184,7 +184,7 @@ class K2ModelItems extends K2Model
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Trigger K2 plugins
         $dispatcher->trigger('onK2BeforeSetQuery', [&$combinedQuery]);
@@ -221,7 +221,7 @@ class K2ModelItems extends K2Model
         // Plugins Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Trigger content & finder plugins when state changes
         $dispatcher->trigger('onContentChangeState', ['com_k2.item', $cid, 1]);
@@ -251,7 +251,7 @@ class K2ModelItems extends K2Model
         // Plugins Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Trigger content & finder plugins when state changes
         $dispatcher->trigger('onContentChangeState', ['com_k2.item', $cid, 0]);
@@ -634,7 +634,7 @@ class K2ModelItems extends K2Model
 
             // Target gallery
             if ($sourceGalleryTag) {
-                if (JString::strpos($sourceGalleryTag, 'http://') || JString::strpos($sourceGalleryTag, 'https://')) {
+                if (\Joomla\String\StringHelper::strpos($sourceGalleryTag, 'http://') || \Joomla\String\StringHelper::strpos($sourceGalleryTag, 'https://')) {
                     $row->gallery = $sourceGalleryTag;
                 } else {
                     $row->gallery = '{gallery}'.$row->id.'{/gallery}';
@@ -741,7 +741,7 @@ class K2ModelItems extends K2Model
         // Plugins Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Trigger content & finder plugins when state changes
         $dispatcher->trigger('onContentChangeState', ['com_k2.item', $cid, -2]);
@@ -777,7 +777,7 @@ class K2ModelItems extends K2Model
         // Plugins Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Trigger content & finder plugins when state changes
         $dispatcher->trigger('onContentChangeState', ['com_k2.item', $cid, $row->published]);
@@ -807,7 +807,7 @@ class K2ModelItems extends K2Model
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // Define media extensions
         $videoExtensions = [
@@ -1063,7 +1063,7 @@ class K2ModelItems extends K2Model
                     if (!empty($item->metakey)) {
                         $itemTags = explode(',', $item->metakey);
                         foreach ($itemTags as $itemTag) {
-                            $itemTag = JString::trim($itemTag);
+                            $itemTag = \Joomla\String\StringHelper::trim($itemTag);
                             if (in_array($itemTag, JArrayHelper::getColumn($tags, 'name'))) {
                                 $query = 'SELECT id FROM #__k2_tags WHERE name='.$db->Quote($itemTag);
                                 $db->setQuery($query);
@@ -1144,7 +1144,7 @@ class K2ModelItems extends K2Model
                 if (!empty($item->metakey)) {
                     $itemTags = explode(',', $item->metakey);
                     foreach ($itemTags as $itemTag) {
-                        $itemTag = JString::trim($itemTag);
+                        $itemTag = \Joomla\String\StringHelper::trim($itemTag);
                         if (in_array($itemTag, JArrayHelper::getColumn($tags, 'name'))) {
                             $query = 'SELECT id FROM #__k2_tags WHERE name='.$db->Quote($itemTag);
                             $db->setQuery($query);
@@ -1318,7 +1318,7 @@ class K2ModelItems extends K2Model
                     $itemTags = array_filter($itemTags);
                     $itemTags = array_unique($itemTags);
                     foreach ($itemTags as $itemTag) {
-                        $itemTag = JString::trim($itemTag);
+                        $itemTag = \Joomla\String\StringHelper::trim($itemTag);
                         if ($itemTag) {
                             // Check if the tag exists already, otherwise insert it as a K2 tag
                             $query = 'SELECT id FROM #__k2_tags WHERE name='.$db->Quote($itemTag);

@@ -35,7 +35,7 @@ class K2ModelUsers extends K2Model
         $filter_group = $app->getUserStateFromRequest($option.$view.'filter_group', 'filter_group', '', 'string');
         $filter_group_k2 = $app->getUserStateFromRequest($option.$view.'filter_group_k2', 'filter_group_k2', '', 'string');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $query = 'SELECT juser.*, k2user.group, k2group.name AS groupname, k2user.image AS image
@@ -127,7 +127,7 @@ class K2ModelUsers extends K2Model
         $filter_group = $app->getUserStateFromRequest($option.$view.'filter_group', 'filter_group', '', 'string');
         $filter_group_k2 = $app->getUserStateFromRequest($option.$view.'filter_group_k2', 'filter_group_k2', '', 'string');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-_]/u', '', $search));
 
         $query = 'SELECT COUNT(DISTINCT juser.id) FROM #__users as juser '.'LEFT JOIN #__k2_users as k2user ON juser.id=k2user.userID '.'LEFT JOIN #__k2_user_groups as k2group ON k2user.group=k2group.id ';
@@ -327,7 +327,7 @@ class K2ModelUsers extends K2Model
 
         if (K2_JVERSION != '15') {
             Joomla\CMS\Plugin\PluginHelper::importPlugin('user');
-            $dispatcher = JDispatcher::getInstance();
+            $dispatcher = K2Dispatcher::getInstance();
             $iAmSuperAdmin = $user->authorise('core.admin');
             foreach ($cid as $key => $id) {
                 $table = Joomla\CMS\Table\Table::getInstance('user');
@@ -472,7 +472,7 @@ class K2ModelUsers extends K2Model
 
         foreach ($usergroups as $usergroup) {
             $K2UserGroup = Joomla\CMS\Table\Table::getInstance('K2UserGroup', 'Table');
-            $K2UserGroup->name = JString::trim($usergroup->name).' (Imported from Joomla)';
+            $K2UserGroup->name = \Joomla\String\StringHelper::trim($usergroup->name).' (Imported from Joomla)';
             $K2UserGroup->permissions = $permissions;
             $K2UserGroup->store();
 

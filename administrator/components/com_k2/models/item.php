@@ -46,7 +46,7 @@ class K2ModelItem extends K2Model
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('finder');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         if (!$row->bind(K2Request::getPost())) {
             $app->enqueueMessage($row->getError(), 'error');
@@ -230,7 +230,7 @@ class K2ModelItem extends K2Model
             if (is_array($tags) && count($tags)) {
                 $tags = array_unique($tags);
                 foreach ($tags as $tag) {
-                    $tag = JString::trim($tag);
+                    $tag = \Joomla\String\StringHelper::trim($tag);
                     if ($tag) {
                         $tagID = false;
                         $K2Tag = Joomla\CMS\Table\Table::getInstance('K2Tag', 'Table');
@@ -646,7 +646,7 @@ class K2ModelItem extends K2Model
             $variables = K2Request::getPost();
 
             foreach ($variables as $key => $value) {
-                if ((bool) JString::stristr($key, 'K2ExtraField_')) {
+                if ((bool) \Joomla\String\StringHelper::stristr($key, 'K2ExtraField_')) {
                     $object = new stdClass();
                     $object->id = substr($key, 13);
                     if (is_string($value)) {
@@ -660,7 +660,7 @@ class K2ModelItem extends K2Model
 
             $csvFiles = K2Request::getFiles();
             foreach ($csvFiles as $key => $file) {
-                if ((bool) JString::stristr($key, 'K2ExtraField_')) {
+                if ((bool) \Joomla\String\StringHelper::stristr($key, 'K2ExtraField_')) {
                     $object = new stdClass();
                     $object->id = substr($key, 13);
                     $csvFile = $file['tmp_name'][0];
@@ -905,12 +905,12 @@ class K2ModelItem extends K2Model
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         $attachment = Joomla\CMS\Table\Table::getInstance('K2Attachment', 'Table');
         if ($app->isClient('site')) {
             $token = K2Request::getVar('id');
-            $check = JString::substr($token, JString::strpos($token, '_') + 1);
+            $check = \Joomla\String\StringHelper::substr($token, \Joomla\String\StringHelper::strpos($token, '_') + 1);
             $hash = version_compare(JVERSION, '3.0', 'ge') ? JApplication::getHash($id) : Joomla\CMS\Utility\Utility::getHash($id);
             if ($check != $hash) {
                 JError::raiseError(404, Joomla\CMS\Language\Text::_('K2_NOT_FOUND'));
@@ -998,7 +998,7 @@ class K2ModelItem extends K2Model
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         $db = Joomla\CMS\Factory::getDbo();
         $db->setQuery(sprintf('SELECT COUNT(*) FROM #__k2_attachments WHERE itemID=%s AND id=%s', $itemID, $id));

@@ -150,7 +150,7 @@ class K2ModelItemlist extends K2Model
                     '<',
                     '\\',
                 ];
-                $search = JString::trim(JString::str_ireplace($badchars, '', K2Request::getString('searchword', null)));
+                $search = \Joomla\String\StringHelper::trim(\Joomla\String\StringHelper::str_ireplace($badchars, '', K2Request::getString('searchword', null)));
                 $sql = $this->prepareSearch($search);
                 if (!empty($sql)) {
                     $query .= $sql;
@@ -333,7 +333,7 @@ class K2ModelItemlist extends K2Model
         $combinedQuery = $queryStart.$query.$queryEnd;
 
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
         $dispatcher->trigger('onK2BeforeSetQuery', [&$combinedQuery]);
 
         $db->setQuery($combinedQuery, $limitstart, $limit);
@@ -689,7 +689,7 @@ class K2ModelItemlist extends K2Model
         $currentLang = $language->getTag();
 
         $search = trim($search);
-        $length = JString::strlen($search);
+        $length = \Joomla\String\StringHelper::strlen($search);
 
         $sql = '';
 
@@ -704,7 +704,7 @@ class K2ModelItemlist extends K2Model
             return $sql;
         }
 
-        $type = JString::substr($search, 0, 1) == '"' && JString::substr($search, $length - 1, 1) == '"' ? 'exact' : 'any';
+        $type = \Joomla\String\StringHelper::substr($search, 0, 1) == '"' && \Joomla\String\StringHelper::substr($search, $length - 1, 1) == '"' ? 'exact' : 'any';
 
         if (Joomla\CMS\Filesystem\File::exists(JPATH_ADMINISTRATOR.'/components/com_joomfish/joomfish.php') && $currentLang != $defaultLang) {
             $conditions = [];
@@ -715,9 +715,9 @@ class K2ModelItemlist extends K2Model
             }
 
             if ($type === 'exact') {
-                $word = JString::substr($search, 1, $length - 2);
+                $word = \Joomla\String\StringHelper::substr($search, 1, $length - 2);
 
-                if (JString::strlen($word) > 3 && !in_array($word, $search_ignore)) {
+                if (\Joomla\String\StringHelper::strlen($word) > 3 && !in_array($word, $search_ignore)) {
                     $escaped = (K2_JVERSION == '15') ? $db->getEscaped($word, true) : $db->escape($word, true);
                     $langField = (K2_JVERSION == '15') ? 'code' : 'lang_code';
                     $word = $db->Quote('%'.$escaped.'%', false);
@@ -750,9 +750,9 @@ class K2ModelItemlist extends K2Model
                     }
                 }
             } else {
-                $search = explode(' ', JString::strtolower($search));
+                $search = explode(' ', \Joomla\String\StringHelper::strtolower($search));
                 foreach ($search as $searchword) {
-                    if (JString::strlen($searchword) > 3 && !in_array($searchword, $search_ignore)) {
+                    if (\Joomla\String\StringHelper::strlen($searchword) > 3 && !in_array($searchword, $search_ignore)) {
                         $escaped = (K2_JVERSION == '15') ? $db->getEscaped($searchword, true) : $db->escape($searchword, true);
                         $word = $db->Quote('%'.$escaped.'%', false);
                         $langField = (K2_JVERSION == '15') ? 'code' : 'lang_code';
@@ -795,7 +795,7 @@ class K2ModelItemlist extends K2Model
                 $sql .= ' AND ('.implode(' OR ', $conditions).')';
             }
         } elseif ($type === 'exact') {
-            $search = JString::trim($search, '"');
+            $search = \Joomla\String\StringHelper::trim($search, '"');
             $escaped = (K2_JVERSION == '15') ? $db->getEscaped($search, true) : $db->escape($search, true);
             $quoted = $db->Quote('%'.$escaped.'%', false);
             $sql .= ' AND (

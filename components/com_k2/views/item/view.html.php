@@ -103,7 +103,7 @@ class K2ViewItem extends K2View
         $item->event->K2UserDisplay = '';
         if (isset($item->author) && is_object($item->author->profile) && isset($item->author->profile->id)) {
             Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-            $dispatcher = JDispatcher::getInstance();
+            $dispatcher = K2Dispatcher::getInstance();
             $results = $dispatcher->trigger('onK2UserDisplay', [
                 &$item->author->profile,
                 &$params,
@@ -121,7 +121,7 @@ class K2ViewItem extends K2View
         if (K2_JVERSION != '15') {
             if (!in_array($item->access, $user->getAuthorisedViewLevels()) || !in_array($item->category->access, $user->getAuthorisedViewLevels())) {
                 if ($user->guest) {
-                    $uri = Joomla\CMS\Factory::getURI();
+                    $uri = Joomla\CMS\Uri\Uri::getInstance();
                     $url = 'index.php?option=com_users&view=login&return='.base64_encode($uri->toString());
                     $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
                     $app->redirect(Joomla\CMS\Router\Route::_($url, false));
@@ -133,7 +133,7 @@ class K2ViewItem extends K2View
             }
         } elseif ($item->access > $user->get('aid', 0) || $item->category->access > $user->get('aid', 0)) {
             if ($user->guest) {
-                $uri = Joomla\CMS\Factory::getURI();
+                $uri = Joomla\CMS\Uri\Uri::getInstance();
                 $url = 'index.php?option=com_user&view=login&return='.base64_encode($uri->toString());
                 $app->enqueueMessage(Joomla\CMS\Language\Text::_('K2_YOU_NEED_TO_LOGIN_FIRST'), 'notice');
                 $app->redirect(Joomla\CMS\Router\Route::_($url, false));
@@ -182,7 +182,7 @@ class K2ViewItem extends K2View
             if ($item->params->get('itemComments')) {
                 // Trigger comments events
                 Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-                $dispatcher = JDispatcher::getInstance();
+                $dispatcher = K2Dispatcher::getInstance();
                 $results = $dispatcher->trigger('onK2CommentsCounter', [
                     &$item,
                     &$params,

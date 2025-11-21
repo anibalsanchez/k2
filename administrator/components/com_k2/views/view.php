@@ -42,6 +42,17 @@ if (version_compare(JVERSION, '3.0', 'ge')) {
 
             return parent::display($tpl);
         }
+
+        public function assignRef($key, &$val)
+        {
+            if (is_string($key) && !str_starts_with($key, '_')) {
+                $this->$key = &$val;
+
+                return true;
+            }
+
+            return false;
+        }
     }
 } else {
     class K2View extends JView

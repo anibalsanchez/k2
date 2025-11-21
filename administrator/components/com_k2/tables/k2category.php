@@ -97,7 +97,7 @@ class TableK2Category extends K2Table
     {
         jimport('joomla.filter.output');
         $params = Joomla\CMS\Component\ComponentHelper::getParams('com_k2');
-        $this->name = JString::trim($this->name);
+        $this->name = \Joomla\String\StringHelper::trim($this->name);
         if ($this->name == '') {
             $this->setError(Joomla\CMS\Language\Text::_('K2_CATEGORY_MUST_HAVE_A_NAME'));
 

@@ -44,6 +44,6 @@ class TableK2Comment extends K2Table
 
     public function check()
     {
-        $this->commentText = JString::trim($this->commentText);
+        $this->commentText = \Joomla\String\StringHelper::trim($this->commentText);
     }
 }

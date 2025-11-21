@@ -68,7 +68,7 @@ class K2Plugin extends Joomla\CMS\Plugin\CMSPlugin
                     $replace = 'name="plugins['.$this->pluginName.$field->name.']"';
                 }
 
-                $input = JString::str_ireplace($search, $replace, $field->__get('input'));
+                $input = \Joomla\String\StringHelper::str_ireplace($search, $replace, $field->__get('input'));
                 $fields .= $field->__get('label').' '.$input;
             }
 

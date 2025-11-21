@@ -64,7 +64,7 @@ class K2ModelExtraField extends K2Model
         $showNull = K2Request::getInt('showNull');
         $displayInFrontEnd = K2Request::getInt('displayInFrontEnd');
 
-        if (JString::strtolower($alias) == 'this') {
+        if (\Joomla\String\StringHelper::strtolower($alias) == 'this') {
             $alias = '';
         }
 

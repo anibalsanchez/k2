@@ -148,7 +148,7 @@ class K2ViewItem extends K2View
         $wysiwyg = Joomla\CMS\Factory::getEditor();
         $onSave = '';
         if ($params->get('mergeEditors')) {
-            if (JString::strlen($item->fulltext) > 1) {
+            if (\Joomla\String\StringHelper::strlen($item->fulltext) > 1) {
                 $textValue = $item->introtext.'<hr id="system-readmore" />'.$item->fulltext;
             } else {
                 $textValue = $item->introtext;
@@ -230,7 +230,7 @@ class K2ViewItem extends K2View
             $lists['providers'] = Joomla\CMS\HTML\HTMLHelper::_('select.genericlist', $providersOptions, 'videoProvider', '', 'value', 'text', $lists['providerVideoType']);
         }
 
-        if (!empty($item->video) && JString::substr($item->video, 0, 1) !== '{') {
+        if (!empty($item->video) && \Joomla\String\StringHelper::substr($item->video, 0, 1) !== '{') {
             $embedVideo = true;
             $options['startOffset'] = 3;
         }
@@ -243,13 +243,13 @@ class K2ViewItem extends K2View
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content', 'jw_sigpro');
         Joomla\CMS\Plugin\PluginHelper::importPlugin('content', 'jw_allvideos');
 
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         // For SIGPro
-        if (JString::strpos($item->gallery, 'http://') || JString::strpos($item->gallery, 'https://')) {
+        if (\Joomla\String\StringHelper::strpos($item->gallery, 'http://') || \Joomla\String\StringHelper::strpos($item->gallery, 'https://')) {
             $item->galleryType = 'flickr';
-            $item->galleryValue = JString::substr($item->gallery, 9);
-            $item->galleryValue = JString::substr($item->galleryValue, 0, -10);
+            $item->galleryValue = \Joomla\String\StringHelper::substr($item->gallery, 9);
+            $item->galleryValue = \Joomla\String\StringHelper::substr($item->galleryValue, 0, -10);
         } else {
             $item->galleryType = 'server';
             $item->galleryValue = '';
@@ -278,9 +278,9 @@ class K2ViewItem extends K2View
         if (!$embedVideo) {
             $params->set('vfolder', 'media/k2/videos');
             $params->set('afolder', 'media/k2/audio');
-            if (JString::strpos($item->video, 'remote}')) {
+            if (\Joomla\String\StringHelper::strpos($item->video, 'remote}')) {
                 preg_match('#}(.*?){/#s', $item->video, $matches);
-                if (JString::substr($matches[1], 0, 7) != 'http://' || JString::substr($matches[1], 0, 8) != 'https://') {
+                if (\Joomla\String\StringHelper::substr($matches[1], 0, 7) != 'http://' || \Joomla\String\StringHelper::substr($matches[1], 0, 8) != 'https://') {
                     $item->video = str_replace($matches[1], Joomla\CMS\Uri\Uri::root().$matches[1], $item->video);
                 }
             }
@@ -427,7 +427,7 @@ class K2ViewItem extends K2View
 
         // Plugin Events
         Joomla\CMS\Plugin\PluginHelper::importPlugin('k2');
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = K2Dispatcher::getInstance();
 
         $K2PluginsItemContent = $dispatcher->trigger('onRenderAdminForm', [
             &$item,

@@ -152,7 +152,7 @@ class K2HelperHTML
                     $settingsURL = 'index.php?option=com_config&view=component&component=com_k2&path=&tmpl=component';
                     $settingsURLAttributes = ' class="modal" rel="{handler: \'iframe\', size: {x: (window.innerWidth) * 0.7, y: (window.innerHeight) * 0.9}}"';
                 } else {
-                    $settingsURL = 'index.php?option=com_config&view=component&component=com_k2&path=&return='.urlencode(base64_encode(Joomla\CMS\Factory::getURI()->toString()));
+                    $settingsURL = 'index.php?option=com_config&view=component&component=com_k2&path=&return='.urlencode(base64_encode(Joomla\CMS\Uri\Uri::getInstance()->toString()));
                     $settingsURLAttributes = '';
                 }
 
@@ -273,11 +273,11 @@ class K2HelperHTML
         if ($document->getType() == 'html') {
             // JS framework loading
             if (version_compare(JVERSION, '1.6.0', 'lt')) {
-                Joomla\CMS\HTML\HTMLHelper::_('behavior.mootools');
+                K2Behavior::mootools();
             }
 
             if ($loadFramework && $view !== 'media' && version_compare(JVERSION, '1.6.0', 'ge')) {
-                Joomla\CMS\HTML\HTMLHelper::_('behavior.framework');
+                K2Behavior::framework();
             }
 
             if (version_compare(JVERSION, '3.0.0', 'ge')) {
@@ -385,7 +385,7 @@ class K2HelperHTML
                     $document->addStyleSheet(Joomla\CMS\Uri\Uri::root(true).'/media/k2/assets/vendors/studio-42/elfinder/css/theme.css?v='.K2_CURRENT_VERSION);
                     $document->addScript(Joomla\CMS\Uri\Uri::root(true).'/media/k2/assets/vendors/studio-42/elfinder/js/elfinder.min.js?v='.K2_CURRENT_VERSION);
                 } else {
-                    Joomla\CMS\HTML\HTMLHelper::_('behavior.tooltip');
+                    K2Behavior::tooltip();
                     if (version_compare(JVERSION, '3.0.0', 'ge')) {
                         if ($params->get('taggingSystem') === '0' || $params->get('taggingSystem') === '1') {
                             // B/C - Convert old options

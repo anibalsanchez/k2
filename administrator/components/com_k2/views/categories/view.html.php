@@ -48,7 +48,7 @@ class K2ViewCategories extends K2View
 
         $language = $app->getUserStateFromRequest($option.$view.'language', 'language', '', 'string');
         $search = $app->getUserStateFromRequest($option.$view.'search', 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = \Joomla\String\StringHelper::strtolower($search);
         $search = trim(preg_replace('/[^\p{L}\p{N}\s\-.,:!?\'"()]/u', '', $search));
 
         $model = $this->getModel();
